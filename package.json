@@ -1,0 +1,29 @@
+{
+  "name": "xmas",
+  "version": "1.0.0",
+  "description": "Christmas experiments",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "lct",
+  "license": "MIT",
+  "dependencies": {
+    "browserify": "^10.2.0",
+    "browserify-middleware": "^7.0.0",
+    "express": "~4.5.1",
+    "figlet": "^1.1.0",
+    "jade": "~1.3.1",
+    "nib": "~1.0.3",
+    "stringify": "^3.1.0",
+    "stylus": "~0.47.1",
+    "three": "^0.81.2",
+    "three-obj-loader": "^1.0.2",
+    "three-orbit-controls": "^72.0.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "0.10.x"
+  }
+}
