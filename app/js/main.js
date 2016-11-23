@@ -85,7 +85,7 @@ var App = function() {
 		var geometry = new THREE.SphereBufferGeometry( 2, 32, 32 );
 		var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
 		var sphere = new THREE.Mesh( geometry, material );
-		sphere.position.set( 0, this.origin.y -  this.getPoint( this.path, this.path.getTotalLength() * i / 50 ).y, this.origin.x - this.getPoint( this.path, this.path.getTotalLength() * i / 50 ).x )
+		sphere.position.set( 0, this.origin.y -  this.path.getPointAtLength( this.path.getTotalLength() * i / 50 ).y, this.origin.x - this.path.getPointAtLength( this.path.getTotalLength() * i / 50 ).x )
 		// this.scene.add( sphere );
 	}
 	this.raycaster = new THREE.Raycaster( this.player.position, new THREE.Vector3( 0, -1, 0 ), 0.1, 1000 );
@@ -109,16 +109,13 @@ App.prototype.onResize = function(e) {
 	this.camera.updateProjectionMatrix();
 }
 
-App.prototype.getPoint = function(path,d){
-	return path.getPointAtLength( d )
-}
 App.prototype.updatePosition = function(){
 	
 	var gravity = 0.98;
 	var mass = 75;
 	var pos = new THREE.Vector3(0,0,0);
 	if( this.position < this.path.getTotalLength() ){
-		var angleRadians = Math.atan2( this.getPoint( this.path, this.position + 1 ).y - this.getPoint( this.path, this.position ).y, this.getPoint( this.path, this.position + 1 ).x - this.getPoint( this.path, this.position ).x );
+		var angleRadians = Math.atan2( this.path.getPointAtLength( this.position + 1 ).y - this.path.getPointAtLength( this.position ).y, this.path.getPointAtLength( this.position + 1 ).x - this.path.getPointAtLength( this.position ).x );
 		var friction = 0.01;
 		var P = mass * gravity;
 		var Px = P * Math.sin(angleRadians);
