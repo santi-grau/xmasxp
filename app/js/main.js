@@ -4,7 +4,7 @@ var Stage = require('./views/stage');
 var Player = require('./views/player');
 
 var OrbitControls = require('three-orbit-controls')(THREE);
-var model = require('../assets/base4.obj');
+
 var OBJLoader = require('three-obj-loader')(THREE);
 
 var App = function() {
@@ -17,17 +17,26 @@ var App = function() {
 	this.camera.position.set( 0, 100, 0 );
 	this.camera.rotation.x = Math.PI / 2
 	var controls = new OrbitControls(this.camera);
+	
 
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
 	this.containerEl.appendChild( this.renderer.domElement );
 
 	this.stage = new Stage( this );
 	this.player = new Player( this );
+	var cameraHelper = new THREE.CameraHelper( this.player.camera );
 	
 	this.scene.add( this.stage.group, this.player.group );
-	
+	this.scene.add( cameraHelper )
 	window.onresize = this.onResize.bind(this);
 
+	var size = 1000;
+	var step = 10;
+
+	var gridHelper = new THREE.GridHelper( size, step );
+	this.scene.add( gridHelper );
+
+	setTimeout( this.player.onStart.bind(this.player), 1000 );
 	// run
 	this.onResize();
 	this.step();
@@ -41,9 +50,9 @@ App.prototype.onResize = function(e) {
 }
 
 App.prototype.updatePosition = function(){
-	document.getElementById('position').innerHTML = 'position : ' + ( this.player.group.position.x + ' ' + this.player.group.position.y );
-	document.getElementById('speed').innerHTML = 'speed : ' + this.speed;
-	document.getElementById('altitude').innerHTML = 'altitude : ' + this.player.altitude;
+	// document.getElementById('position').innerHTML = 'position : ' + ( this.player.group.position.x + ' ' + this.player.group.position.y );
+	// document.getElementById('speed').innerHTML = 'speed : ' + this.player.speed;
+	// document.getElementById('altitude').innerHTML = 'altitude : ' + this.player.altitude;
 }
 
 App.prototype.step = function(time) {
@@ -51,7 +60,7 @@ App.prototype.step = function(time) {
 	this.updatePosition();
 	this.stage.step( time );
 	this.player.step( time );
-	// this.renderer.render( this.scene, this.player.camera );
+	this.renderer.render( this.scene, this.player.camera );
 	this.renderer.render( this.scene, this.camera );
 };
 
