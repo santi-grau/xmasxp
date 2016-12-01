@@ -2,6 +2,7 @@ window.THREE = require('three');
 
 var Stage = require('./views/stage');
 var Player = require('./views/player');
+var Prizes = require('./views/player');
 
 var OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -18,25 +19,27 @@ var App = function() {
 	this.camera.rotation.x = Math.PI / 2
 	var controls = new OrbitControls(this.camera);
 	
-
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
 	this.containerEl.appendChild( this.renderer.domElement );
 
 	this.stage = new Stage( this );
 	this.player = new Player( this );
+	this.prizes = new Prizes( this );
+	
 	var cameraHelper = new THREE.CameraHelper( this.player.camera );
 	
 	this.scene.add( this.stage.group, this.player.group );
 	this.scene.add( cameraHelper )
 	window.onresize = this.onResize.bind(this);
 
-	var size = 1000;
-	var step = 10;
-
-	var gridHelper = new THREE.GridHelper( size, step );
+	var gridHelper = new THREE.GridHelper( 1000, 10 );
 	this.scene.add( gridHelper );
 
+	var axisHelper = new THREE.AxisHelper( 50 );
+	this.scene.add( axisHelper );
+
 	setTimeout( this.player.onStart.bind(this.player), 1000 );
+	
 	// run
 	this.onResize();
 	this.step();
@@ -60,7 +63,7 @@ App.prototype.step = function(time) {
 	this.updatePosition();
 	this.stage.step( time );
 	this.player.step( time );
-	this.renderer.render( this.scene, this.player.camera );
+	// this.renderer.render( this.scene, this.player.camera );
 	this.renderer.render( this.scene, this.camera );
 };
 
