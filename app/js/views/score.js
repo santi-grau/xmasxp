@@ -2,7 +2,7 @@ var SimplexNoise = require('simplex-noise');
 
 var Score = function( parent ){
 	this.parent = parent;
-	this.value = 0;
+	this.points = 0;
 
 	this.plane = new THREE.PlaneBufferGeometry( 30, 20 );
 

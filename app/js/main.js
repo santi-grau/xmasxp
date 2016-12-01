@@ -20,7 +20,32 @@ var App = function() {
 	this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
 
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
+	this.renderer.shadowMap.enabled = true;
+	this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 	this.containerEl.appendChild( this.renderer.domElement );
+
+	this.ambientLight = new THREE.AmbientLight( 0xffffff , 0.6);
+	this.scene.add( this.ambientLight );
+
+	this.directionalLight = new THREE.SpotLight( 0xffffff, 0.6 );
+	this.directionalLight.position.set( 400, 400, 0 );
+	this.directionalLight.lookAt( 0, 0, 0 )
+
+	this.directionalLight.shadow.mapSize.width = 4096;
+	this.directionalLight.shadow.mapSize.height = 4096;
+
+	// this.directionalLight.shadow.camera.near = 100;
+	// this.directionalLight.shadow.camera.far = 4000;
+	this.directionalLight.shadow.camera.fov = 30;
+
+	// this.directionalLight.shadowCameraVisible = true;
+
+	var lightHelper = new THREE.CameraHelper( this.directionalLight.shadow.camera );
+	this.scene.add( lightHelper)
+	this.directionalLight.castShadow = true;
+	
+	this.scene.add( this.directionalLight );
 
 	this.stage = new Stage( this );
 	this.player = new Player( this );

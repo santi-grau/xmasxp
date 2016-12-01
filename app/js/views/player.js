@@ -95,7 +95,7 @@ Player.prototype.onJump = function(){
 	this.speedForward = Math.cos( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 
 	TweenMax.to( this, 0.2, { speed : 0, ease : Power2.easeOut });
-	TweenMax.to( this, 2, { motionSpeed : 0.21, ease : Power2.easeOut });
+	TweenMax.to( this, 2, { motionSpeed : 0.01, ease : Power2.easeOut });
 	TweenMax.to( this.camera, 2, { fov : 60, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
 	this.currentStatus = 'ascending'

@@ -27,7 +27,10 @@ var Stage = function( parent ){
 		
 		child.material = new THREE.MeshNormalMaterial( { side : THREE.DoubleSide } );
 		child.material = new THREE.MeshBasicMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
-
+		child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+		child.castShadow = true;
+		child.receiveShadow = true;
+		console.log(child);
 		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( child.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
 		this.wireframe.add( wireframe );
 
@@ -64,7 +67,8 @@ Stage.prototype.addLamps = function(){
 	var lampCount = 60
 	var group = new THREE.Object3D();
 	var mesh = new THREE.OBJLoader().parse(lamp).children[0];
-	mesh.material = new THREE.MeshBasicMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+	mesh.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+	mesh.castShadow = true;
 	for( var i = 7 ; i < lampCount - 3 ; i++ ){
 		var m = mesh.clone()
 		m.position.y = 2;
@@ -96,7 +100,9 @@ Stage.prototype.makeLandingMesh = function(){
 		var ovs = nvs;
 	}
 	
-	var mesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color : 0xff0000, wireframe : false } ) )
+	var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } ) );
+	mesh.castShadow = true;
+	mesh.receiveShadow = true;
 	return mesh;
 }
 Stage.prototype.step = function( time ){
