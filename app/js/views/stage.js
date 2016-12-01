@@ -1,5 +1,7 @@
 var model = require('../../assets/base9.obj');
-
+var lamp = require('../../assets/lamp.obj');
+var pole = require('../../assets/pole.obj');
+var OBJLoader = require('three-obj-loader')(THREE);
 var Stage = function( parent ){
 	this.parent = parent;
 	
@@ -25,13 +27,52 @@ var Stage = function( parent ){
 	}.bind(this) );
 
 	this.landingMesh = this.makeLandingMesh();
+	this.lamps = this.addLamps();
+	this.poles = this.addPoles();
 
 	var wireframeLanding = new THREE.LineSegments( new THREE.WireframeGeometry( this.landingMesh.geometry ), new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: .5, fog : true  } ) );
 	this.wireframe.add( wireframeLanding );
 	
-	this.group.add( this.mesh, this.wireframe, this.landingMesh );
+	this.group.add( this.mesh, this.wireframe, this.landingMesh, this.lamps, this.poles );
 	this.group.rotation.y = Math.PI / 2;
 }
+
+
+Stage.prototype.addPoles = function(){
+	var poleCount = 80
+	var group = new THREE.Object3D();
+	var mesh = new THREE.OBJLoader().parse(pole).children[0];
+	mesh.material = new THREE.MeshBasicMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+	for( var i = 0 ; i < poleCount ; i++ ){
+		var m = mesh.clone();
+		m.position.set( this.slope.getPointAtLength( i / ( poleCount - 1) * this.slope.getTotalLength() ).x, -this.slope.getPointAtLength( i / ( poleCount - 1) * this.slope.getTotalLength() ).y - 0.2, 0 );
+		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( m.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
+		wireframe.position.set( m.position.x, m.position.y, m.position.z);
+		group.add(m, wireframe);
+	}
+	return group;
+}
+
+Stage.prototype.addLamps = function(){
+	var lampCount = 60
+	var group = new THREE.Object3D();
+	var mesh = new THREE.OBJLoader().parse(lamp).children[0];
+	mesh.material = new THREE.MeshBasicMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+	for( var i = 7 ; i < lampCount - 3 ; i++ ){
+		var m = mesh.clone()
+		m.position.y = 2;
+		var lampGroup = new THREE.Object3D();
+		lampGroup.position.set( this.slope.getPointAtLength( i / ( lampCount - 1) * this.slope.getTotalLength() ).x, -this.slope.getPointAtLength( i / ( lampCount - 1) * this.slope.getTotalLength() ).y, 0 );
+		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( m.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
+		wireframe.position.y = m.position.y;
+		lampGroup.add(m, wireframe);
+		var angle = Math.atan2( (-this.slope.getPointAtLength( i / ( lampCount - 1) * this.slope.getTotalLength() + 1 ).y) - ( - this.slope.getPointAtLength( i / ( lampCount - 1) * this.slope.getTotalLength() ).y), this.slope.getPointAtLength( i / ( lampCount - 1) * this.slope.getTotalLength() + 1 ).x - this.slope.getPointAtLength( i / ( lampCount - 1) * this.slope.getTotalLength() ).x );
+		lampGroup.rotation.z = angle;
+		group.add( lampGroup );
+	}
+	return group;
+}
+
 Stage.prototype.makeLandingMesh = function(){
 	var path = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg"><path d="' + this.landingPath + '" /></svg>', "application/xml").querySelector('svg').querySelectorAll('path')[0];
 	var segments = 100;

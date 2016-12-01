@@ -6,8 +6,6 @@ var Prizes = require('./views/prizes');
 
 var OrbitControls = require('three-orbit-controls')(THREE);
 
-var OBJLoader = require('three-obj-loader')(THREE);
-
 var App = function() {
 	// props
 	this.containerEl = document.getElementById('main');
@@ -19,6 +17,8 @@ var App = function() {
 	this.camera.rotation.x = Math.PI / 2
 	var controls = new OrbitControls(this.camera);
 	
+	this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
+
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
 	this.containerEl.appendChild( this.renderer.domElement );
 
@@ -26,17 +26,9 @@ var App = function() {
 	this.player = new Player( this );
 	this.prizes = new Prizes( this );
 	
-	var cameraHelper = new THREE.CameraHelper( this.player.camera );
-	
 	this.scene.add( this.stage.group, this.player.group, this.prizes.group );
-	this.scene.add( cameraHelper )
+	
 	window.onresize = this.onResize.bind(this);
-
-	var gridHelper = new THREE.GridHelper( 1000, 10 );
-	this.scene.add( gridHelper );
-
-	var axisHelper = new THREE.AxisHelper( 50 );
-	this.scene.add( axisHelper );
 
 	setTimeout( this.player.onStart.bind(this.player), 1000 );
 	
@@ -52,20 +44,13 @@ App.prototype.onResize = function(e) {
 	this.camera.updateProjectionMatrix();
 }
 
-App.prototype.updatePosition = function(){
-	// document.getElementById('position').innerHTML = 'position : ' + ( this.player.group.position.x + ' ' + this.player.group.position.y );
-	// document.getElementById('speed').innerHTML = 'speed : ' + this.player.speed;
-	// document.getElementById('altitude').innerHTML = 'altitude : ' + this.player.altitude;
-}
-
 App.prototype.step = function(time) {
 	window.requestAnimationFrame(this.step.bind(this));
-	this.updatePosition();
 	this.stage.step( time );
 	this.player.step( time );
 	this.prizes.step( time );
 	this.renderer.render( this.scene, this.player.camera );
-	// this.renderer.render( this.scene, this.camera );
+	this.renderer.render( this.scene, this.camera );
 };
 
 var app = new App();

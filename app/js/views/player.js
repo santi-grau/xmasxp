@@ -1,5 +1,5 @@
 var skiModel = require('../../assets/ski.obj');
-
+var OBJLoader = require('three-obj-loader')(THREE);
 var svgIntersections = require('svg-intersections');
 var intersect = svgIntersections.intersect;
 intersect.plugin( require('svg-intersections/lib/functions/bezier') )
