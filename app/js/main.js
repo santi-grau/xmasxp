@@ -2,7 +2,7 @@ window.THREE = require('three');
 
 var Stage = require('./views/stage');
 var Player = require('./views/player');
-var Prizes = require('./views/player');
+var Prizes = require('./views/prizes');
 
 var OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -28,7 +28,7 @@ var App = function() {
 	
 	var cameraHelper = new THREE.CameraHelper( this.player.camera );
 	
-	this.scene.add( this.stage.group, this.player.group );
+	this.scene.add( this.stage.group, this.player.group, this.prizes.group );
 	this.scene.add( cameraHelper )
 	window.onresize = this.onResize.bind(this);
 
@@ -63,8 +63,9 @@ App.prototype.step = function(time) {
 	this.updatePosition();
 	this.stage.step( time );
 	this.player.step( time );
-	// this.renderer.render( this.scene, this.player.camera );
-	this.renderer.render( this.scene, this.camera );
+	this.prizes.step( time );
+	this.renderer.render( this.scene, this.player.camera );
+	// this.renderer.render( this.scene, this.camera );
 };
 
 var app = new App();

@@ -9,7 +9,7 @@ var TweenMax = require('gsap');
 
 var Player = function( parent ){
 	this.parent = parent;
-	
+
 	this.gravity = 0.98;
 	
 	this.currentStatus = 'waiting';
@@ -42,14 +42,17 @@ var Player = function( parent ){
 
 	console.log('Player waiting to start');
 }
+
 Player.prototype.waiting = function(){
 	
 }
+
 Player.prototype.onStart = function(){
 	this.speed = 0.2
 	this.currentStatus = 'descending';
 	console.log('Player start');
 }
+
 Player.prototype.descending = function( time ){
 	var mass = 75;
 	this.pos = new THREE.Vector3(0,0,0);
@@ -72,6 +75,7 @@ Player.prototype.descending = function( time ){
 
 	if( this.slopePosition > this.parent.stage.slope.getTotalLength() ) this.onJump();
 }
+
 Player.prototype.onJump = function(){
 	this.jumpOrigin = this.group.position;
 	this.speedUp = Math.sin( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
@@ -83,19 +87,26 @@ Player.prototype.onJump = function(){
 	this.currentStatus = 'ascending'
 	console.log('Player jumps');
 }
+
 Player.prototype.updateCamera = function(){
 	this.camera.updateProjectionMatrix();
 }
-Player.prototype.getAltitude = function(){
-	var altitude;
+
+Player.prototype.getGroundIntersection = function( playerData ){
+	var xsect;
 	var intersections = intersect(  
 		shape("path", { d: this.parent.stage.landingPath }),
-		shape("line", { x1: -this.position.z, y1: -this.position.y, x2: -this.position.z, y2: 1000 })  
+		shape("line", playerData)  
 	);
-	if( intersections.points.length ) altitude = -intersections.points[0].y;
-	else altitude = null;
-	return altitude;
+	if( intersections.points.length ) xsect = -intersections.points[0].y;
+	else xsect = null;
+	return xsect;
 }
+
+Player.prototype.getAltitude = function(){
+	return this.getGroundIntersection( { x1: -this.position.z, y1: -this.position.y, x2: -this.position.z, y2: 1000 } );
+}
+
 Player.prototype.ascending = function( time ){
 	this.speedUp -= this.gravity / 60 * this.motionSpeed;
 	this.position = new THREE.Vector3( this.jumpOrigin.x, ( this.jumpOrigin.y + this.speedUp ), ( this.jumpOrigin.z - this.speedForward * this.motionSpeed ) );
@@ -103,17 +114,20 @@ Player.prototype.ascending = function( time ){
 	this.altitude = this.getAltitude();
 	if( this.speedUp < 0 ) this.onPeak();
 }
+
 Player.prototype.onPeak = function(){
 	// TweenMax.to( this, 2, { motionSpeed : 1, ease : Power2.easeOut });
 	this.peakAltitude = this.altitude;
 	this.currentStatus = 'hovering'
 	console.log('Player reached max height ( ' + this.peakAltitude + ' )' );
 }
+
 Player.prototype.onEndHover = function(){
 	TweenMax.to( this, 2, { motionSpeed : 1, ease : Power2.easeOut });
 	this.currentStatus = 'landing';
 	console.log( 'Player ended hovering' );
 }
+
 Player.prototype.hovering = function( time ){
 	this.speedUp -= this.gravity / 60 * this.motionSpeed;
 	this.position = new THREE.Vector3( this.jumpOrigin.x, ( this.jumpOrigin.y + this.speedUp ), ( this.jumpOrigin.z - this.speedForward * this.motionSpeed ) );
@@ -130,14 +144,11 @@ Player.prototype.landing = function( time ){
 	this.altitude = this.getAltitude();
 	if( !this.altitude ) this.onLand();
 }
-Player.prototype.onLand = function(){
-	var intersections = intersect(  
-		shape("path", { d: this.parent.stage.landingPath }),
-		shape("line", { x1: -this.position.z, y1: -this.position.y, x2: -this.position.z, y2: -100 })  
-	);
-	this.position.y = -intersections.points[0].y;
 
+Player.prototype.onLand = function(){
+	this.position.y = this.getGroundIntersection( { x1: -this.position.z, y1: -this.position.y, x2: -this.position.z, y2: -100 } );
 	TweenMax.to( this.camera, 3, { fov : 32, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
+	
 	console.log( 'Player touched the ground' );
 	this.currentStatus = 'breaking'
 }
@@ -149,12 +160,8 @@ Player.prototype.onEnd = function(){
 
 Player.prototype.breaking = function( time ){
 	var friction = 0.987;
-	var intersections = intersect(  
-		shape("path", { d: this.parent.stage.landingPath }),
-		shape("line", { x1: -this.position.z, y1: 1000, x2: -this.position.z, y2: -1000 })  
-	);
 	this.speedForward *= friction;
-	this.position.y = -intersections.points[0].y;
+	this.position.y = this.getGroundIntersection( { x1: -this.position.z, y1: 1000, x2: -this.position.z, y2: -100 } );
 	this.position.z += -this.speedForward;
 
 	// Bounce fitipaldi!!
