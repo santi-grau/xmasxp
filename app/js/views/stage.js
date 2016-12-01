@@ -1,6 +1,10 @@
 var model = require('../../assets/base9.obj');
 var lamp = require('../../assets/lamp.obj');
 var pole = require('../../assets/pole.obj');
+
+var Score = require('./score');
+var Intro = require('./intro');
+
 var OBJLoader = require('three-obj-loader')(THREE);
 var Stage = function( parent ){
 	this.parent = parent;
@@ -11,6 +15,9 @@ var Stage = function( parent ){
 	this.slope = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg"><path d="' + this.slopePath + '" /></svg>', "application/xml").querySelector('svg').querySelectorAll('path')[0];
 	
 	this.slopeAngle = 30;
+
+	this.score = new Score();
+	this.intro = new Intro();
 
 	this.group = new THREE.Object3D();
 	this.wireframe = new THREE.Object3D();
@@ -33,7 +40,7 @@ var Stage = function( parent ){
 	var wireframeLanding = new THREE.LineSegments( new THREE.WireframeGeometry( this.landingMesh.geometry ), new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: .5, fog : true  } ) );
 	this.wireframe.add( wireframeLanding );
 	
-	this.group.add( this.mesh, this.wireframe, this.landingMesh, this.lamps, this.poles );
+	this.group.add( this.mesh, this.wireframe, this.landingMesh, this.lamps, this.poles, this.score.mesh, this.intro.mesh );
 	this.group.rotation.y = Math.PI / 2;
 }
 

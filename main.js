@@ -26,7 +26,7 @@ var port = Number(process.env.PORT || 4000);
 // └────────────────────────────────────────────────────────────────────┘
 
 browserify.settings({ transform: [stringify(['.svg', '.glsl', '.obj'])]});
-
+// browserify.settings.ignoreMissing = true;
 app.set('views', __dirname + '/app/views');
 app.use('/js', browserify('./app/js'));
 app.set('view engine', 'jade');

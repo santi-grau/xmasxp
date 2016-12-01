@@ -14,11 +14,22 @@ var Player = function( parent ){
 	
 	this.currentStatus = 'waiting';
 
+
+
+	// simulate head movement w mouse
+	window.addEventListener('mousemove', this.onMouseMove.bind(this) );
+
+	var T = timbre;
+	this.noise = T("noise", { mul:0.15 } );
+	this.pan = T("pan", { pos : 0.5 }, this.noise ).play();
+
 	this.slopePosition = 0;
 	this.rotation = -1.6286101308328111 + Math.PI / 2; // trust me on this one...
 	this.speed = 0;
 	this.motionSpeed = 1;
 	this.group = new THREE.Object3D();
+
+	
 
 	this.camera = new THREE.PerspectiveCamera( 24, window.innerWidth / window.innerHeight, 0.1, 10000 );
 	this.camera.position.y = 1.75;
@@ -42,9 +53,11 @@ var Player = function( parent ){
 
 	console.log('Player waiting to start');
 }
-
+Player.prototype.onMouseMove = function( e ){
+	this.posX = (e.x / window.innerWidth - 0.5) / 0.5;
+}
 Player.prototype.waiting = function(){
-	
+	this.rotation = Math.PI / 24
 }
 
 Player.prototype.onStart = function(){
@@ -81,6 +94,7 @@ Player.prototype.onJump = function(){
 	this.speedUp = Math.sin( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 	this.speedForward = Math.cos( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 
+	TweenMax.to( this, 0.2, { speed : 0, ease : Power2.easeOut });
 	TweenMax.to( this, 2, { motionSpeed : 0.21, ease : Power2.easeOut });
 	TweenMax.to( this.camera, 2, { fov : 60, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
@@ -163,7 +177,7 @@ Player.prototype.breaking = function( time ){
 	this.speedForward *= friction;
 	this.position.y = this.getGroundIntersection( { x1: -this.position.z, y1: 1000, x2: -this.position.z, y2: -100 } );
 	this.position.z += -this.speedForward;
-
+	this.speed = this.speedForward;
 	// Bounce fitipaldi!!
 	if( this.position.z < -230 ) this.speedForward *= -1;
 	this.position.z -= this.speedForward;
@@ -175,6 +189,10 @@ Player.prototype.ending = function( time ){
 }
 
 Player.prototype.step = function( time ){
+	// this.pan.pos = (Math.sin( time/1000 ) + 1) / 2
+	
+	this.noise.mul = this.speed / 10;
+	
 	this[this.currentStatus]( time );
 
 	this.group.position.set( this.position.x, this.position.y, this.position.z );

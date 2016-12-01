@@ -13,8 +13,8 @@ var App = function() {
 	// three stuff
 	this.scene = new THREE.Scene();
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
-	this.camera.position.set( 0, 100, 0 );
-	this.camera.rotation.x = Math.PI / 2
+	this.camera.position.set( 0, 30, -200 );
+	// this.camera.rotation.x = Math.PI / 2
 	var controls = new OrbitControls(this.camera);
 	
 	this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
@@ -50,7 +50,7 @@ App.prototype.step = function(time) {
 	this.player.step( time );
 	this.prizes.step( time );
 	this.renderer.render( this.scene, this.player.camera );
-	this.renderer.render( this.scene, this.camera );
+	// this.renderer.render( this.scene, this.camera );
 };
 
 var app = new App();
