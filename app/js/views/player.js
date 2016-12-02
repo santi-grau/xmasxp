@@ -19,9 +19,9 @@ var Player = function( parent ){
 	// simulate head movement w mouse
 	window.addEventListener('mousemove', this.onMouseMove.bind(this) );
 
-	var T = timbre;
-	this.noise = T("noise", { mul:0.15 } );
-	this.pan = T("pan", { pos : 0.5 }, this.noise ).play();
+	// var T = timbre;
+	// this.noise = T("noise", { mul:0.15 } );
+	// this.pan = T("pan", { pos : 0.5 }, this.noise ).play();
 
 	this.slopePosition = 0;
 	this.rotation = -1.6286101308328111 + Math.PI / 2; // trust me on this one...
@@ -191,7 +191,7 @@ Player.prototype.ending = function( time ){
 Player.prototype.step = function( time ){
 	// this.pan.pos = (Math.sin( time/1000 ) + 1) / 2
 	
-	this.noise.mul = this.speed / 10;
+	// this.noise.mul = this.speed / 10;
 	
 	this[this.currentStatus]( time );
 

@@ -58,7 +58,7 @@ App.prototype.step = function(time) {
 	this.prizes.step( time );
 	this.lights.step( time );
 	this.renderer.render( this.scene, this.player.camera );
-	this.renderer.render( this.scene, this.camera );
+	// this.renderer.render( this.scene, this.camera );
 };
 
 var app = new App();

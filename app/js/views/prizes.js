@@ -29,12 +29,12 @@ Prizes.prototype.step = function( time ){
 	this.i1 += 0.0001;
 	this.i2 += 0.001;
 	for( var i = 0 ; i < this.group.children.length ; i++ ){
-
+		var rotationMultiplier = ( this.group.children[i].rotationSense ) ? 1 : -1 ;
 		var position = this.simplex.noise2D( i / this.group.children.length + this.i1, i / this.group.children.length );
 		var rotation = this.simplex.noise2D( i / this.group.children.length + this.i2, i / this.group.children.length );
 		
 		this.group.children[i].position.y = this.group.children[i].inity + position * 20;
-		this.group.children[i].rotation.y += 0.005 * ( rotation + 1 ) / 2;
+		this.group.children[i].rotation.y += 0.005 * rotation;
 		this.group.children[i].children[0].rotation.x += 0.01 * position;
 		this.group.children[i].children[0].rotation.y += 0.01 * rotation;
 	}
