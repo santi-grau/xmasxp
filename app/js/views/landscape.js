@@ -20,7 +20,7 @@ var Landscape = function( parent ){
 
 	var geoWorker = WebWorker( require( './treemesh' ) );
 	geoWorker.onmessage = this.geometryReady.bind(this);
-	geoWorker.postMessage( JSON.stringify( { treeCount : 2000, imgData : imgData.data } ) );
+	geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data } ) );
 
 }
 Landscape.prototype.geometryReady = function( msg ){
