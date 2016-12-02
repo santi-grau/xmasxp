@@ -25,8 +25,9 @@ var Lights = function(){
 	var lightHelper = new THREE.CameraHelper( this.directionalLight.shadow.camera );
 	this.azimuthGroup.add( lightHelper)
 	this.directionalLight.castShadow = true;
-	this.directionalLight.position.x = 500;
-	this.azimuthGroup.add( this.directionalLight );
+	this.directionalLight.position.set(200, 200, 0);
+	// this.azimuthGroup.add( this.directionalLight );
+	this.group.add( this.directionalLight );
 
 	// setTimeout( function(){
 	// 	if( !this.dateRanges ) console.log( 'too late for geo ');
@@ -118,7 +119,7 @@ Lights.prototype.update = function( stage ){
 	console.log(new Date().addHours(0));
 	var position = SunCalc.getPosition( new Date().addHours(-18), this.latlon[0], this.latlon[1] );
 
-	// this.altitudeGroup.rotation.z = position.altitude;
+	this.altitudeGroup.rotation.z = -Math.PI / 27;
 	// this.azimuthGroup.rotation.y = -Math.PI / 2 - position.azimuth * Math.PI;
 	// this.directionalLight.position.set( Math.cos( position.altitude ), Math.sin( position.altitude ), 0 ).normalize().multiplyScalar( this.directionalLightDistance );
 	// this.directionalLight.color = new THREE.Color( 1,1,1);

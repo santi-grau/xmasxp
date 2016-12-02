@@ -35,7 +35,7 @@ Landscape.prototype.geometryReady = function( msg ){
 	this.treeMesh = new THREE.Mesh( geometry, material );
 	this.group.add(this.treeMesh)
 
-	
+	this.treeMesh.castShadow = true;
 	for( var j = 0 ; j < this.coords.length ; j++ ){
 		var raycaster = new THREE.Raycaster( new THREE.Vector3( this.coords[j][1], -200, -this.coords[j][0] ), new THREE.Vector3( 0, 1, 0 ), 0.1, 1000 );
 		var intersects = raycaster.intersectObject( this.parent.mountainMesh );
