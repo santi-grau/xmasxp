@@ -3,6 +3,7 @@ window.THREE = require('three');
 var Stage = require('./views/stage');
 var Player = require('./views/player');
 var Prizes = require('./views/prizes');
+var Lights = require('./views/lights');
 
 var OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -17,7 +18,7 @@ var App = function() {
 	// this.camera.rotation.x = Math.PI / 2
 	var controls = new OrbitControls(this.camera);
 	
-	this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
+	// this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
 
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
 	this.renderer.shadowMap.enabled = true;
@@ -25,36 +26,17 @@ var App = function() {
 
 	this.containerEl.appendChild( this.renderer.domElement );
 
-	this.ambientLight = new THREE.AmbientLight( 0xffffff , 0.6);
-	this.scene.add( this.ambientLight );
-
-	this.directionalLight = new THREE.SpotLight( 0xffffff, 0.6 );
-	this.directionalLight.position.set( 400, 400, 0 );
-	this.directionalLight.lookAt( 0, 0, 0 )
-
-	this.directionalLight.shadow.mapSize.width = 4096;
-	this.directionalLight.shadow.mapSize.height = 4096;
-
-	// this.directionalLight.shadow.camera.near = 100;
-	// this.directionalLight.shadow.camera.far = 4000;
-	this.directionalLight.shadow.camera.fov = 30;
-
-	// this.directionalLight.shadowCameraVisible = true;
-
-	var lightHelper = new THREE.CameraHelper( this.directionalLight.shadow.camera );
-	this.scene.add( lightHelper)
-	this.directionalLight.castShadow = true;
-	
-	this.scene.add( this.directionalLight );
-
 	this.stage = new Stage( this );
 	this.player = new Player( this );
 	this.prizes = new Prizes( this );
+	this.lights = new Lights( this );
 	
-	this.scene.add( this.stage.group, this.player.group, this.prizes.group );
+	this.scene.add( this.stage.group, this.player.group, this.prizes.group, this.lights.group );
 	
-	window.onresize = this.onResize.bind(this);
+	var axisHelper = new THREE.AxisHelper( 5 );
+	this.scene.add( axisHelper );
 
+	window.onresize = this.onResize.bind(this);
 	setTimeout( this.player.onStart.bind(this.player), 1000 );
 	
 	// run
@@ -74,6 +56,7 @@ App.prototype.step = function(time) {
 	this.stage.step( time );
 	this.player.step( time );
 	this.prizes.step( time );
+	this.lights.step( time );
 	this.renderer.render( this.scene, this.player.camera );
 	// this.renderer.render( this.scene, this.camera );
 };

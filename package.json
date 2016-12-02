@@ -21,11 +21,13 @@
     "stringify": "^3.1.0",
     "stylus": "~0.47.1",
     "subcollider": "^0.1.1",
+    "suncalc": "^1.7.0",
     "svg-intersections": "^0.2.5",
     "three": "^0.81.2",
     "three-obj-loader": "^1.0.2",
     "three-orbit-controls": "^72.0.0",
-    "timbre": "^14.11.25"
+    "timbre": "^14.11.25",
+    "webworkify": "^1.4.0"
   },
   "devDependencies": {},
   "engines": {

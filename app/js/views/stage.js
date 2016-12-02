@@ -2,8 +2,9 @@ var model = require('../../assets/base9.obj');
 var lamp = require('../../assets/lamp.obj');
 var pole = require('../../assets/pole.obj');
 
-var Score = require('./score');
-var Intro = require('./intro');
+var Score = require('./score'); // Scoreboard
+var Intro = require('./intro'); // Introboard
+var Landscape = require('./landscape'); // Trees, village and decoration on stage 
 
 var OBJLoader = require('three-obj-loader')(THREE);
 var Stage = function( parent ){
@@ -16,25 +17,23 @@ var Stage = function( parent ){
 	
 	this.slopeAngle = 30;
 
-	this.score = new Score();
-	this.intro = new Intro();
-
 	this.group = new THREE.Object3D();
 	this.wireframe = new THREE.Object3D();
 
 	this.mesh = new THREE.OBJLoader().parse(model);
 	this.mesh.traverse( function ( child ) {
-		
-		child.material = new THREE.MeshNormalMaterial( { side : THREE.DoubleSide } );
-		child.material = new THREE.MeshBasicMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+		if( child.name == 'MOUNTAIN_Mesh.026' ) this.mountainMesh = child;
 		child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
 		child.castShadow = true;
 		child.receiveShadow = true;
-		console.log(child);
 		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( child.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
 		this.wireframe.add( wireframe );
 
 	}.bind(this) );
+
+	this.score = new Score( this );
+	this.intro = new Intro( this );
+	this.landscape = new Landscape( this );
 
 	this.landingMesh = this.makeLandingMesh();
 	this.lamps = this.addLamps();
@@ -43,8 +42,9 @@ var Stage = function( parent ){
 	var wireframeLanding = new THREE.LineSegments( new THREE.WireframeGeometry( this.landingMesh.geometry ), new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: .5, fog : true  } ) );
 	this.wireframe.add( wireframeLanding );
 	
-	this.group.add( this.mesh, this.wireframe, this.landingMesh, this.lamps, this.poles, this.score.mesh, this.intro.mesh );
+	this.group.add( this.mesh, this.wireframe, this.landingMesh, this.lamps, this.poles, this.score.mesh, this.intro.mesh, this.landscape.group );
 	this.group.rotation.y = Math.PI / 2;
+
 }
 
 
@@ -106,7 +106,7 @@ Stage.prototype.makeLandingMesh = function(){
 	return mesh;
 }
 Stage.prototype.step = function( time ){
-
+	this.landscape.step( time );
 }
 
 module.exports = Stage;
