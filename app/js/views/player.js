@@ -11,7 +11,7 @@ var Player = function( parent ){
 	this.parent = parent;
 
 	this.gravity = 0.98;
-	
+
 	this.currentStatus = 'waiting';
 
 
@@ -29,15 +29,19 @@ var Player = function( parent ){
 	this.motionSpeed = 1;
 	this.group = new THREE.Object3D();
 
-	
 
+	this.cameraContainer = new THREE.Object3D();
+	this.cameraContainer.position.y = 1.75;
 	this.camera = new THREE.PerspectiveCamera( 24, window.innerWidth / window.innerHeight, 0.1, 10000 );
-	this.camera.position.y = 1.75;
-	this.group.add( this.camera );
+	this.cameraContainer.add( this.camera );
+	this.group.add( this.cameraContainer );
 
-	// var cube = new THREE.Mesh( new THREE.BoxBufferGeometry( 10, 1.6, 10 ), new THREE.MeshBasicMaterial( { color: 0x0000ff, side : THREE.DoubleSide } ) );
-	// cube.position.y = 0.8;
-	// this.group.add( cube );
+	if (!this.parent.isPlayer) {
+
+		var cube = new THREE.Mesh( new THREE.BoxBufferGeometry( 10, 1.6, 10 ), new THREE.MeshBasicMaterial( { color: 0x0000ff, side : THREE.DoubleSide } ) );
+		cube.position.y = 0.8;
+		this.group.add( cube );
+	}
 
 	this.skiMesh = new THREE.OBJLoader().parse(skiModel);
 	this.skiMesh.rotation.y = Math.PI / 2;
@@ -80,7 +84,7 @@ Player.prototype.descending = function( time ){
 
 	this.speed += a / 60;
 	this.slopePosition += this.speed;
-	
+
 	var pp = this.parent.stage.slope.getPointAtLength( this.slopePosition );
 	this.position = new THREE.Vector3( 0 , this.parent.stage.slopeOrigin.y - pp.y, this.parent.stage.slopeOrigin.x - pp.x );
 	var angle = Math.atan2(  this.position.z - this.oldPosition.z,  this.position.y - this.oldPosition.y );
@@ -108,9 +112,9 @@ Player.prototype.updateCamera = function(){
 
 Player.prototype.getGroundIntersection = function( playerData ){
 	var xsect;
-	var intersections = intersect(  
+	var intersections = intersect(
 		shape("path", { d: this.parent.stage.landingPath }),
-		shape("line", playerData)  
+		shape("line", playerData)
 	);
 	if( intersections.points.length ) xsect = -intersections.points[0].y;
 	else xsect = null;
@@ -145,7 +149,7 @@ Player.prototype.onEndHover = function(){
 Player.prototype.hovering = function( time ){
 	this.speedUp -= this.gravity / 60 * this.motionSpeed;
 	this.position = new THREE.Vector3( this.jumpOrigin.x, ( this.jumpOrigin.y + this.speedUp ), ( this.jumpOrigin.z - this.speedForward * this.motionSpeed ) );
-	
+
 	this.altitude = this.getAltitude();
 	if( this.altitude < this.peakAltitude - 3 ) this.onEndHover();
 }
@@ -162,7 +166,7 @@ Player.prototype.landing = function( time ){
 Player.prototype.onLand = function(){
 	this.position.y = this.getGroundIntersection( { x1: -this.position.z, y1: -this.position.y, x2: -this.position.z, y2: -100 } );
 	TweenMax.to( this.camera, 3, { fov : 32, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
-	
+
 	console.log( 'Player touched the ground' );
 	this.currentStatus = 'breaking'
 }
@@ -190,14 +194,14 @@ Player.prototype.ending = function( time ){
 
 Player.prototype.step = function( time ){
 	// this.pan.pos = (Math.sin( time/1000 ) + 1) / 2
-	
+
 	this.noise.mul = this.speed / 10;
-	
+
 	this[this.currentStatus]( time );
 
 	this.group.position.set( this.position.x, this.position.y, this.position.z );
 	this.group.rotation.x = this.rotation;
-	
+
 	// store values for physics
 	this.oldAltitude = this.altitude;
 	this.oldRotation = this.rotation;
