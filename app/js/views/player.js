@@ -31,7 +31,7 @@ var Player = function( parent ){
 
 
 	this.cameraContainer = new THREE.Object3D();
-	this.cameraContainer.position.y = 1.75;
+	this.cameraContainer.position.y = 1;//1.75;
 	this.camera = new THREE.PerspectiveCamera( 24, window.innerWidth / window.innerHeight, 0.1, 10000 );
 	this.cameraContainer.add( this.camera );
 	this.group.add( this.cameraContainer );
