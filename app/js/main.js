@@ -5,9 +5,12 @@ var Player = require('./views/player');
 var Prizes = require('./views/prizes');
 var Lights = require('./views/lights');
 
+var OBJLoader = require('three-obj-loader')(THREE);
 var OrbitControls = require('three-orbit-controls')(THREE);
 var VRControls = require('./scripts/vr/VRControls');
 var VREffect = require('./scripts/vr/VREffect');
+var ViveController = require('./scripts/vr/ViveController');
+var WEBVR = require('./scripts/vr/WebVR');
 var PolyfillWebVR = require('./scripts/vr/webvr-polyfill');
 
 var App = function() {
@@ -21,7 +24,7 @@ var App = function() {
 	this.scene = new THREE.Scene();
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
 	this.camera.position.set( 0, 30, -200 );
-	// this.camera.rotation.x = Math.PI / 2
+	this.camera.rotation.x = Math.PI / 2
 
 	// this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
 
@@ -39,6 +42,36 @@ var App = function() {
 	this.lights = new Lights( this );
 
 	this.controls = (this.isPlayer)? new THREE.VRControls(this.player.camera) : new OrbitControls(this.camera);
+	if (this.isPlayer) {
+
+		this.controls.standing = false;
+
+        if ( THREE.WebVR.isAvailable() === true ) {
+
+			// Vive controllers
+
+			this.viveController1 = new THREE.ViveController( 0 );
+			this.viveController1.standingMatrix = this.controls.getStandingMatrix();
+			this.scene.add( this.viveController1 );
+			this.viveController2 = new THREE.ViveController( 1 );
+			this.viveController2.standingMatrix = this.controls.getStandingMatrix();
+			this.scene.add( this.viveController2 );
+
+            var loader = new THREE.OBJLoader();
+			loader.load( 'assets/vive-controller/vr_controller_vive_1_5.obj', function ( object ) {
+
+				var loader = new THREE.TextureLoader();
+				loader.setPath( 'assets/vive-controller/' );
+				var controller = object.children[ 0 ];
+				controller.material.map = loader.load( 'onepointfive_texture.png' );
+				controller.material.specularMap = loader.load( 'onepointfive_spec.png' );
+				this.viveController1.add( object.clone() );
+				this.viveController2.add( object.clone() );
+			}.bind(this) );
+
+			document.body.appendChild( THREE.WebVR.getButton(this.effect) );
+        }
+    }
 
 	this.scene.add( this.stage.group, this.player.group, this.prizes.group, this.lights.group );
 
@@ -50,17 +83,7 @@ var App = function() {
 
 	// run
 	this.onResize();
-
-	// Detection of VR displays and step method assigned to them
-	this.vrDisplay = null;
-	navigator.getVRDisplays().then(function(displays) {
-
-	  	if (displays.length > 0) {
-
-			this.vrDisplay = displays[0];
-			this.vrDisplay.requestAnimationFrame( this.step.bind(this) );
-		}
-	}.bind(this));
+	this.effect.requestAnimationFrame( this.step.bind(this) );
 }
 
 App.prototype.onResize = function(e) {
@@ -74,20 +97,29 @@ App.prototype.onResize = function(e) {
 
 App.prototype.step = function(time) {
 
+    this.effect.requestAnimationFrame( this.step.bind(this) );
+
 	this.stage.step( time );
 	this.player.step( time );
 	this.prizes.step( time );
 	this.lights.step( time );
 
+
+    if ( this.isPlayer && THREE.WebVR.isAvailable() === true ) {
+
+		this.viveController1.update();
+		this.viveController2.update();
+    }
+
 	this.controls.update();
 
 	if (this.isPlayer) {
+
 		this.effect.render( this.scene, this.player.camera );
 	} else {
+
 		this.renderer.render( this.scene, this.camera );
 	}
-
-	this.vrDisplay.requestAnimationFrame( this.step.bind(this) );
 };
 
 var app = new App();
