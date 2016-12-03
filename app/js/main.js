@@ -7,8 +7,8 @@ var Lights = require('./views/lights');
 
 var OrbitControls = require('three-orbit-controls')(THREE);
 var VRControls = require('./scripts/vr/VRControls');
-var VRControls = require('./scripts/vr/VREffect');
-var VRControls = require('./scripts/vr/webvr-polyfill');
+var VREffect = require('./scripts/vr/VREffect');
+var PolyfillWebVR = require('./scripts/vr/webvr-polyfill');
 
 var App = function() {
 
