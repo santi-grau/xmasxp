@@ -49,6 +49,17 @@ var App = function() {
 
     this.activeCamera = (this.isPlayer)? this.player.camera : this.camera;
 	this.controls = (this.isWebVR)? new THREE.VRControls(this.activeCamera) : new OrbitControls(this.activeCamera);
+	if (this.isPlayer && !this.isWebVR) {
+
+	    // put some limitations to the Orbit controls
+        this.controls.enableZoom = false;
+        this.controls.minPolarAngle = Math.PI / 4;
+        this.controls.maxPolarAngle = Math.PI / 1.25;
+        this.controls.minAzimuthAngle = -Math.PI / 4;
+        this.controls.maxAzimuthAngle = Math.PI / 4;
+        this.controls.target.set( 0, 0, -0.1 );
+        this.controls.update();
+    }
 
 	if (this.isPlayer && this.isWebVR ) {
 
