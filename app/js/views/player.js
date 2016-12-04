@@ -7,17 +7,14 @@ var shape = svgIntersections.shape;
 
 var TweenMax = require('gsap');
 
-var Player = function( parent ){
+var Player = function( parent ) {
+
 	this.parent = parent;
-
 	this.gravity = 0.98;
-
 	this.currentStatus = 'waiting';
 
-
-
 	// simulate head movement w mouse
-	window.addEventListener('mousemove', this.onMouseMove.bind(this) );
+	// window.addEventListener('mousemove', this.onMouseMove.bind(this) );
 
 	var T = timbre;
 	this.noise = T("noise", { mul:0.15 } );
@@ -31,8 +28,8 @@ var Player = function( parent ){
 
 
 	this.cameraContainer = new THREE.Object3D();
-	this.cameraContainer.position.y = 1;//1.75;
-	this.camera = new THREE.PerspectiveCamera( 24, window.innerWidth / window.innerHeight, 0.1, 10000 );
+	this.cameraContainer.position.y = (this.parent.isWebVR)? 1 : 1.75;
+	this.camera = new THREE.PerspectiveCamera( 24, this.parent.containerEl.offsetWidth / this.parent.containerEl.offsetHeight, 0.1, 10000 );
 	this.cameraContainer.add( this.camera );
 	this.group.add( this.cameraContainer );
 
@@ -57,14 +54,15 @@ var Player = function( parent ){
 
 	console.log('Player waiting to start');
 }
-Player.prototype.onMouseMove = function( e ){
-	this.posX = (e.x / window.innerWidth - 0.5) / 0.5;
-}
+// Player.prototype.onMouseMove = function( e ){
+// 	this.posX = (e.x / window.innerWidth - 0.5) / 0.5;
+// }
 Player.prototype.waiting = function(){
 	this.rotation = Math.PI / 24
 }
 
 Player.prototype.onStart = function(){
+
 	this.speed = 0.2
 	this.currentStatus = 'descending';
 	console.log('Player start');
@@ -206,6 +204,12 @@ Player.prototype.step = function( time ){
 	this.oldAltitude = this.altitude;
 	this.oldRotation = this.rotation;
 	this.oldPosition = this.group.position.clone();
+}
+
+Player.prototype.onResize = function(e) {
+
+    this.camera.aspect = this.parent.containerEl.offsetWidth / this.parent.containerEl.offsetHeight;
+    this.camera.updateProjectionMatrix();
 }
 
 module.exports = Player;

@@ -4052,7 +4052,7 @@ window.WebVRConfig = Util.extend({
   PREDICTION_TIME_S: 0.040,
 
   // Flag to enable touch panner. In case you have your own touch controls.
-  TOUCH_PANNER_DISABLED: true,
+  TOUCH_PANNER_DISABLED: false,
 
   // Flag to disabled the UI in VR Mode.
   CARDBOARD_UI_DISABLED: false, // Default: false
@@ -4093,7 +4093,8 @@ window.WebVRConfig = Util.extend({
   // When set to true, this will cause a polyfilled VRDisplay to always be
   // appended to the list returned by navigator.getVRDisplays(), even if that
   // list includes a native VRDisplay.
-  ALWAYS_APPEND_POLYFILL_DISPLAY: false
+  ALWAYS_APPEND_POLYFILL_DISPLAY: true
+
 }, window.WebVRConfig);
 
 if (!window.WebVRConfig.DEFER_INITIALIZATION) {

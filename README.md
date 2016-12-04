@@ -1,13 +1,13 @@
 # xmasxp
 
-### H3 USAGE
+### USAGE
 
 $ npm i
 $ node main.js
 
 Should be ready on port 4000
 
-### H3 TODO
+### TODO
 
 1. VRify -> WebVR ✔
 2. Lights ( night day cycle ) -> Allow for a day/night cycle, make night texture
@@ -20,7 +20,7 @@ Should be ready on port 4000
 9. Sounds -> Added with tone.js, polish stereo, add sky sond and landing. music?
 10. Add prizes -> Israel assets ✔
 
-### H3 WISHLIST
+### WISHLIST
 
 1. Make global scoreboard? -> We'd need to keep track on server
 2. Make character -> Could neable external view
