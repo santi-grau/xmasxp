@@ -30,6 +30,7 @@ var Player = function( parent ) {
 	this.cameraContainer = new THREE.Object3D();
 	this.cameraContainer.position.y = (this.parent.isWebVR)? 1 : 1.75;
 	this.camera = new THREE.PerspectiveCamera( 24, this.parent.containerEl.offsetWidth / this.parent.containerEl.offsetHeight, 0.1, 10000 );
+	this.camera.position.y = 0.01;
 	this.cameraContainer.add( this.camera );
 	this.group.add( this.cameraContainer );
 

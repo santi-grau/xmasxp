@@ -26,7 +26,7 @@ var App = function() {
 	this.scene = new THREE.Scene();
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
 	this.camera.position.set( 0, 30, -200 );
-	this.camera.rotation.x = Math.PI / 2
+	this.camera.rotation.x = Math.PI / 2;
 
 	// this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
 
@@ -115,7 +115,7 @@ App.prototype.step = function(time) {
 		this.viveController2.update();
     }
 
-	this.effect.render( this.scene, this.activeCamera );
+    this.effect.render( this.scene, this.activeCamera );
 };
 
 var app = new App();
