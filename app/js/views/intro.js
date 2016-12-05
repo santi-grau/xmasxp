@@ -15,7 +15,7 @@ var Intro = function( parent ){
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.font = "Bold 20px Arial";
 	this.context.fillStyle = "rgba(0,0,0,1)";
-    this.context.fillText('Intro here!', 10, 20);
+    this.context.fillText('Gaze 3 seconds to start', 10, 20);
 
 	this.texture = new THREE.Texture( this.canvas );
 	var material = new THREE.MeshBasicMaterial( { color : 0xffffff, map : this.texture } );

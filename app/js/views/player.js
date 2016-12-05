@@ -57,6 +57,11 @@ var Player = function( parent ) {
 	console.log('Player waiting to start');
 }
 
+Player.prototype.onGazeEndIntro = function() {
+
+	this.onStart();
+};
+
 Player.prototype.waiting = function(){
 	this.rotation = Math.PI / 24
 }
