@@ -77,7 +77,7 @@ Target.prototype.show = function() {
 Target.prototype.hide = function() {
 
     if (this.tween) this.tween.kill();
-    TweenMax.to( this, 1.0, {
+    this.tween = TweenMax.to( this, 1.0, {
 
         alpha : 0.0,
         ease : Power2.easeOut,

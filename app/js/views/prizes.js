@@ -24,35 +24,35 @@ var Prizes = function( parent ){
 	this.meshes = [
 		{
 			id : 'box',
-			points: 10,
+			points : 10,
 			scale : 10.0,
-			model: boxModel,
-			mesh: null,
-			color: 0xffdedf
+			model : boxModel,
+			mesh : null,
+			color : 0xffdedf
 		},
 		{
 			id : 'cane',
-			points: 2,
+			points : 2,
 			scale : 10.0,
-			model: caneModel,
-			mesh: null,
-			color: 0xe75656
+			model : caneModel,
+			mesh : null,
+			color : 0xe75656
 		},
 		{
 			id : 'ball',
-			points: 5,
+			points : 5,
 			scale : 15.0,
-			model: ballModel,
-			mesh: null,
-			color: 0xdeffed
+			model : ballModel,
+			mesh : null,
+			color : 0xdeffed
 		},
 		{
 			id : 'book',
-			points: 5,
+			points : 5,
 			scale : 20.0,
-			model: bookModel,
-			mesh: null,
-			color: 0xfeffde
+			model : bookModel,
+			mesh : null,
+			color : 0xfeffde
 		}
 	]
 	this.loadMeshes();
@@ -92,6 +92,7 @@ Prizes.prototype.loadMeshes = function() {
 Prizes.prototype.positionPrizes = function() {
 
 	for( var i = 0 ; i < this.totalPrizes ; i++ ){
+
 		var prizeGroup = new THREE.Object3D();
 		prizeGroup.inity = prizeGroup.position.y = Math.random() * ( this.maxHeight - this.minHeight ) + this.minHeight;
 		prizeGroup.rotation.y = Math.random() * Math.PI * 2;
@@ -101,6 +102,7 @@ Prizes.prototype.positionPrizes = function() {
 		prize.position.set( 0, 0, Math.random() * ( this.maxDistance - this.minDistance ) + this.minDistance );
 		prize.scale.set(this.meshes[ prizeIndex ].scale, this.meshes[ prizeIndex ].scale, this.meshes[ prizeIndex ].scale);
 		prize.userData = this.meshes[ prizeIndex ];
+		prize.userData.index = i;
 		prizeGroup.add( prize );
 		this.group.add( prizeGroup );
 		this.prizes.push( prize );

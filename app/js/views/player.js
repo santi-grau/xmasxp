@@ -16,9 +16,6 @@ var Player = function( parent ) {
 	this.gravity = 0.98;
 	this.currentStatus = 'waiting';
 
-	// simulate head movement w mouse
-	// window.addEventListener('mousemove', this.onMouseMove.bind(this) );
-
 	var T = timbre;
 	this.noise = T("noise", { mul:0.15 } );
 	this.pan = T("pan", { pos : 0.5 }, this.noise ).play();
@@ -30,6 +27,8 @@ var Player = function( parent ) {
 	this.group = new THREE.Object3D();
 
 	this.descendingSpeed = 0.1;
+	this.maxDescendingSpeed = 4;
+	this.points = 0;
 
 	this.cameraContainer = new THREE.Object3D();
 	this.cameraContainer.position.y = (this.parent.isWebVR)? 1 : 1.75;
@@ -64,9 +63,7 @@ var Player = function( parent ) {
 
 	console.log('Player waiting to start');
 }
-// Player.prototype.onMouseMove = function( e ){
-// 	this.posX = (e.x / window.innerWidth - 0.5) / 0.5;
-// }
+
 Player.prototype.waiting = function(){
 	this.rotation = Math.PI / 24
 }
@@ -83,7 +80,17 @@ Player.prototype.onStart = function(){
 Player.prototype.incrementSpeed = function() {
 
 	this.descendingSpeed += 0.01;
-	this.descendingSpeed = Math.min( 4.0, this.descendingSpeed );
+	this.descendingSpeed = Math.min( this.maxDescendingSpeed, this.descendingSpeed );
+
+	this.parent.stage.score.updateSpeed( this.descendingSpeed );
+};
+
+Player.prototype.incrementPoints = function( points, prizeIndex ) {
+
+	this.points += points;
+
+	this.parent.stage.score.updatePoints( this.points );
+    // this.parent.prizes.removePrizeWithIndex( prizeIndex );
 };
 
 Player.prototype.descending = function( time ){
@@ -124,6 +131,7 @@ Player.prototype.onJump = function(){
 
 	this.currentStatus = 'ascending'
 	this.target.hide();
+	this.targetCamera.hideSpeed();
 
 	console.log('Player jumps');
 }
