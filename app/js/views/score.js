@@ -33,8 +33,9 @@ Score.prototype.drawTexture = function() {
 	this.context.font = "Bold 20px Arial";
 	this.context.fillStyle = "rgba(255,0,0,0.95)";
     this.context.fillText('Hello Player!', 10, 20);
-    this.context.fillText('Mx speed:' + this.speed.toFixed(2) + ' mph', 10, 40);
-    this.context.fillText('Total points:' + this.points, 10, 60);
+    this.context.fillText('Max speed: ' + this.speed.toFixed(2) + ' mph', 10, 50);
+    this.context.fillText('Gift points: ' + this.points, 10, 70);
+    this.context.fillText('Total points: ' + (this.points + Math.floor(this.speed)), 10, 100);
 
     this.texture.needsUpdate = true;
 };

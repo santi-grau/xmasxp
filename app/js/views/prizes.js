@@ -25,7 +25,7 @@ var Prizes = function( parent ){
 		{
 			id : 'box',
 			points : 10,
-			scale : 10.0,
+			scale : 10.0 + 10.0,
 			model : boxModel,
 			mesh : null,
 			color : 0xffdedf
@@ -33,7 +33,7 @@ var Prizes = function( parent ){
 		{
 			id : 'cane',
 			points : 2,
-			scale : 10.0,
+			scale : 10.0 + 10.0,
 			model : caneModel,
 			mesh : null,
 			color : 0xe75656
@@ -41,7 +41,7 @@ var Prizes = function( parent ){
 		{
 			id : 'ball',
 			points : 5,
-			scale : 15.0,
+			scale : 15.0 + 10.0,
 			model : ballModel,
 			mesh : null,
 			color : 0xdeffed
@@ -49,7 +49,7 @@ var Prizes = function( parent ){
 		{
 			id : 'book',
 			points : 5,
-			scale : 20.0,
+			scale : 20.0 + 10.0,
 			model : bookModel,
 			mesh : null,
 			color : 0xfeffde
@@ -101,8 +101,11 @@ Prizes.prototype.positionPrizes = function() {
 		var prize = this.meshes[ prizeIndex ].mesh.clone();
 		prize.position.set( 0, 0, Math.random() * ( this.maxDistance - this.minDistance ) + this.minDistance );
 		prize.scale.set(this.meshes[ prizeIndex ].scale, this.meshes[ prizeIndex ].scale, this.meshes[ prizeIndex ].scale);
-		prize.userData = this.meshes[ prizeIndex ];
-		prize.userData.index = i;
+		prize.userData = {
+			points : this.meshes[ prizeIndex ].points,
+			index : i
+		};
+
 		prizeGroup.add( prize );
 		this.group.add( prizeGroup );
 		this.prizes.push( prize );
@@ -112,6 +115,12 @@ Prizes.prototype.positionPrizes = function() {
 Prizes.prototype.getRandomInt = function(min, max) {
 
     return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+Prizes.prototype.removePrizeWithIndex = function(index) {
+
+	// TODO: Make something more interesting than this dissapearing
+	this.prizes[index].visible = false;
 };
 
 Prizes.prototype.step = function( time ){

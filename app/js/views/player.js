@@ -90,7 +90,7 @@ Player.prototype.incrementPoints = function( points, prizeIndex ) {
 	this.points += points;
 
 	this.parent.stage.score.updatePoints( this.points );
-    // this.parent.prizes.removePrizeWithIndex( prizeIndex );
+    this.parent.prizes.removePrizeWithIndex( prizeIndex );
 };
 
 Player.prototype.descending = function( time ){

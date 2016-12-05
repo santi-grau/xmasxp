@@ -68,7 +68,7 @@ TargetCamera.prototype.hideSpeed = function() {
 
 TargetCamera.prototype.step = function() {
 
-    if ( this.parent.currentStatus !== 'descending' && this.parent.currentStatus !== 'ascending' ) return;
+    if ( this.parent.currentStatus !== 'descending' && this.parent.currentStatus !== 'ascending' && this.parent.currentStatus !== 'hovering' ) return;
 
     // Throw a ray to check if it intersects with the speed target
     var cameraDirection = new THREE.Vector3();
@@ -87,7 +87,7 @@ TargetCamera.prototype.step = function() {
         } else {
 
             var intersectMesh = intersects[0].object;
-            if (!intersectMesh.userData.points) this.incrementPoints( intersectMesh.userData.index, intersectMesh.parent.userData.points );
+            if (!intersectMesh.userData.points) this.incrementPoints( intersectMesh.parent.userData.index, intersectMesh.parent.userData.points );
             else this.incrementPoints( intersectMesh.userData.index, intersectMesh.userData.points );
         }
     }
