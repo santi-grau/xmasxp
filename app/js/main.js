@@ -38,9 +38,9 @@ var App = function() {
 
     this.effect = new THREE.VREffect(this.renderer);
 
+	this.prizes = new Prizes( this );
 	this.stage = new Stage( this );
 	this.player = new Player( this );
-	this.prizes = new Prizes( this );
 	this.lights = new Lights( this );
     this.scene.add( this.stage.group, this.player.group, this.prizes.group, this.lights.group );
 

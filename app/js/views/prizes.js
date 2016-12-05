@@ -14,6 +14,7 @@ var Prizes = function( parent ){
 	this.i1 = 0;
 	this.i2 = 0;
 	this.totalPrizes = 100;
+	this.prizes = [];
 	this.minDistance = 20;
 	this.maxDistance = 300;
 	this.minHeight = 100;
@@ -102,6 +103,7 @@ Prizes.prototype.positionPrizes = function() {
 		prize.userData = this.meshes[ prizeIndex ];
 		prizeGroup.add( prize );
 		this.group.add( prizeGroup );
+		this.prizes.push( prize );
 	}
 };
 

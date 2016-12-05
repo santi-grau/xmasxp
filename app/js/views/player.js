@@ -6,6 +6,7 @@ intersect.plugin( require('svg-intersections/lib/functions/bezier') )
 var shape = svgIntersections.shape;
 
 var Target = require('./target'); // Target object for the player
+var TargetCamera = require('./targetcamera'); // Point where the camera is targeting
 
 var TweenMax = require('gsap');
 
@@ -28,15 +29,17 @@ var Player = function( parent ) {
 	this.motionSpeed = 1;
 	this.group = new THREE.Object3D();
 
-    this.target = new Target( this );
-    this.group.add( this.target.mesh );
-
 	this.cameraContainer = new THREE.Object3D();
 	this.cameraContainer.position.y = (this.parent.isWebVR)? 1 : 1.75;
 	this.camera = new THREE.PerspectiveCamera( 24, this.parent.containerEl.offsetWidth / this.parent.containerEl.offsetHeight, 0.1, 10000 );
 	this.camera.position.y = 0.01;
 	this.cameraContainer.add( this.camera );
 	this.group.add( this.cameraContainer );
+
+	this.target = new Target( this );
+	this.group.add( this.target.mesh );
+	this.targetCamera = new TargetCamera( this, this.parent.prizes.prizes );
+	this.camera.add( this.targetCamera.mesh );
 
 	if (!this.parent.isPlayer) {
 
@@ -70,10 +73,13 @@ Player.prototype.onStart = function(){
 
 	this.speed = 0.2
 	this.currentStatus = 'descending';
+	this.target.show();
+
 	console.log('Player start');
 }
 
 Player.prototype.descending = function( time ){
+
 	var mass = 75;
 	this.pos = new THREE.Vector3(0,0,0);
 	var angleRadians = Math.atan2( this.parent.stage.slope.getPointAtLength( this.slopePosition + 1 ).y - this.parent.stage.slope.getPointAtLength( this.slopePosition ).y, this.parent.stage.slope.getPointAtLength( this.slopePosition + 1 ).x - this.parent.stage.slope.getPointAtLength( this.slopePosition ).x );
@@ -97,15 +103,18 @@ Player.prototype.descending = function( time ){
 }
 
 Player.prototype.onJump = function(){
+
 	this.jumpOrigin = this.group.position;
 	this.speedUp = Math.sin( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 	this.speedForward = Math.cos( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 
 	TweenMax.to( this, 0.2, { speed : 0, ease : Power2.easeOut });
 	TweenMax.to( this, 2, { motionSpeed : 0.01, ease : Power2.easeOut });
-	TweenMax.to( this.camera, 2, { fov : 60, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
+	TweenMax.to( this.camera, 2, { fov : 40, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
 	this.currentStatus = 'ascending'
+	this.target.hide();
+
 	console.log('Player jumps');
 }
 
@@ -209,6 +218,9 @@ Player.prototype.step = function( time ){
 	this.oldAltitude = this.altitude;
 	this.oldRotation = this.rotation;
 	this.oldPosition = this.group.position.clone();
+
+	this.target.step();
+	this.targetCamera.step();
 }
 
 Player.prototype.onResize = function(e) {
