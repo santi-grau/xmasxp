@@ -22,7 +22,7 @@ var Lights = function( parent ){
 	// setInterval( function(){
 	// 	this.update();
 	// }.bind(this), 10 );
-	// this.incDebug = 0.001;
+	this.incDebug = 0.0;
 
 	// var spotLight = new THREE.SpotLight( 0xffffff, 10, 1550 );
 	// spotLight.position.set( 46, 37, -212 );
