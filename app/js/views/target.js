@@ -1,3 +1,4 @@
+var SimplexNoise = require('simplex-noise');
 
 var Target = function( parent ){
 
@@ -8,6 +9,10 @@ var Target = function( parent ){
     this.color = this.colorNoHit;
     this.sto = 0;
     this.sti = 0;
+
+    this.simplex = new SimplexNoise( Math.random );
+    this.simplexInc = 0.0;
+    this.useNoise = false;
 
     this.plane = new THREE.PlaneBufferGeometry( 1, 1 );
 
@@ -35,21 +40,15 @@ var Target = function( parent ){
     this.mesh.scale.set(0.75, 0.75, 0.75);
 };
 
-Target.prototype.moveRandom = function() {
-
-    this.position.x = this.getRandomInt(-3, 3);
-    this.position.y = this.getRandomInt(1, 3);
-    this.position.z = this.getRandomInt(-30, -10);
-};
-
-Target.prototype.getRandomInt = function(min, max) {
-
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
 Target.prototype.step = function() {
 
-    // TODO: Move randomly
+    // Move randomly using a simple noise
+    if (this.useNoise) {
+
+        this.simplexInc += 0.01;
+        var noisePosition = this.simplex.noise2D( 0.1, this.simplexInc );
+        this.position.y = 0.75 + (noisePosition * 0.5);
+    }
 
     // Ease to the random position
     this.mesh.position.x += (this.position.x - this.mesh.position.x) / 20;
@@ -77,7 +76,7 @@ Target.prototype.show = function() {
         ease : Power3.easeInOut
     });
 
-    this.sti = setInterval( this.moveRandom.bind(this), 750 );
+    this.useNoise = true;
 };
 
 Target.prototype.hide = function() {
@@ -91,7 +90,7 @@ Target.prototype.hide = function() {
         onComplete : this.hideEnd.bind(this)
     });
 
-    clearInterval( this.sti );
+    this.useNoise = false;
     this.position = new THREE.Vector3(0, 1, -10);
 };
 

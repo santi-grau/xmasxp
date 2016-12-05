@@ -33,8 +33,12 @@ var Player = function( parent ) {
 	this.motionSpeed = 1;
 	this.group = new THREE.Object3D();
 
-	this.descendingSpeed = 0.1;
-	this.maxDescendingSpeed = 4;
+	this.minFriction = 0.005;
+	this.maxFriction = 0.01;
+	this.difFriction = this.maxFriction - this.minFriction;
+
+	this.descendingSpeed = 0.0;
+	this.maxDescendingSpeed = 1.0;
 	this.points = 0;
 
 	this.cameraContainer = new THREE.Object3D();
@@ -82,11 +86,9 @@ Player.prototype.onStart = function(){
 	console.log('Player start');
 }
 
-Player.prototype.incrementSpeed = function() {
+Player.prototype.updateSpeedDescend = function(speedDescend) {
 
-	this.descendingSpeed += 0.01;
-	this.descendingSpeed = Math.min( this.maxDescendingSpeed, this.descendingSpeed );
-
+	this.descendingSpeed = speedDescend;
 	this.parent.stage.score.updateSpeed( this.descendingSpeed );
 };
 
@@ -105,7 +107,7 @@ Player.prototype.descending = function( time ){
 
 	this.pos = new THREE.Vector3(0,0,0);
 	var angleRadians = Math.atan2( this.parent.stage.slope.getPointAtLength( this.slopePosition + 1 ).y - this.parent.stage.slope.getPointAtLength( this.slopePosition ).y, this.parent.stage.slope.getPointAtLength( this.slopePosition + 1 ).x - this.parent.stage.slope.getPointAtLength( this.slopePosition ).x );
-	var friction = 0.005; // 0.01 -> perfect // // 0.005 min friction
+	var friction = this.minFriction + (this.descendingSpeed * this.difFriction);
 	var P = mass * this.gravity;
 	var Px = P * Math.sin(angleRadians);
 	var Py = P * Math.cos(angleRadians);

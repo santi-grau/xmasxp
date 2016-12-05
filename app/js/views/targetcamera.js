@@ -37,6 +37,16 @@ var TargetCamera = function( parent, prizes ){
     this.mesh.position.x = 0;
     this.mesh.position.z = -5;
 
+    var materialLine = new THREE.LineBasicMaterial({ color: 0x00000, linewidth: 2.0, opacity: 1.0 });
+    var geometryLine = new THREE.Geometry();
+        geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(0.02, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(5, 0, 0));
+    this.line = new THREE.Line(geometryLine, materialLine, THREE.LinePieces);
+
+    this.mesh.add( this.line );
+
     this.drawTargetCamera();
 
     this.raycaster = new THREE.Raycaster();
@@ -84,9 +94,34 @@ TargetCamera.prototype.hideSpeed = function() {
     this.position = new THREE.Vector3(0, 1, -10);
 };
 
+TargetCamera.prototype.getCoordinates = function( element, camera, renderer ) {
+
+    var screenVector = new THREE.Vector3();
+    element.localToWorld( screenVector );
+
+    screenVector.project( camera );
+
+    var posx = Math.round(( screenVector.x + 1 ) * renderer.domElement.offsetWidth / 2 );
+    var posy = Math.round(( 1 - screenVector.y ) * renderer.domElement.offsetHeight / 2 );
+
+    return new THREE.Vector2( posx, posy );
+};
+
 TargetCamera.prototype.step = function() {
 
-    if ( this.parent.currentStatus !== 'waiting' && this.parent.currentStatus !== 'descending' && this.parent.currentStatus !== 'ascending' && this.parent.currentStatus !== 'hovering' ) return;
+    if (this.parent.currentStatus === 'descending') {
+
+        // Calc distance from this point to the target point
+        var renderer = this.parent.parent.renderer;
+        var halfSize = renderer.domElement.offsetWidth * 0.5;
+        var positionRay = this.getCoordinates( this.mesh, this.parent.camera, renderer);
+        var positionTarget = this.getCoordinates( this.speedTarget.mesh, this.parent.camera, renderer);
+        var distance = Math.min( halfSize, positionRay.distanceTo( positionTarget ) );
+        var distancePercentage = 1.0 - (distance / halfSize);
+
+        this.updateSpeedDescend( distancePercentage );
+
+    } else if ( this.parent.currentStatus !== 'waiting' && this.parent.currentStatus !== 'ascending' && this.parent.currentStatus !== 'hovering' ) return;
 
     // Throw a ray to check if it intersects with the speed target
     var cameraDirection = new THREE.Vector3();
@@ -95,19 +130,12 @@ TargetCamera.prototype.step = function() {
     this.raycaster.ray.origin.setFromMatrixPosition( this.parent.camera.matrixWorld );
     this.raycaster.ray.direction = cameraDirection.normalize();
 
-    var intersects = ( this.parent.currentStatus == 'waiting' || this.parent.currentStatus == 'descending' )? this.raycaster.intersectObject( this.speedTarget.mesh ) : this.raycaster.intersectObjects( this.prizes, true );
+    var intersects = ( this.parent.currentStatus == 'waiting' )? this.raycaster.intersectObject( this.speedTarget.mesh ) : this.raycaster.intersectObjects( this.prizes, true );
     if (intersects.length > 0) {
 
         if (intersects[0].object == this.speedTarget.mesh) {
 
-            if (this.parent.currentStatus == 'waiting') {
-
-                this.onGazeOverIntro();
-
-            } else {
-
-                this.incrementSpeedDescend();
-            }
+            this.onGazeOverIntro();
 
         } else {
 
@@ -164,10 +192,10 @@ TargetCamera.prototype.onGazeEndIntro = function() {
     this.parent.onGazeEndIntro();
 };
 
-TargetCamera.prototype.incrementSpeedDescend = function() {
+TargetCamera.prototype.updateSpeedDescend = function(speedDescend) {
 
     this.speedTarget.drawHit();
-    this.parent.incrementSpeed();
+    this.parent.updateSpeedDescend(speedDescend);
     this.drawTargetCamera();
 };
 
