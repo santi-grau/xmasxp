@@ -27,3 +27,4 @@ Should be ready on port 4000
 3. Stars
 4. Village lights
 5. Sun and moon shaders
+6. Present pick up effect

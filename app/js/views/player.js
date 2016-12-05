@@ -42,13 +42,6 @@ var Player = function( parent ) {
 	this.targetCamera = new TargetCamera( this, this.parent.prizes.prizes );
 	this.camera.add( this.targetCamera.mesh );
 
-	if (!this.parent.isPlayer) {
-
-		var cube = new THREE.Mesh( new THREE.BoxBufferGeometry( 10, 1.6, 10 ), new THREE.MeshBasicMaterial( { color: 0x0000ff, side : THREE.DoubleSide } ) );
-		cube.position.y = 0.8;
-		this.group.add( cube );
-	}
-
 	this.skiMesh = new THREE.OBJLoader().parse(skiModel);
 	this.skiMesh.rotation.y = Math.PI / 2;
 	this.skiMesh.position.y = 0.05;
@@ -70,7 +63,7 @@ Player.prototype.waiting = function(){
 
 Player.prototype.onStart = function(){
 
-	this.speed = 0.2
+	this.speed = 0.1
 	this.currentStatus = 'descending';
 	this.target.show();
 
@@ -110,6 +103,8 @@ Player.prototype.descending = function( time ){
 
 	this.speed += a / 60;
 	this.slopePosition += this.speed;
+
+	console.log((this.speed * 100).toFixed(2) + 'kmh');
 
 	var pp = this.parent.stage.slope.getPointAtLength( this.slopePosition );
 	this.position = new THREE.Vector3( 0 , this.parent.stage.slopeOrigin.y - pp.y, this.parent.stage.slopeOrigin.x - pp.x );

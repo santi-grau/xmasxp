@@ -70,15 +70,11 @@ Prizes.prototype.loadMeshes = function() {
 		model.traverse( function ( child ) {
 
 			if (firstChild) {
-
 				firstChild = false;
 
 			} else {
 
 				child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : this.meshes[ i ].color } );
-				child.castShadow = true;
-				child.receiveShadow = true;
-
 				var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( child.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
 
 				this.meshes[ i ].mesh.add( model );
