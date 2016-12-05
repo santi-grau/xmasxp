@@ -18,7 +18,14 @@ var Player = function( parent ) {
 
 	var T = timbre;
 	this.noise = T("noise", { mul:0.15 } );
-	this.pan = T("pan", { pos : 0.5 }, this.noise ).play();
+	// this.pan = T("pan", { pos : 0.5 }, this.noise ).play();
+
+
+	var src = "assets/wind.mp3";
+
+	// var audio = T("audio", {loop:true}).load(src, function(res) {
+	// 	T("reverb", {room:0.9, damp:0.2, mix:0.45}, this).play();
+	// });
 
 	this.slopePosition = 0;
 	this.rotation = -1.6286101308328111 + Math.PI / 2; // trust me on this one...
@@ -94,11 +101,11 @@ Player.prototype.incrementPoints = function( points, prizeIndex ) {
 Player.prototype.descending = function( time ){
 
 	// Modifiying the speed is actually changing the mass, more mass == more acceleration
-	var mass = 75 * this.descendingSpeed;
+	var mass = 75;
 
 	this.pos = new THREE.Vector3(0,0,0);
 	var angleRadians = Math.atan2( this.parent.stage.slope.getPointAtLength( this.slopePosition + 1 ).y - this.parent.stage.slope.getPointAtLength( this.slopePosition ).y, this.parent.stage.slope.getPointAtLength( this.slopePosition + 1 ).x - this.parent.stage.slope.getPointAtLength( this.slopePosition ).x );
-	var friction = 0.01;
+	var friction = 0.005; // 0.01 -> perfect // // 0.005 min friction
 	var P = mass * this.gravity;
 	var Px = P * Math.sin(angleRadians);
 	var Py = P * Math.cos(angleRadians);
