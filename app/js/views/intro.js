@@ -11,12 +11,14 @@ var Intro = function( parent ){
 	this.canvas.height = 256;
 	this.context = this.canvas.getContext('2d');
 
-	this.context.font = "Bold 20px Arial";
+    this.context.fillStyle = "#FFFFFF";
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.font = "Bold 20px Arial";
 	this.context.fillStyle = "rgba(0,0,0,1)";
     this.context.fillText('Intro here!', 10, 20);
 
 	this.texture = new THREE.Texture( this.canvas );
-	var material = new THREE.MeshBasicMaterial( { color : 0xffff00, map : this.texture } );
+	var material = new THREE.MeshBasicMaterial( { color : 0xffffff, map : this.texture } );
 
 	this.mesh = new THREE.Mesh( this.plane,  material );
 	this.mesh.rotation.y = -Math.PI / 2;

@@ -15,7 +15,7 @@ var Score = function( parent ){
 	this.context = this.canvas.getContext('2d');
 
 	this.texture = new THREE.Texture( this.canvas );
-	var material = new THREE.MeshBasicMaterial( { color : 0xffff00, map : this.texture } );
+	var material = new THREE.MeshBasicMaterial( { color : 0xffffff, map : this.texture } );
 
 	this.mesh = new THREE.Mesh( this.plane,  material );
 	this.mesh.rotation.y = -Math.PI / 2;
@@ -29,7 +29,8 @@ var Score = function( parent ){
 
 Score.prototype.drawTexture = function() {
 
-	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	this.context.fillStyle = "#FFFFFF";
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	this.context.font = "Bold 20px Arial";
 	this.context.fillStyle = "rgba(255,0,0,0.95)";
     this.context.fillText('Hello Player!', 10, 20);
