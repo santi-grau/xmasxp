@@ -16,16 +16,13 @@ var Player = function( parent ) {
 	this.gravity = 0.98;
 	this.currentStatus = 'waiting';
 
-	var T = timbre;
-	this.noise = T("noise", { mul:0.15 } );
+	this.noise = timbre("noise", { mul:0.15 } ).play();
 	// this.pan = T("pan", { pos : 0.5 }, this.noise ).play();
 
 
-	var src = "assets/wind.mp3";
+	var src = "assets/wind.wav";
+	this.wind = timbre("audio", { mul: 0.0 }).loadthis(src, function () { });
 
-	// var audio = T("audio", {loop:true}).load(src, function(res) {
-	// 	T("reverb", {room:0.9, damp:0.2, mix:0.45}, this).play();
-	// });
 
 	this.slopePosition = 0;
 	this.rotation = -1.6286101308328111 + Math.PI / 2; // trust me on this one...
@@ -133,12 +130,17 @@ Player.prototype.onJump = function(){
 	this.speedForward = Math.cos( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 
 	TweenMax.to( this, 0.2, { speed : 0, ease : Power2.easeOut });
+	TweenMax.to( this.wind, 0.2, { mul : 0.2, ease : Power2.easeOut });
+	
+
 	TweenMax.to( this, 2, { motionSpeed : 0.01, ease : Power2.easeOut });
 	TweenMax.to( this.camera, 2, { fov : 40, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
 	this.currentStatus = 'ascending'
 	this.target.hide();
 	this.targetCamera.hideSpeed();
+
+	this.wind.play();
 
 	console.log('Player jumps');
 }

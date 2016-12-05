@@ -9,7 +9,7 @@ Should be ready on port 4000
 
 ### TODO
 
-1. VRify ✔
+1. VRify -> Borismus ✔
 2. Lights -> make night lighting
 3. Landscape ✔
 4. Audience -> Simple mesh with spheres
