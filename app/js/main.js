@@ -28,7 +28,7 @@ var App = function() {
 	this.camera.position.set( 0, 30, -200 );
 	this.camera.rotation.x = Math.PI / 2;
 
-	// this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
+	this.scene.fog = new THREE.FogExp2( 0xffffff, 0.003 );
 
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
 	this.renderer.shadowMap.enabled = true;
