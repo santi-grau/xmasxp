@@ -2,7 +2,7 @@
 var Target = function( parent ){
 
     this.parent = parent;
-    this.position = new THREE.Vector3(0, 1, -10);
+    this.position = new THREE.Vector3(0, 1.5, -10);
     this.colorNoHit = "#cc0000";
     this.colorHit = "#00cc00";
     this.color = this.colorNoHit;
@@ -28,13 +28,11 @@ var Target = function( parent ){
     this.mesh = new THREE.Mesh( this.plane, material );
 
     this.tween;
-    this.alpha = 0.0;
+    this.alpha = 1.0;
     this.drawTarget();
 
-    this.mesh.position.x = 0;
-    this.mesh.position.y = 1;
-    this.mesh.position.z = -10;
-    this.mesh.visible = false;
+    this.mesh.position.set(0, 1.5, -10);
+    this.mesh.scale.set(0.75, 0.75, 0.75);
 };
 
 Target.prototype.moveRandom = function() {
@@ -69,6 +67,14 @@ Target.prototype.show = function() {
         alpha : 1.0,
         ease : Power2.easeOut,
         onUpdate: this.drawTarget.bind(this)
+    });
+
+    TweenMax.to( this.mesh.scale, 1.0, {
+
+        x : 1.0,
+        y : 1.0,
+        z : 1.0,
+        ease : Power3.easeInOut
     });
 
     this.sti = setInterval( this.moveRandom.bind(this), 750 );
