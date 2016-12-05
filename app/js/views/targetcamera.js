@@ -76,7 +76,8 @@ TargetCamera.prototype.step = function() {
 
 TargetCamera.prototype.incrementSpeedDescend = function() {
 
-    console.log('go faster');
+    this.speedTarget.drawHit();
+    this.parent.incrementSpeed();
 };
 
 TargetCamera.prototype.incrementPoints = function( points ) {

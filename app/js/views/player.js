@@ -29,6 +29,8 @@ var Player = function( parent ) {
 	this.motionSpeed = 1;
 	this.group = new THREE.Object3D();
 
+	this.descendingSpeed = 0.1;
+
 	this.cameraContainer = new THREE.Object3D();
 	this.cameraContainer.position.y = (this.parent.isWebVR)? 1 : 1.75;
 	this.camera = new THREE.PerspectiveCamera( 24, this.parent.containerEl.offsetWidth / this.parent.containerEl.offsetHeight, 0.1, 10000 );
@@ -78,9 +80,17 @@ Player.prototype.onStart = function(){
 	console.log('Player start');
 }
 
+Player.prototype.incrementSpeed = function() {
+
+	this.descendingSpeed += 0.01;
+	this.descendingSpeed = Math.min( 4.0, this.descendingSpeed );
+};
+
 Player.prototype.descending = function( time ){
 
-	var mass = 75;
+	// Modifiying the speed is actually changing the mass, more mass == more acceleration
+	var mass = 75 * this.descendingSpeed;
+
 	this.pos = new THREE.Vector3(0,0,0);
 	var angleRadians = Math.atan2( this.parent.stage.slope.getPointAtLength( this.slopePosition + 1 ).y - this.parent.stage.slope.getPointAtLength( this.slopePosition ).y, this.parent.stage.slope.getPointAtLength( this.slopePosition + 1 ).x - this.parent.stage.slope.getPointAtLength( this.slopePosition ).x );
 	var friction = 0.01;
@@ -99,7 +109,7 @@ Player.prototype.descending = function( time ){
 	var angle = Math.atan2(  this.position.z - this.oldPosition.z,  this.position.y - this.oldPosition.y );
 	this.rotation += ( angle + Math.PI / 2 - this.rotation ) * 0.3;
 
-	if( this.slopePosition > this.parent.stage.slope.getTotalLength() ) this.onJump();
+	if ( this.slopePosition > this.parent.stage.slope.getTotalLength() ) this.onJump();
 }
 
 Player.prototype.onJump = function(){
