@@ -113,11 +113,11 @@ TargetCamera.prototype.step = function() {
 
         // Calc distance from this point to the target point
         var renderer = this.parent.parent.renderer;
-        var halfSize = renderer.domElement.offsetWidth * 0.5;
+        var maxDistance = renderer.domElement.offsetWidth * 0.25;
         var positionRay = this.getCoordinates( this.mesh, this.parent.camera, renderer);
         var positionTarget = this.getCoordinates( this.speedTarget.mesh, this.parent.camera, renderer);
-        var distance = Math.min( halfSize, positionRay.distanceTo( positionTarget ) );
-        var distancePercentage = 1.0 - (distance / halfSize);
+        var distance = Math.min( maxDistance, positionRay.distanceTo( positionTarget ) );
+        var distancePercentage = 1.0 - (distance / maxDistance);
 
         this.updateSpeedDescend( distancePercentage );
 
