@@ -18,9 +18,9 @@ var App = function() {
 	// this.camera.rotation.x = Math.PI / 2
 	var controls = new OrbitControls(this.camera);
 	
-	// this.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
+	this.renderer = new THREE.WebGLRenderer({ alpha : false, antialias : true });
+	this.renderer.setClearColor( 0x000000, 1 );
 
-	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
 	this.renderer.shadowMap.enabled = true;
 	this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -46,7 +46,7 @@ var App = function() {
 
 App.prototype.onResize = function(e) {
 	this.camera.aspect = this.containerEl.offsetWidth / this.containerEl.offsetHeight;
-	this.renderer.setSize( this.containerEl.offsetWidth * 2, this.containerEl.offsetHeight * 2 );
+	this.renderer.setSize( this.containerEl.offsetWidth * 1, this.containerEl.offsetHeight * 1 );
 	this.renderer.domElement.setAttribute('style', 'width:' + this.containerEl.offsetWidth + 'px; height:' + this.containerEl.offsetHeight + 'px');
 	this.camera.updateProjectionMatrix();
 }
@@ -58,7 +58,7 @@ App.prototype.step = function(time) {
 	this.prizes.step( time );
 	this.lights.step( time );
 	this.renderer.render( this.scene, this.player.camera );
-	// this.renderer.render( this.scene, this.camera );
+	this.renderer.render( this.scene, this.camera );
 };
 
 var app = new App();

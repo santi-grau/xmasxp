@@ -1,4 +1,5 @@
 var model = require('../../assets/base9.obj');
+var mountain = require('../../assets/lamp.obj');
 var lamp = require('../../assets/lamp.obj');
 var pole = require('../../assets/pole.obj');
 
@@ -20,10 +21,28 @@ var Stage = function( parent ){
 	this.group = new THREE.Object3D();
 	this.wireframe = new THREE.Object3D();
 
+	var texture = require('./../../assets/texture.svg');
+	var textureData = window.btoa(texture);
+	var myImage = new Image();
+	myImage.src = 'data:image/svg+xml;base64,' + textureData;
+
 	this.mesh = new THREE.OBJLoader().parse(model);
 	this.mesh.traverse( function ( child ) {
-		if( child.name == 'MOUNTAIN_Mesh.026' ) this.mountainMesh = child;
+		// console.log(child.name);
+		if( child.name == 'SNOW_MOUNTAIN_Mesh.026' ) this.mountainMesh = child;
+
+		
 		child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+		
+		if( child.name == 'WATER_MOUNTAIN_Mesh.000' ) child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0x0000ff } );
+		if( child.name == 'STONE_MOUNTAIN_Mesh.001' ) child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xABABAB } );
+		
+		// if( child.name == 'MOUNTAIN_Mesh.026' ) console.log(child);
+
+		// if( child.name == 'MOUNTAIN_Mesh.026' ) child.material.map = THREE.ImageUtils.loadTexture( 'data:image/svg+xml;base64,' + textureData );
+		// if( child.name == 'MOUNTAIN_Mesh.026' ) console.log(child.material);
+		// child.material.needsUpdate = true;
+
 		child.castShadow = true;
 		child.receiveShadow = true;
 		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( child.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
@@ -39,7 +58,7 @@ var Stage = function( parent ){
 	this.lamps = this.addLamps();
 	this.poles = this.addPoles();
 
-	var wireframeLanding = new THREE.LineSegments( new THREE.WireframeGeometry( this.landingMesh.geometry ), new THREE.LineBasicMaterial( { color: 0xffffff, linewidth: .5, fog : true  } ) );
+	var wireframeLanding = new THREE.LineSegments( new THREE.WireframeGeometry( this.landingMesh.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
 	this.wireframe.add( wireframeLanding );
 	
 	this.group.add( this.mesh, this.wireframe, this.landingMesh, this.lamps, this.poles, this.score.mesh, this.intro.mesh, this.landscape.group );
@@ -52,11 +71,11 @@ Stage.prototype.addPoles = function(){
 	var poleCount = 80
 	var group = new THREE.Object3D();
 	var mesh = new THREE.OBJLoader().parse(pole).children[0];
-	mesh.material = new THREE.MeshBasicMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+	mesh.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0x9C704E } );
 	for( var i = 0 ; i < poleCount ; i++ ){
 		var m = mesh.clone();
 		m.position.set( this.slope.getPointAtLength( i / ( poleCount - 1) * this.slope.getTotalLength() ).x, -this.slope.getPointAtLength( i / ( poleCount - 1) * this.slope.getTotalLength() ).y - 0.2, 0 );
-		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( m.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
+		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( m.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: 0.5, fog : true  } ) );
 		wireframe.position.set( m.position.x, m.position.y, m.position.z);
 		group.add(m, wireframe);
 	}
@@ -67,6 +86,7 @@ Stage.prototype.addLamps = function(){
 	var lampCount = 60
 	var group = new THREE.Object3D();
 	var mesh = new THREE.OBJLoader().parse(lamp).children[0];
+
 	mesh.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
 	mesh.castShadow = true;
 	for( var i = 7 ; i < lampCount - 3 ; i++ ){
@@ -101,8 +121,8 @@ Stage.prototype.makeLandingMesh = function(){
 	}
 	
 	var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } ) );
-	mesh.castShadow = true;
-	mesh.receiveShadow = true;
+	// mesh.castShadow = true;
+	// mesh.receiveShadow = true;
 	return mesh;
 }
 Stage.prototype.step = function( time ){

@@ -4,8 +4,8 @@ var Landscape = function( parent ){
 	this.parent = parent;
 	this.treesCount  = 1000;
 
-	var treemap = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve"><path fill="#00FF00" d="M374.3932,179.4243C364.6439,204.0842,340.011,259.7371,368,301c20.816,30.6881,92.9106,49.3516,104,63c26,32,7.2108,50.2925-8.5,72.5c-16.2858,23.0203,44.5-7,88-1.5c44.3681,5.6097-11.5-79-7.5-145s-4-72-78-98S440,78,440,32c0-9.8997,11.6772-20.7261,29.1194-32H342.4427C338.5206,68.2643,386.3975,149.0605,374.3932,179.4243z"/><path fill="#00FF00" d="M536,628c-56-12-174,72-180,130s-37.5735,118-13.7867,242h198.9004c18.0758-72.766,58.7026-147.3625,81.5357-196C648,750,592,640,536,628z"/><path fill="#00FF00" d="M868,270c-32,18-80,90-62,164s0.5757,82.0879-11.4243,116.0879s71.8809-30.665,114.521-50.5754c29.7153-13.8753,56.5305-0.5491,90.9033-3.6473V237.8549C944.4902,270.5303,895.201,254.6994,868,270z"/></svg>';
-	var encodedData = window.btoa(treemap);
+	var landscapemap = require('./../../assets/landscapemap2.svg');
+	var encodedData = window.btoa(landscapemap);
 
 	var myImage = new Image(1000, 1000);
 	myImage.src = 'data:image/svg+xml;base64,' + encodedData;
@@ -18,55 +18,87 @@ var Landscape = function( parent ){
 
 	this.group = new THREE.Object3D();
 
-	var geoWorker = WebWorker( require( './treemesh' ) );
-	geoWorker.onmessage = this.geometryReady.bind(this);
+	var geoWorker = WebWorker( require( './ww/treemesh' ) );
+	geoWorker.onmessage = this.treeGeometryReady.bind(this);
 	geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data } ) );
 
+	var geoWorker = WebWorker( require( './ww/houseMesh' ) );
+	geoWorker.onmessage = this.houseGeometryReady.bind(this);
+	geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data } ) );
+
 }
-Landscape.prototype.geometryReady = function( msg ){
+Landscape.prototype.houseGeometryReady = function( msg ){
 	var data = JSON.parse( msg.data );
 
-	this.coords = data.coords;
+	this.houseCoords = data.coords;
+	this.houseVertices = data.vertices.length / data.coords.length;
+
+	var geometry = new THREE.BufferGeometry();
+	geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( data.vertices ), 3 ) );
+	
+	var material = new THREE.MeshPhongMaterial( { shading: THREE.FlatShading, vertexColors: THREE.VertexColors } );
+
+	this.housesMesh = new THREE.Mesh( geometry, material );
+	this.group.add(this.housesMesh)
+
+	this.housesMesh.castShadow = true;
+
+	geometry.addAttribute( 'color', new THREE.BufferAttribute(  new Float32Array( data.colors ), 3 ) );
+
+	this.placedHouses = 0;
+}
+
+Landscape.prototype.treeGeometryReady = function( msg ){
+	var data = JSON.parse( msg.data );
+
+	this.treeCoords = data.coords;
 	this.treesVertices = data.vertices.length / data.coords.length;
 
 	var geometry = new THREE.BufferGeometry();
 	geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( data.vertices ), 3 ) );
-	var material = new THREE.MeshBasicMaterial( { color: 0x00A500 } );
+	
+	var material = new THREE.MeshPhongMaterial( { shading: THREE.FlatShading, vertexColors: THREE.VertexColors, side : THREE.DoubleSide } );
+
 	this.treeMesh = new THREE.Mesh( geometry, material );
 	this.group.add(this.treeMesh)
 
 	this.treeMesh.castShadow = true;
-	for( var j = 0 ; j < this.coords.length ; j++ ){
-		var raycaster = new THREE.Raycaster( new THREE.Vector3( this.coords[j][1], -200, -this.coords[j][0] ), new THREE.Vector3( 0, 1, 0 ), 0.1, 1000 );
-		var intersects = raycaster.intersectObject( this.parent.mountainMesh );
-		if( intersects ) {
-			for( var i = this.treesVertices * j ; i < this.treesVertices * (j+1) ; i+= 3){
-				this.treeMesh.geometry.attributes.position.array[ i + 1 ] += intersects[ 0 ].distance + 0.1;
-			}
-		}
-	}
 
+	geometry.addAttribute( 'color', new THREE.BufferAttribute(  new Float32Array( data.colors ), 3 ) );
 
+	this.placedTrees = 0;
 
-	// this.treeMesh.geometry.attributes.position.needsUpdate = true;
-
-	
 }
 Landscape.prototype.step = function( time ){
-	// if( this.coords && this.coords.length ){
-	// 	var coords = this.coords.splice( 0, 10 );
+	if( this.placedHouses !== null && this.houseCoords && this.placedHouses < this.houseCoords.length ){
+		for( var j = this.placedHouses ; j < this.placedHouses + 10 ; j++ ){
+			var raycaster = new THREE.Raycaster( new THREE.Vector3( this.houseCoords[j][1], -200, -this.houseCoords[j][0] ), new THREE.Vector3( 0, 1, 0 ), 0.1, 1000 );
+			var intersects = raycaster.intersectObject( this.parent.mountainMesh );
+			if( intersects ) {
+				for( var i = this.houseVertices * j ; i < this.houseVertices * (j+1) ; i+= 3){
+					if( intersects[ 0 ] ) this.housesMesh.geometry.attributes.position.array[ i + 1 ] += intersects[ 0 ].distance + 0.1;
+				}
+			}
+		}
+		this.housesMesh.geometry.attributes.position.needsUpdate = true;
+		this.housesMesh.geometry.attributes.color.needsUpdate = true;
+		this.placedHouses += 10;
+	}
 
-	// 	for( var j = 0 ; j < coords.length ; j++ ){
-	// 		var raycaster = new THREE.Raycaster( new THREE.Vector3( coords[j][1], -200, -coords[j][0] ), new THREE.Vector3( 0, 1, 0 ), 0.1, 1000 );
-	// 		var intersects = raycaster.intersectObject( this.parent.mountainMesh );
-	// 		if( intersects ) {
-	// 			for( var i = this.treesVertices * j ; i < this.treesVertices * (j+1) ; i+= 3){
-	// 				this.treeMesh.geometry.attributes.position.array[ i + 1 ] += intersects[ 0 ].distance + 0.1;
-	// 			}
-	// 		}
-	// 	}
-	// 	this.treeMesh.geometry.attributes.position.needsUpdate = true;
-	// }
+	if( this.placedTrees !== null && this.treeCoords && this.placedTrees < this.treeCoords.length ){
+		for( var j = this.placedTrees ; j < this.placedTrees + 10 ; j++ ){
+			var raycaster = new THREE.Raycaster( new THREE.Vector3( this.treeCoords[j][1], -200, -this.treeCoords[j][0] ), new THREE.Vector3( 0, 1, 0 ), 0.1, 1000 );
+			var intersects = raycaster.intersectObject( this.parent.mountainMesh );
+			if( intersects ) {
+				for( var i = this.treesVertices * j ; i < this.treesVertices * (j+1) ; i+= 3){
+					if( intersects[ 0 ] ) this.treeMesh.geometry.attributes.position.array[ i + 1 ] += intersects[ 0 ].distance + 0.1;
+				}
+			}
+		}
+		this.treeMesh.geometry.attributes.position.needsUpdate = true;
+		this.treeMesh.geometry.attributes.color.needsUpdate = true;
+		this.placedTrees += 10;
+	}
 }
 
 module.exports = Landscape

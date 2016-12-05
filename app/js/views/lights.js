@@ -1,69 +1,106 @@
 var SunCalc = require('suncalc');
 
-var Lights = function(){
+var Lights = function( parent ){
+	this.parent = parent;
+	
 	this.group = new THREE.Object3D();
-	this.altitudeGroup = new THREE.Object3D();
-	this.azimuthGroup = new THREE.Object3D();
-	this.altitudeGroup.add( this.azimuthGroup );
-	this.group.add( this.azimuthGroup );
+
+	this.fog = this.parent.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
+
+	this.sunGroup = this.makeSun();
+	this.moonGroup = this.makeMoon();
+
+	
 
 	this.ambientLight = new THREE.AmbientLight( 0xffffff , 0.6);
-	
 	this.group.add( this.ambientLight );
-
-	this.directionalLightDistance = 500;
-	this.directionalLight = new THREE.SpotLight( 0xffffff );
-	this.directionalLight.lookAt( 0, 0, 0 )
-
-	this.directionalLight.shadow.mapSize.width = 4096;
-	this.directionalLight.shadow.mapSize.height = 4096;
-
-	this.directionalLight.shadow.camera.near = 100;
-	this.directionalLight.shadow.camera.far = 4000;
-	this.directionalLight.shadow.camera.fov = 60;
-
-	var lightHelper = new THREE.CameraHelper( this.directionalLight.shadow.camera );
-	this.azimuthGroup.add( lightHelper)
-	this.directionalLight.castShadow = true;
-	this.directionalLight.position.set(200, 200, 0);
-	// this.azimuthGroup.add( this.directionalLight );
-	this.group.add( this.directionalLight );
-
 	// setTimeout( function(){
 	// 	if( !this.dateRanges ) console.log( 'too late for geo ');
 	// }, 2000 );
+	
+	this.timeOffset = -12;
+	setInterval( function(){
+		this.update();
+	}.bind(this), 10 );
+	this.incDebug = 0.0;
 
-	// this.latlon = [ Math.random() * 180 - 90, Math.random() * 360 - 180 ];
+	// var spotLight = new THREE.SpotLight( 0xffffff, 10, 1550 );
+	// spotLight.position.set( 46, 37, -212 );
+	// this.group.add(spotLight);
+
+
+	// var helper = new THREE.SpotLightHelper( spotLight, 10 )
+	// this.group.add(helper);
+
 	this.latlon = [ 37.3909795, -122.0360722 ];
 	this.update();
 
 	// this.getLocation();
-	// this.defaultDayNightData = '{"results":{"sunrise":"2016-12-01T15:04:52+00:00","sunset":"2016-12-02T00:50:27+00:00","solar_noon":"2016-12-01T19:57:39+00:00","day_length":35135,"civil_twilight_begin":"2016-12-01T14:36:12+00:00","civil_twilight_end":"2016-12-02T01:19:07+00:00","nautical_twilight_begin":"2016-12-01T14:03:51+00:00","nautical_twilight_end":"2016-12-02T01:51:28+00:00","astronomical_twilight_begin":"2016-12-01T13:32:20+00:00","astronomical_twilight_end":"2016-12-02T02:22:59+00:00"},"status":"OK"}';
-	// this.set( this.defaultDayNightData );
-	// this.update( 3 )
 }
-Lights.prototype.set = function( data ){
-	console.log(data);
-	this.dateRanges = {};
-	for( var key in data ){
-		this.dateRanges[ key ] = new Date( data[ key ] );
-	}
-	this.update();
+Lights.prototype.makeMoon = function(){
+	this.moonGroup = new THREE.Object3D();
+	this.moonAltitudeGroup = new THREE.Object3D();
+	this.moonAzimuthGroup = new THREE.Object3D();
+
+	this.moonDirectionalLightDistance = 500;
+	this.moonDirectionalLight = new THREE.PointLight( 0xffffff, 1, 400 );
+	this.moonDirectionalLight.lookAt( 0, 0, 0 );
+	this.moonDirectionalLight.position.set(0, 0, this.moonDirectionalLightDistance);
+
+	var geometry = new THREE.SphereBufferGeometry( 1.8, 16, 16 );
+	var material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+	this.sunSphere = new THREE.Mesh( geometry, material );
+	this.sunSphere.position.z = this.moonDirectionalLightDistance;
+	this.moonAzimuthGroup.add( this.sunSphere );
+
+	this.moonAzimuthGroup.add( this.moonDirectionalLight )
+	this.moonAltitudeGroup.add( this.moonAzimuthGroup );
+	this.moonGroup.add( this.moonAltitudeGroup )
+	this.moonGroup.rotation.x = -Math.PI / 2;
+	this.group.add( this.moonGroup );
 }
-Lights.prototype.update = function( stage ){
-	console.log(stage);
+Lights.prototype.makeSun = function(){
+	this.sunGroup = new THREE.Object3D();
+	this.altitudeGroup = new THREE.Object3D();
+	this.azimuthGroup = new THREE.Object3D();
+
+	this.directionalLightDistance = 500;
+	this.directionalLight = new THREE.PointLight( 0xffffff, 1, 1000 );
+	this.directionalLight.lookAt( 0, 0, 0 );
+	this.directionalLight.shadow.mapSize.width = 2048;
+	this.directionalLight.shadow.mapSize.height = 2048;
+	this.directionalLight.castShadow = true;
+	this.directionalLight.position.set(0, 0, this.directionalLightDistance);
+
+	var geometry = new THREE.SphereBufferGeometry( 20, 32, 32 );
+	var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+	this.sunSphere = new THREE.Mesh( geometry, material );
+	this.sunSphere.position.z = this.directionalLightDistance;
+	this.azimuthGroup.add( this.sunSphere );
+
+	this.azimuthGroup.add( this.directionalLight )
+	this.altitudeGroup.add( this.azimuthGroup );
+	this.sunGroup.add( this.altitudeGroup )
+	this.sunGroup.rotation.x = -Math.PI / 2;
+	this.sunGroup.position.y = -100
+	this.group.add( this.sunGroup );
+}
+
+Lights.prototype.update = function( ){
 	var stages = [
 		{ 
-			'stage' : 'dawn',
+			'stage' : 'nightEnd',
 			'data' : {
-				rotation : 0,
+				clear : [ 0, 0, 0, 0.002 ],
+				fog : [ 0, 0, 0, 0.002 ],
 				ambient : [ 0, 0, 0, 0 ],
 				directional : [ 0, 0, 0, 0 ]
 			} 
 		},
 		{ 'stage' : 'sunrise',
 			'data' : {
-				rotation : 0.15,
+				clear : [ 1, 0.3, 0.1, 0.002 ],
+				fog : [ 1, 0.3, 0.1, 0.002 ],
 				ambient : [ 1, 1, 1, 0.5 ],
 				directional : [ 1, 0, 0, 0.5 ]
 			}
@@ -71,7 +108,8 @@ Lights.prototype.update = function( stage ){
 		{
 			'stage' : 'solarNoon',
 			'data' : {
-				rotation : 0.5,
+				clear : [ 0.82, 0.93, 0.94, 0.002 ],
+				fog : [ 1, 1, 1, 0.002 ],
 				ambient : [ 1, 1, 1, 1 ],
 				directional : [ 1, 1, 1, 1 ]
 			}
@@ -79,87 +117,113 @@ Lights.prototype.update = function( stage ){
 		{
 			'stage' : 'sunset',
 			'data' : {
-				rotation : 0.85,
+				clear : [ 1, 0.2, 0.3, 0.002 ],
+				fog : [ 1, 0.2, 0.3, 0.002 ],
 				ambient : [ 1, 0.3, 0, 0.3 ],
 				directional : [ 1, 0.8, 0.5, 0.8 ]
 			}
 		},
 		{
-			'stage' : 'dusk',
+			'stage' : 'night',
 			'data' : {
-				rotation : 1,
-				ambient : [ 0, 0, 0, 0 ],
-				directional : [ 0, 0, 0, 0 ]
-			}
-		},
-		{
-			'stage' : 'dawn',
-			'data' : {
-				rotation : 1,
+				clear : [ 0, 0, 0, 0.002 ],
+				fog : [ 0, 0, 0, 0.002 ],
 				ambient : [ 0, 0, 0, 0 ],
 				directional : [ 0, 0, 0, 0 ]
 			}
 		}
 	]
 
-	this.now = new Date();
-	// if( !stage ){
-	// 	for( var i = 0 ; i < stages.length ; i++ ){
-	// 		if( this.now > this.dateRanges[ stages[i].stage ] ) stage = i;
-	// 		else continue;
-	// 	}
-	// }
-
-
 	Date.prototype.addHours = function(h) {    
  		this.setTime( this.getTime() + ( h*60*60*1000 ) ); 
  		return this;   
 	}
-	console.log(this.latlon);
-	console.log(new Date().addHours(0));
-	var position = SunCalc.getPosition( new Date().addHours(-18), this.latlon[0], this.latlon[1] );
-
-	this.altitudeGroup.rotation.z = -Math.PI / 27;
-	// this.azimuthGroup.rotation.y = -Math.PI / 2 - position.azimuth * Math.PI;
-	// this.directionalLight.position.set( Math.cos( position.altitude ), Math.sin( position.altitude ), 0 ).normalize().multiplyScalar( this.directionalLightDistance );
-	// this.directionalLight.color = new THREE.Color( 1,1,1);
-	// this.directionalLight.intensity = 1;
-	console.log(position);
 
 
+	this.timeOffset+=this.incDebug;
+	// console.log(new Date().addHours(this.timeOffset));
+	var sunPsition = SunCalc.getPosition( new Date().addHours(this.timeOffset), this.latlon[0], this.latlon[1] );
 
-	// var initTime = this.dateRanges[ stages[stage].stage ].getTime();
-	// var endTime = this.dateRanges[ stages[stage+1].stage ].getTime();
-	// var nowProgress = ( this.now - initTime ) / ( endTime - initTime );
+	this.azimuthGroup.rotation.y = -sunPsition.azimuth;
+	this.altitudeGroup.rotation.x = sunPsition.altitude;
 
-	// var rotation = stages[stage].data.rotation + ( stages[stage + 1].data.rotation - stages[stage].data.rotation ) * nowProgress;
-	// var position = new THREE.Vector3( Math.cos( Math.PI * rotation ), Math.sin( Math.PI * rotation ), 0  ).normalize().multiplyScalar( this.directionalLightDistance );
+	// console.log(sunPsition.altitude);
+
+	var moonPosition = SunCalc.getMoonPosition( new Date().addHours(this.timeOffset), this.latlon[0], this.latlon[1] );
+	this.moonAzimuthGroup.rotation.y = -moonPosition.azimuth;
+	this.moonAltitudeGroup.rotation.x = moonPosition.altitude;
+
+	var moonIllumination = SunCalc.getMoonIllumination( new Date().addHours(this.timeOffset) );
+	this.moonDirectionalLight.intensity = 1 - Math.abs(moonIllumination.phase-0.5) / 0.5;
+
+	var getTimes = SunCalc.getTimes( new Date().addHours(this.timeOffset), this.latlon[0], this.latlon[1] );
 	
-	// this.directionalLight.position.set( position.x, position.y, position.z );
-	
-	// var directionalColor = []
-	// for( var i = 0 ; i < stages[stage].data.directional.length ; i++ ) directionalColor[i] = stages[stage].data.directional[i] + ( stages[stage + 1].data.directional[i] - stages[stage].data.directional[i] ) * nowProgress;
-	// this.directionalLight.color = new THREE.Color( directionalColor[0], directionalColor[1], directionalColor[2] );
-	// this.directionalLight.intensity = directionalColor[3];
+	var phase = 4;
+	var now = new Date().addHours(this.timeOffset).getTime();
+	if( now > getTimes[stages[0].stage] && now < getTimes[stages[1].stage] ) phase = 0;
+	else if( now > new Date( getTimes[stages[1].stage] ).getTime() && now < new Date( getTimes[stages[2].stage] ).getTime() ) phase = 1;
+	else if( now > new Date( getTimes[stages[2].stage]).getTime() && now < new Date( getTimes[stages[3].stage]).getTime() ) phase = 2;
+	else if( now > new Date( getTimes[stages[3].stage]).getTime() && now < new Date( getTimes[stages[4].stage]).getTime() ) phase = 3;
+	else phase = 4;
 
-	// var ambientColor = []
-	// for( var i = 0 ; i < stages[stage].data.ambient.length ; i++ ) ambientColor[i] = stages[stage].data.ambient[i] + ( stages[stage + 1].data.ambient[i] - stages[stage].data.ambient[i] ) * nowProgress;
-	// this.ambientLight.color = new THREE.Color( ambientColor[0], ambientColor[1], ambientColor[2] );
-	// this.ambientLight.intensity = ambientColor[3];
+	var frac;
+	var directionalColor = [];
+	var ambientColor = [];
+	var fogColor = [];
+	var clearColor = [];
+	if( phase < 4 ){
+		frac = ( new Date().addHours(this.timeOffset).getTime() - new Date( getTimes[stages[phase].stage] ).getTime() ) / ( new Date( getTimes[stages[parseInt(phase)+1].stage] ).getTime() - new Date( getTimes[stages[phase].stage] ).getTime() );
+		for( var i = 0 ; i < stages[phase].data.directional.length ; i++ ) directionalColor[i] = stages[phase].data.directional[i] + ( stages[phase + 1].data.directional[i] - stages[phase].data.directional[i] ) * frac;
+		for( var i = 0 ; i < stages[phase].data.ambient.length ; i++ ) ambientColor[i] = stages[phase].data.ambient[i] + ( stages[phase + 1].data.ambient[i] - stages[phase].data.ambient[i] ) * frac;
+		for( var i = 0 ; i < stages[phase].data.fog.length ; i++ ) fogColor[i] = stages[phase].data.fog[i] + ( stages[phase + 1].data.fog[i] - stages[phase].data.fog[i] ) * frac;
+		for( var i = 0 ; i < stages[phase].data.clear.length ; i++ ) clearColor[i] = stages[phase].data.clear[i] + ( stages[phase + 1].data.clear[i] - stages[phase].data.clear[i] ) * frac;
+		
+		this.fog.color = new THREE.Color( fogColor[0], fogColor[1], fogColor[2] );
+
+		this.ambientLight.color = new THREE.Color( ambientColor[0], ambientColor[1], ambientColor[2] );
+		this.ambientLight.intensity = ambientColor[3];
+
+		this.directionalLight.color = new THREE.Color( directionalColor[0], directionalColor[1], directionalColor[2] );
+		this.directionalLight.intensity = directionalColor[3];
+
+		this.parent.renderer.setClearColor(new THREE.Color( clearColor[0], clearColor[1], clearColor[2] ), 1 );
+
+		this.sunSphere.material.color = this.directionalLight.color;
+	} else {
+		var t1 = new Date().addHours(this.timeOffset).getTime() - new Date( getTimes.night ).getTime();
+		if( t1 < 0 ) t1 = new Date().addHours(parseInt(this.timeOffset) + 24).getTime() - new Date( getTimes.night ).getTime();
+		frac = t1 / ( new Date( getTimes[stages[0].stage] ).addHours(24).getTime() - new Date( getTimes[stages[phase].stage] ).getTime() );
+		
+		this.fog.color = new THREE.Color( 0, 0, 0 );
+
+		this.directionalLight.color = new THREE.Color( 0, 0, 0 );
+		this.directionalLight.intensity = 0;
+
+		this.ambientLight.color = new THREE.Color( 0, 0, 0 );
+		this.ambientLight.intensity = 0.1;
+
+		this.parent.renderer.setClearColor( this.fog.color, 1 );
+	}
+
+	// console.log(phase, frac);
 
 }
 Lights.prototype.getDayNightData = function( position ){
 	console.log(position);
-	// this.set( SunCalc.getTimes( new Date(), position.coords.latitude, position.coords.longitude ) );
 }
 Lights.prototype.getLocation = function(){
-	if ( navigator.geolocation ) navigator.geolocation.getCurrentPosition( this.getDayNightData.bind(this) );
-	else this.getDayNightData(null);
+	if ( navigator.geolocation ){
+		navigator.geolocation.getCurrentPosition( this.getDayNightData.bind(this) );
+
+	} else{
+		this.getDayNightData(null);
+	}
 }
 Lights.prototype.step = function( time ){
-	// var now = new Date().getSeconds();
-	// if( ( now == 30 || now == 0 ) && now !== this.lastNow ) this.update();
-	// this.lastNow = now;
+
+	var now = new Date().getSeconds();
+	if( ( now == 30 || now == 0 ) && now !== this.lastNow ) this.update();
+	this.lastNow = now;
 }
 
 module.exports = Lights;
