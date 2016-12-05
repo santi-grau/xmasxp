@@ -5,6 +5,8 @@ var intersect = svgIntersections.intersect;
 intersect.plugin( require('svg-intersections/lib/functions/bezier') )
 var shape = svgIntersections.shape;
 
+var Target = require('./target'); // Target object for the player
+
 var TweenMax = require('gsap');
 
 var Player = function( parent ) {
@@ -26,6 +28,8 @@ var Player = function( parent ) {
 	this.motionSpeed = 1;
 	this.group = new THREE.Object3D();
 
+    this.target = new Target( this );
+    this.group.add( this.target.mesh );
 
 	this.cameraContainer = new THREE.Object3D();
 	this.cameraContainer.position.y = (this.parent.isWebVR)? 1 : 1.75;

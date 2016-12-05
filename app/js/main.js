@@ -92,7 +92,7 @@ var App = function() {
 
 	window.onresize = this.onResize.bind(this);
 
-    // setTimeout( this.player.onStart.bind(this.player), 2000 );
+    setTimeout( this.player.onStart.bind(this.player), 2000 );
 
 	// run
 	this.onResize();
