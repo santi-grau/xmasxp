@@ -3,10 +3,12 @@ var SimplexNoise = require('simplex-noise');
 var Target = function( parent ){
 
     this.parent = parent;
-    this.position = new THREE.Vector3(0, 1.5, -10);
-    this.colorNoHit = "#cc0000";
+    this.position = new THREE.Vector3(0, 1.5, -5);
+    this.colorNoHit = "#333333";
     this.colorHit = "#00cc00";
+    this.colorDescend = "#ffffff";
     this.color = this.colorNoHit;
+    this.scale = 4.0;
     this.sto = 0;
     this.sti = 0;
 
@@ -14,7 +16,7 @@ var Target = function( parent ){
     this.simplexInc = 0.0;
     this.useNoise = false;
 
-    this.plane = new THREE.PlaneBufferGeometry( 1, 1 );
+    this.plane = new THREE.PlaneBufferGeometry( 0.1, 0.1 );
 
     this.canvas = document.createElement('canvas');
     this.canvas.width = 256;
@@ -31,13 +33,21 @@ var Target = function( parent ){
     } );
 
     this.mesh = new THREE.Mesh( this.plane, material );
+    this.mesh.position.set(0, 1.5, -5);
+
+    var materialLine = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2.0, opacity: 0.0, transparent: true });
+    var geometryLine = new THREE.Geometry();
+        geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(0.02, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(5, 0, 0));
+    this.line = new THREE.LineSegments(geometryLine, materialLine);
+
+    this.mesh.add( this.line );
 
     this.tween;
     this.alpha = 1.0;
     this.drawTarget();
-
-    this.mesh.position.set(0, 1.5, -10);
-    this.mesh.scale.set(0.75, 0.75, 0.75);
 };
 
 Target.prototype.step = function() {
@@ -47,7 +57,7 @@ Target.prototype.step = function() {
 
         this.simplexInc += 0.01;
         var noisePosition = this.simplex.noise2D( 0.1, this.simplexInc );
-        this.position.y = 0.75 + (noisePosition * 0.5);
+        this.position.y = 1.2 + (noisePosition * 0.1);
     }
 
     // Ease to the random position
@@ -59,21 +69,20 @@ Target.prototype.step = function() {
 Target.prototype.show = function() {
 
     this.mesh.visible = true;
+    this.line.visible = true;
+    this.color = this.colorDescend;
 
-    if (this.tween) this.tween.kill();
-    this.tween = TweenMax.to( this, 2.0, {
+    TweenMax.to( this.line.material, 2.0, {
 
-        alpha : 1.0,
-        ease : Power2.easeOut,
-        onUpdate: this.drawTarget.bind(this)
+        opacity : 1.0,
+        ease : Linear.none
     });
 
-    TweenMax.to( this.mesh.scale, 1.0, {
+    TweenMax.to( this, 1.0, {
 
-        x : 1.0,
-        y : 1.0,
-        z : 1.0,
-        ease : Power3.easeInOut
+        scale : 0.5,
+        ease : Power2.easeInOut,
+        onUpdate: this.drawTarget.bind(this)
     });
 
     this.useNoise = true;
@@ -81,10 +90,17 @@ Target.prototype.show = function() {
 
 Target.prototype.hide = function() {
 
-    if (this.tween) this.tween.kill();
-    this.tween = TweenMax.to( this, 1.0, {
+    TweenMax.to( this, 1.0, {
 
         alpha : 0.0,
+        ease : Power2.easeOut,
+        onUpdate: this.drawTarget.bind(this),
+        onComplete : this.hideEnd.bind(this)
+    });
+
+    TweenMax.to( this.line.material, 1.0, {
+
+        opacity : 0.0,
         ease : Power2.easeOut,
         onUpdate: this.drawTarget.bind(this),
         onComplete : this.hideEnd.bind(this)
@@ -97,6 +113,7 @@ Target.prototype.hide = function() {
 Target.prototype.hideEnd = function() {
 
     this.mesh.visible = false;
+    this.line.visible = false;
 };
 
 Target.prototype.drawHit = function() {
@@ -119,10 +136,10 @@ Target.prototype.drawTarget = function () {
 
     this.context.globalAlpha = this.alpha;
     this.context.strokeStyle = this.color;
-    this.context.lineWidth = 6;
+    this.context.lineWidth = 15;
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.beginPath();
-    this.context.arc(halfSize, halfSize, halfSize - 3, 0, 2 * Math.PI);
+    this.context.arc(halfSize, halfSize, (25 * this.scale), 0, 2 * Math.PI);
     this.context.stroke();
 
     this.texture.needsUpdate = true;

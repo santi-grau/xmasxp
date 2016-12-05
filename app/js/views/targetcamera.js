@@ -37,7 +37,7 @@ var TargetCamera = function( parent, prizes ){
     this.mesh.position.x = 0;
     this.mesh.position.z = -5;
 
-    var materialLine = new THREE.LineBasicMaterial({ color: 0x00000, linewidth: 2.0, opacity: 1.0 });
+    var materialLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2.0, opacity: 0.0, transparent: true });
     var geometryLine = new THREE.Geometry();
         geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
         geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
@@ -56,7 +56,7 @@ TargetCamera.prototype.drawTargetCamera = function () {
 
     var halfSize = this.canvas.width * 0.5;
 
-    this.context.strokeStyle = "#333333";
+    this.context.strokeStyle = "#000000";
     this.context.lineWidth = 15;
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.beginPath();
@@ -67,7 +67,7 @@ TargetCamera.prototype.drawTargetCamera = function () {
 
         var speedPercent = this.parent.descendingSpeed / this.parent.maxDescendingSpeed;
         var speed = (100 * speedPercent * this.speedLineMultiplier);
-        this.context.fillStyle = "#333333";
+        this.context.fillStyle = "#cc0000";
         this.context.fillRect(halfSize - speed, 220, speed, 15);
         this.context.fillRect(halfSize, 220, speed, 15);
     }
@@ -190,11 +190,28 @@ TargetCamera.prototype.onGazeEndIntro = function() {
     this.showTime = false;
     this.showSpeed = true;
     this.parent.onGazeEndIntro();
+
+    TweenMax.to( this.line.material, 2.0, {
+
+        opacity : 1.0,
+        ease : Linear.none
+    });
+};
+
+TargetCamera.prototype.onJump = function() {
+
+    this.hideSpeed();
+
+    TweenMax.to( this.line.material, 1.0, {
+
+        opacity : 0.0,
+        ease : Linear.none
+    });
 };
 
 TargetCamera.prototype.updateSpeedDescend = function(speedDescend) {
 
-    this.speedTarget.drawHit();
+    // this.speedTarget.drawHit();
     this.parent.updateSpeedDescend(speedDescend);
     this.drawTargetCamera();
 };

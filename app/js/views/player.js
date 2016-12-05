@@ -140,7 +140,7 @@ Player.prototype.onJump = function(){
 
 	this.currentStatus = 'ascending'
 	this.target.hide();
-	this.targetCamera.hideSpeed();
+	this.targetCamera.onJump();
 
 	console.log('Player jumps');
 }
