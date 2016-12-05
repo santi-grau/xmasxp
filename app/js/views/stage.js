@@ -22,10 +22,10 @@ var Stage = function( parent ){
 	this.group = new THREE.Object3D();
 	this.wireframe = new THREE.Object3D();
 
-	var texture = require('./../../assets/texture.svg');
-	var textureData = window.btoa(texture);
-	var myImage = new Image();
-	myImage.src = 'data:image/svg+xml;base64,' + textureData;
+	// var texture = require('./../../assets/texture.svg');
+	// var textureData = window.btoa(texture);
+	// var myImage = new Image();
+	// myImage.src = 'data:image/svg+xml;base64,' + textureData;
 
 	this.mesh = new THREE.OBJLoader().parse(model);
 	this.mesh.traverse( function ( child ) {
