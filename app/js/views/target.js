@@ -7,6 +7,7 @@ var Target = function( parent ){
     this.colorHit = "#00cc00";
     this.color = this.colorNoHit;
     this.sto = 0;
+    this.sti = 0;
 
     this.plane = new THREE.PlaneBufferGeometry( 1, 1 );
 
@@ -34,8 +35,6 @@ var Target = function( parent ){
     this.mesh.position.y = 1;
     this.mesh.position.z = -10;
     this.mesh.visible = false;
-
-    this.moveRandom();
 };
 
 Target.prototype.moveRandom = function() {
@@ -43,8 +42,6 @@ Target.prototype.moveRandom = function() {
     this.position.x = this.getRandomInt(-3, 3);
     this.position.y = this.getRandomInt(1, 3);
     this.position.z = this.getRandomInt(-30, -10);
-
-    setInterval( this.moveRandom.bind(this), 2000 );
 };
 
 Target.prototype.getRandomInt = function(min, max) {
@@ -73,6 +70,8 @@ Target.prototype.show = function() {
         ease : Power2.easeOut,
         onUpdate: this.drawTarget.bind(this)
     });
+
+    this.sti = setInterval( this.moveRandom.bind(this), 750 );
 };
 
 Target.prototype.hide = function() {
@@ -85,6 +84,9 @@ Target.prototype.hide = function() {
         onUpdate: this.drawTarget.bind(this),
         onComplete : this.hideEnd.bind(this)
     });
+
+    clearInterval( this.sti );
+    this.position = new THREE.Vector3(0, 1, -10);
 };
 
 Target.prototype.hideEnd = function() {
