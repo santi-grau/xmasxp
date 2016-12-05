@@ -24,3 +24,6 @@ Should be ready on port 4000
 
 1. Make global scoreboard? -> We'd need to keep track on server
 2. Make character -> Could neable external view
+3. Stars
+4. Village lights
+5. Sun and moon shaders
