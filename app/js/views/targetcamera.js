@@ -37,6 +37,16 @@ var TargetCamera = function( parent, prizes ){
     this.mesh.position.x = 0;
     this.mesh.position.z = -5;
 
+    var materialLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2.0, opacity: 0.0, transparent: true });
+    var geometryLine = new THREE.Geometry();
+        geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(0.02, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(5, 0, 0));
+    this.line = new THREE.Line(geometryLine, materialLine, THREE.LinePieces);
+
+    this.mesh.add( this.line );
+
     this.drawTargetCamera();
 
     this.raycaster = new THREE.Raycaster();
@@ -46,7 +56,7 @@ TargetCamera.prototype.drawTargetCamera = function () {
 
     var halfSize = this.canvas.width * 0.5;
 
-    this.context.strokeStyle = "#333333";
+    this.context.strokeStyle = "#000000";
     this.context.lineWidth = 15;
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.beginPath();
@@ -57,7 +67,7 @@ TargetCamera.prototype.drawTargetCamera = function () {
 
         var speedPercent = this.parent.descendingSpeed / this.parent.maxDescendingSpeed;
         var speed = (100 * speedPercent * this.speedLineMultiplier);
-        this.context.fillStyle = "#333333";
+        this.context.fillStyle = "#cc0000";
         this.context.fillRect(halfSize - speed, 220, speed, 15);
         this.context.fillRect(halfSize, 220, speed, 15);
     }
@@ -84,9 +94,34 @@ TargetCamera.prototype.hideSpeed = function() {
     this.position = new THREE.Vector3(0, 1, -10);
 };
 
+TargetCamera.prototype.getCoordinates = function( element, camera, renderer ) {
+
+    var screenVector = new THREE.Vector3();
+    element.localToWorld( screenVector );
+
+    screenVector.project( camera );
+
+    var posx = Math.round(( screenVector.x + 1 ) * renderer.domElement.offsetWidth / 2 );
+    var posy = Math.round(( 1 - screenVector.y ) * renderer.domElement.offsetHeight / 2 );
+
+    return new THREE.Vector2( posx, posy );
+};
+
 TargetCamera.prototype.step = function() {
 
-    if ( this.parent.currentStatus !== 'waiting' && this.parent.currentStatus !== 'descending' && this.parent.currentStatus !== 'ascending' && this.parent.currentStatus !== 'hovering' ) return;
+    if (this.parent.currentStatus === 'descending') {
+
+        // Calc distance from this point to the target point
+        var renderer = this.parent.parent.renderer;
+        var maxDistance = renderer.domElement.offsetWidth * 0.25;
+        var positionRay = this.getCoordinates( this.mesh, this.parent.camera, renderer);
+        var positionTarget = this.getCoordinates( this.speedTarget.mesh, this.parent.camera, renderer);
+        var distance = Math.min( maxDistance, positionRay.distanceTo( positionTarget ) );
+        var distancePercentage = 1.0 - (distance / maxDistance);
+
+        this.updateSpeedDescend( distancePercentage );
+
+    } else if ( this.parent.currentStatus !== 'waiting' && this.parent.currentStatus !== 'ascending' && this.parent.currentStatus !== 'hovering' ) return;
 
     // Throw a ray to check if it intersects with the speed target
     var cameraDirection = new THREE.Vector3();
@@ -95,19 +130,12 @@ TargetCamera.prototype.step = function() {
     this.raycaster.ray.origin.setFromMatrixPosition( this.parent.camera.matrixWorld );
     this.raycaster.ray.direction = cameraDirection.normalize();
 
-    var intersects = ( this.parent.currentStatus == 'waiting' || this.parent.currentStatus == 'descending' )? this.raycaster.intersectObject( this.speedTarget.mesh ) : this.raycaster.intersectObjects( this.prizes, true );
+    var intersects = ( this.parent.currentStatus == 'waiting' )? this.raycaster.intersectObject( this.speedTarget.mesh ) : this.raycaster.intersectObjects( this.prizes, true );
     if (intersects.length > 0) {
 
         if (intersects[0].object == this.speedTarget.mesh) {
 
-            if (this.parent.currentStatus == 'waiting') {
-
-                this.onGazeOverIntro();
-
-            } else {
-
-                this.incrementSpeedDescend();
-            }
+            this.onGazeOverIntro();
 
         } else {
 
@@ -162,12 +190,29 @@ TargetCamera.prototype.onGazeEndIntro = function() {
     this.showTime = false;
     this.showSpeed = true;
     this.parent.onGazeEndIntro();
+
+    TweenMax.to( this.line.material, 2.0, {
+
+        opacity : 1.0,
+        ease : Linear.none
+    });
 };
 
-TargetCamera.prototype.incrementSpeedDescend = function() {
+TargetCamera.prototype.onJump = function() {
 
-    this.speedTarget.drawHit();
-    this.parent.incrementSpeed();
+    this.hideSpeed();
+
+    TweenMax.to( this.line.material, 1.0, {
+
+        opacity : 0.0,
+        ease : Linear.none
+    });
+};
+
+TargetCamera.prototype.updateSpeedDescend = function(speedDescend) {
+
+    // this.speedTarget.drawHit();
+    this.parent.updateSpeedDescend(speedDescend);
     this.drawTargetCamera();
 };
 

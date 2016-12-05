@@ -32,12 +32,12 @@ var Stage = function( parent ){
 		// console.log(child.name);
 		if( child.name == 'SNOW_MOUNTAIN_Mesh.026' ) this.mountainMesh = child;
 
-		
+
 		child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
-		
+
 		if( child.name == 'WATER_MOUNTAIN_Mesh.000' ) child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0x0000ff } );
 		if( child.name == 'STONE_MOUNTAIN_Mesh.001' ) child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xABABAB } );
-		
+
 		// if( child.name == 'MOUNTAIN_Mesh.026' ) console.log(child);
 
 		// if( child.name == 'MOUNTAIN_Mesh.026' ) child.material.map = THREE.ImageUtils.loadTexture( 'data:image/svg+xml;base64,' + textureData );
@@ -45,7 +45,7 @@ var Stage = function( parent ){
 		// child.material.needsUpdate = true;
 
 		child.castShadow = true;
-		child.receiveShadow = true;
+		child.receiveShadow = (child.name == 'RAMP_Mesh.017')? false : true;
 		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( child.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
 		this.wireframe.add( wireframe );
 
