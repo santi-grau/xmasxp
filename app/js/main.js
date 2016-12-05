@@ -15,7 +15,7 @@ var WEBVR = require('./scripts/vr/WebVR');
 
 var App = function() {
 
-    this.forceNonWebVR = true;
+    this.forceNonWebVR = false;
     this.isWebVR = (THREE.WebVR.isAvailable() === true && !this.forceNonWebVR);
 	this.isPlayer = true;
 
@@ -119,7 +119,7 @@ App.prototype.step = function(time) {
 	this.prizes.step( time );
 	this.lights.step( time );
 
-    // this.controls.update();
+    this.controls.update();
     if ( this.isPlayer && this.isWebVR ) {
 
 		this.viveController1.update();
