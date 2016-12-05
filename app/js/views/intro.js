@@ -7,13 +7,13 @@ var Intro = function( parent ){
 	this.plane = new THREE.PlaneBufferGeometry( 6, 3 );
 
 	this.canvas = document.createElement('canvas');
-	this.canvas.width = 300;
-	this.canvas.height = 200;
+	this.canvas.width = 512;
+	this.canvas.height = 256;
 	this.context = this.canvas.getContext('2d');
 
 	this.context.font = "Bold 20px Arial";
 	this.context.fillStyle = "rgba(0,0,0,1)";
-    this.context.fillText('Intro here!', 10, 20);	
+    this.context.fillText('Intro here!', 10, 20);
 
 	this.texture = new THREE.Texture( this.canvas );
 	var material = new THREE.MeshBasicMaterial( { color : 0xffff00, map : this.texture } );
@@ -29,7 +29,7 @@ var Intro = function( parent ){
 
 }
 Intro.prototype.step = function( time ){
-	
+
 }
 
 module.exports = Intro;

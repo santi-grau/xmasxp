@@ -3,19 +3,20 @@ var mountain = require('../../assets/lamp.obj');
 var lamp = require('../../assets/lamp.obj');
 var pole = require('../../assets/pole.obj');
 
+var Skybox = require('./skybox'); // Scoreboard
 var Score = require('./score'); // Scoreboard
 var Intro = require('./intro'); // Introboard
-var Landscape = require('./landscape'); // Trees, village and decoration on stage 
+var Landscape = require('./landscape'); // Trees, village and decoration on stage
 
 var OBJLoader = require('three-obj-loader')(THREE);
 var Stage = function( parent ){
 	this.parent = parent;
-	
+
 	this.slopeOrigin = new THREE.Vector2( 0,0 );
 	this.landingPath = 'M-291.324-174.0877c47.978-0.2317,71.3112,17.3651,108.8553,46.0455c43.1519,32.9643,96.7334,40.8891,144.6539,63.8938C2.5818-44.7557,39.0152-15.6982,84.4878-9.421C140.7772-1.6506,200.2027,0,258.4094,0';
 	this.slopePath = 'M-255.3108-189.054c64.3267,3.6638,76.9902,20.1856,97.4599,47.2444c21.762,28.7673,54.0503,52.0614,86.3552,52.0614c4.2467,0,6.6649-0.3817,6.6649-0.3817';
 	this.slope = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg"><path d="' + this.slopePath + '" /></svg>', "application/xml").querySelector('svg').querySelectorAll('path')[0];
-	
+
 	this.slopeAngle = 30;
 
 	this.group = new THREE.Object3D();
@@ -53,6 +54,7 @@ var Stage = function( parent ){
 	this.score = new Score( this );
 	this.intro = new Intro( this );
 	this.landscape = new Landscape( this );
+	this.skybox = new Skybox( this );
 
 	this.landingMesh = this.makeLandingMesh();
 	this.lamps = this.addLamps();
@@ -60,8 +62,18 @@ var Stage = function( parent ){
 
 	var wireframeLanding = new THREE.LineSegments( new THREE.WireframeGeometry( this.landingMesh.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
 	this.wireframe.add( wireframeLanding );
-	
-	this.group.add( this.mesh, this.wireframe, this.landingMesh, this.lamps, this.poles, this.score.mesh, this.intro.mesh, this.landscape.group );
+
+	this.group.add(
+		this.mesh,
+		this.wireframe,
+		this.landingMesh,
+		this.lamps,
+		this.poles,
+		this.score.mesh,
+		this.intro.mesh,
+		this.landscape.group
+		// this.skybox.mesh
+	);
 	this.group.rotation.y = Math.PI / 2;
 
 }
@@ -119,7 +131,7 @@ Stage.prototype.makeLandingMesh = function(){
 		}
 		var ovs = nvs;
 	}
-	
+
 	var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } ) );
 	// mesh.castShadow = true;
 	// mesh.receiveShadow = true;
