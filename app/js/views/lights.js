@@ -18,10 +18,10 @@ var Lights = function( parent ){
 	// 	if( !this.dateRanges ) console.log( 'too late for geo ');
 	// }, 2000 );
 	
-	this.timeOffset = -12;
-	setInterval( function(){
-		this.update();
-	}.bind(this), 10 );
+	this.timeOffset = 0;
+	// setInterval( function(){
+	// 	this.update();
+	// }.bind(this), 10 );
 	this.incDebug = 0.0;
 
 	// var spotLight = new THREE.SpotLight( 0xffffff, 10, 1550 );
