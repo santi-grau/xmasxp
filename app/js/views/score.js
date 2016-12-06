@@ -30,7 +30,17 @@ var Score = function( parent ){
 	this.speeedIcon.src = 'assets/speed.png';
 
 	this.drawTexture();
-}
+};
+
+Score.prototype.reset = function() {
+
+	this.speed = 0.1;
+	this.points = 0;
+	this.altitude = 0;
+	this.bonus = false;
+
+	this.drawTexture();
+};
 
 Score.prototype.drawTexture = function() {
 	if( this.bonus ) return;

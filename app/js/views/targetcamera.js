@@ -32,12 +32,9 @@ var TargetCamera = function( parent, prizes ){
     } );
 
     this.mesh = new THREE.Mesh( this.plane, material );
+    this.mesh.position.set( 0, 0, -5 );
 
-    this.mesh.position.y = 0;
-    this.mesh.position.x = 0;
-    this.mesh.position.z = -5;
-
-    var materialLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2.0, opacity: 0.0, transparent: true });
+    var materialLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2.0, opacity: 0.0, transparent: true, depthTest: false });
     var geometryLine = new THREE.Geometry();
         geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
         geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
@@ -50,6 +47,24 @@ var TargetCamera = function( parent, prizes ){
     this.drawTargetCamera();
 
     this.raycaster = new THREE.Raycaster();
+};
+
+TargetCamera.prototype.reset = function() {
+
+    this.speedLineMultiplier = 1.0;
+    this.timeGazeString = '0';
+
+    this.isGazeIntro = false;
+    this.gazeIntroTime = 0;
+    this.gazeIntroStartTime = 0;
+    this.gazeIntroTotalTime = 3.25;
+
+    this.mesh.position.set( 0, 0, -5 );
+
+    this.showTime = true;
+    this.showSpeed = false;
+
+    this.drawTargetCamera();
 };
 
 TargetCamera.prototype.drawTargetCamera = function () {
@@ -74,6 +89,7 @@ TargetCamera.prototype.drawTargetCamera = function () {
 
     if (this.showTime) {
 
+        this.context.fillStyle = "#000000";
         this.context.font = "Bold 60px Arial";
         this.context.fillText(this.timeGazeString, 110, 150);
     }

@@ -29,13 +29,13 @@ var Target = function( parent ){
         map: this.texture,
         side : THREE.DoubleSide,
         transparent : true,
-        depthTest: false
+        depthTest : false
     } );
 
     this.mesh = new THREE.Mesh( this.plane, material );
     this.mesh.position.set(0, 1.5, -5);
 
-    var materialLine = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2.0, opacity: 0.0, transparent: true });
+    var materialLine = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2.0, opacity: 0.0, transparent: true, depthTest: false });
     var geometryLine = new THREE.Geometry();
         geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
         geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
@@ -47,6 +47,26 @@ var Target = function( parent ){
 
     this.tween;
     this.alpha = 1.0;
+    this.drawTarget();
+};
+
+Target.prototype.reset = function() {
+
+    this.color = this.colorNoHit;
+    this.scale = 4.0;
+    this.alpha = 1.0;
+
+    this.line.visible = false;
+    this.line.material.alpha = 0.0;
+
+    this.mesh.visible = true;
+    this.mesh.material.alpha = 1.0;
+    this.mesh.position.set(0, 1.5, -5);
+
+    this.position.set(0, 1.5, -5);
+
+    this.useNoise = false;
+
     this.drawTarget();
 };
 

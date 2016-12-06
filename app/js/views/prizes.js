@@ -61,7 +61,34 @@ var Prizes = function( parent ){
 	this.loadMeshes();
 	this.positionPrizes();
 
-}
+};
+
+Prizes.prototype.reset = function() {
+
+	for( var i = 0 ; i < this.totalPrizes ; i++ ){
+
+		var prize = this.prizes[ i ];
+		prize.userData.explosion = 0;
+		prize.userData.active = true;
+		prize.children[0].material.opacity = 1.0;
+		prize.children[1].material.opacity = 1.0;
+		prize.visible = true;
+
+		this.resetWireframe( prize.children[1].geometry, prize.userData.originalPositions );
+	}
+};
+
+Prizes.prototype.resetWireframe = function( wireframeGeometry, originalPositions) {
+
+	for ( var j = 0; j < wireframeGeometry.attributes.position.array.length; j += 3 ) {
+
+		wireframeGeometry.attributes.position.array[ j + 0 ] = originalPositions[ j + 0 ];
+		wireframeGeometry.attributes.position.array[ j + 1 ] = originalPositions[ j + 1 ];
+		wireframeGeometry.attributes.position.array[ j + 2 ] = originalPositions[ j + 2 ];
+	}
+
+	wireframeGeometry.attributes.position.needsUpdate = true;
+};
 
 Prizes.prototype.loadMeshes = function() {
 
@@ -133,13 +160,13 @@ Prizes.prototype.positionPrizes = function() {
 		prize.position.set( 0, 0, Math.random() * ( this.maxDistance - this.minDistance ) + this.minDistance );
 		prize.scale.set(this.meshes[ prizeIndex ].scale, this.meshes[ prizeIndex ].scale, this.meshes[ prizeIndex ].scale);
 		prize.userData = {
+
 			points : this.meshes[ prizeIndex ].points,
 			index : i,
 			explosion : 0,
 			active : true,
 			originalPositions : this.meshes[ prizeIndex ].originalPositions,
 			explodePositions : this.meshes[ prizeIndex ].explodePositions
-
 		};
 
 		prizeGroup.add( prize );

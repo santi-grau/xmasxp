@@ -66,30 +66,6 @@ var App = function() {
     this.activeCamera = (this.isPlayer)? this.player.camera : this.camera;
 	this.controls = new OrbitControls(this.activeCamera);
 
-	// if (this.isPlayer) {
-
-	// 	if (this.isWebVR) {
-
-	// 		this.controls = new THREE.VRControls(this.activeCamera);
-
-	// 	}
-		// else if (this.isCardboard) {
-
-	 //        if (this.isIOS) this.preventSleep();
-
-	 //        this.controls = new THREE.DeviceOrientationControls(this.activeCamera);
-	 //        this.controls.connect();
-	 //        this.controls.update();
-
-  //   	    this.renderer.domElement.addEventListener('click', this.fullscreen.bind(this), false);
-
-		// } else {
-
-		//     // put some limitations to the Orbit controls
-		//     this.setupOrbitControls();
-	 //    }
-    // }
-
 	if (this.isPlayer && this.isWebVR ) {
 
         this.controls.standing = false;
@@ -125,6 +101,7 @@ var App = function() {
 	document.addEventListener( 'pointerlockerror', this.onPointerLockError.bind(this), false );
 	document.addEventListener( 'webkitpointerlockerror', this.onPointerLockError.bind(this), false );
 
+	document.addEventListener('keyup', function(e) { if (e.keyCode == 32) this.reset(); }.bind(this), false);
 	// run
 	this.onResize();
 
@@ -136,6 +113,13 @@ var App = function() {
 
 		requestAnimationFrame( this.step.bind(this) );
 	}
+};
+
+App.prototype.reset = function() {
+
+	this.player.reset();
+	this.prizes.reset();
+	this.stage.score.reset();
 };
 
 App.prototype.onClickStart = function() {
