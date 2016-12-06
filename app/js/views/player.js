@@ -62,7 +62,7 @@ var Player = function( parent ) {
 	var pp = this.parent.stage.slope.getPointAtLength( this.slopePosition );
 	this.position = new THREE.Vector3( 0 , this.parent.stage.slopeOrigin.y - pp.y, this.parent.stage.slopeOrigin.x - pp.x );
 
-	console.log('Player waiting to start');
+	// console.log('Player waiting to start');
 }
 
 Player.prototype.onGazeEndIntro = function() {
@@ -80,7 +80,7 @@ Player.prototype.onStart = function(){
 	this.currentStatus = 'descending';
 	this.target.show();
 
-	console.log('Player start');
+	// console.log('Player start');
 }
 
 Player.prototype.updateSpeedDescend = function(speedDescend) {
@@ -167,7 +167,7 @@ Player.prototype.onJump = function(){
 
 	this.wind.play();
 
-	console.log('Player jumps');
+	// console.log('Player jumps');
 }
 
 Player.prototype.updateCamera = function(){
@@ -198,20 +198,20 @@ Player.prototype.ascending = function( time ){
 	this.updateScoreAltitude();
 
 
-	console.log((this.speed * 100).toFixed(2) + 'kmh', this.points + 'points', this.altitude + 'meters');
+	// console.log((this.speed * 100).toFixed(2) + 'kmh', this.points + 'points', this.altitude + 'meters');
 }
 
 Player.prototype.onPeak = function(){
 	// TweenMax.to( this, 2, { motionSpeed : 1, ease : Power2.easeOut });
 	this.peakAltitude = this.altitude;
 	this.currentStatus = 'hovering';
-	console.log('Player reached max height ( ' + this.peakAltitude + ' )' );
+	// console.log('Player reached max height ( ' + this.peakAltitude + ' )' );
 }
 
 Player.prototype.onEndHover = function(){
 	TweenMax.to( this, 2, { motionSpeed : 1, ease : Power2.easeOut });
 	this.currentStatus = 'landing';
-	console.log( 'Player ended hovering' );
+	// console.log( 'Player ended hovering' );
 }
 
 Player.prototype.hovering = function( time ){
@@ -235,13 +235,13 @@ Player.prototype.onLand = function(){
 	this.position.y = this.getGroundIntersection( { x1: -this.position.z, y1: -this.position.y, x2: -this.position.z, y2: -100 } );
 	TweenMax.to( this.camera, 3, { fov : 32, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
-	console.log( 'Player touched the ground' );
+	// console.log( 'Player touched the ground' );
 	this.currentStatus = 'breaking'
 }
 
 Player.prototype.onEnd = function(){
 	this.currentStatus = 'ending'
-	console.log( 'Player has stopped completely' );
+	// console.log( 'Player has stopped completely' );
 }
 
 Player.prototype.breaking = function( time ){

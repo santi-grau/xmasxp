@@ -33,7 +33,7 @@ app.set('view engine', 'jade');
 app.use('/*.css', function(req, res){
 	var reqUrl = req.originalUrl.split('/');
 	var file = reqUrl[reqUrl.length-1].slice(0, -4);
-	res.set('Content-Type', 'text/css').send( stylus.render( fs.readFileSync(__dirname + '/app/css/' + file + '.styl', 'utf-8') )); 
+	res.set('Content-Type', 'text/css').send( stylus.render( fs.readFileSync(__dirname + '/app/css/' + file + '.styl', 'utf-8') ));
 });
 
 app.use(express.static(__dirname + '/app'));
