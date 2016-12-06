@@ -19,7 +19,7 @@ Should be ready on port 4000
 8. Build system -> Grunt, make ?
 9. Sounds -> Added with tone.js, polish stereo, add sky sond and landing. music?
 10. Add prizes ✔
-11. Replay
+11. Replay ✔
 
 ### WISHLIST
 
