@@ -2,7 +2,7 @@ var SunCalc = require('suncalc');
 
 var Lights = function( parent ){
 	this.parent = parent;
-	
+
 	this.group = new THREE.Object3D();
 
 	this.fog = this.parent.scene.fog = new THREE.FogExp2( 0xffffff, 0.002 );
@@ -10,13 +10,12 @@ var Lights = function( parent ){
 	this.sunGroup = this.makeSun();
 	this.moonGroup = this.makeMoon();
 
-
 	this.ambientLight = new THREE.AmbientLight( 0xffffff , 0.6);
 	this.group.add( this.ambientLight );
 	// setTimeout( function(){
 	// 	if( !this.dateRanges ) console.log( 'too late for geo ');
 	// }, 2000 );
-	
+
 	this.timeOffset = 0;
 	// setInterval( function(){
 	// 	this.update();
@@ -87,14 +86,14 @@ Lights.prototype.makeSun = function(){
 
 Lights.prototype.update = function( ){
 	var stages = [
-		{ 
+		{
 			'stage' : 'nightEnd',
 			'data' : {
 				clear : [ 0, 0, 0, 0.002 ],
 				fog : [ 0, 0, 0, 0.002 ],
 				ambient : [ 0, 0, 0, 0 ],
 				directional : [ 0, 0, 0, 0 ]
-			} 
+			}
 		},
 		{ 'stage' : 'sunrise',
 			'data' : {
@@ -133,9 +132,9 @@ Lights.prototype.update = function( ){
 		}
 	]
 
-	Date.prototype.addHours = function(h) {    
- 		this.setTime( this.getTime() + ( h*60*60*1000 ) ); 
- 		return this;   
+	Date.prototype.addHours = function(h) {
+ 		this.setTime( this.getTime() + ( h*60*60*1000 ) );
+ 		return this;
 	}
 
 
@@ -156,7 +155,7 @@ Lights.prototype.update = function( ){
 	this.moonDirectionalLight.intensity = 1 - Math.abs(moonIllumination.phase-0.5) / 0.5;
 
 	var getTimes = SunCalc.getTimes( new Date().addHours(this.timeOffset), this.latlon[0], this.latlon[1] );
-	
+
 	var phase = 4;
 	var now = new Date().addHours(this.timeOffset).getTime();
 	if( now > getTimes[stages[0].stage] && now < getTimes[stages[1].stage] ) phase = 0;
@@ -176,7 +175,7 @@ Lights.prototype.update = function( ){
 		for( var i = 0 ; i < stages[phase].data.ambient.length ; i++ ) ambientColor[i] = stages[phase].data.ambient[i] + ( stages[phase + 1].data.ambient[i] - stages[phase].data.ambient[i] ) * frac;
 		for( var i = 0 ; i < stages[phase].data.fog.length ; i++ ) fogColor[i] = stages[phase].data.fog[i] + ( stages[phase + 1].data.fog[i] - stages[phase].data.fog[i] ) * frac;
 		for( var i = 0 ; i < stages[phase].data.clear.length ; i++ ) clearColor[i] = stages[phase].data.clear[i] + ( stages[phase + 1].data.clear[i] - stages[phase].data.clear[i] ) * frac;
-		
+
 		this.fog.color = new THREE.Color( fogColor[0], fogColor[1], fogColor[2] );
 
 		this.ambientLight.color = new THREE.Color( ambientColor[0], ambientColor[1], ambientColor[2] );
@@ -192,7 +191,7 @@ Lights.prototype.update = function( ){
 		var t1 = new Date().addHours(this.timeOffset).getTime() - new Date( getTimes.night ).getTime();
 		if( t1 < 0 ) t1 = new Date().addHours(parseInt(this.timeOffset) + 24).getTime() - new Date( getTimes.night ).getTime();
 		frac = t1 / ( new Date( getTimes[stages[0].stage] ).addHours(24).getTime() - new Date( getTimes[stages[phase].stage] ).getTime() );
-		
+
 		this.fog.color = new THREE.Color( 0, 0, 0 );
 
 		this.directionalLight.color = new THREE.Color( 0, 0, 0 );
