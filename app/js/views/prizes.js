@@ -5,11 +5,14 @@ var ballModel = require('../../assets/ball.obj');
 var bookModel = require('../../assets/book.obj');
 var OBJLoader = require('three-obj-loader')(THREE);
 
+var PrizesPointsPool = require('./prizespointspool');
+
 var Prizes = function( parent ){
 
 	this.parent = parent;
 
 	this.simplex = new SimplexNoise( Math.random );
+	this.pointsPool = new PrizesPointsPool( this.parent );
 
 	this.i1 = 0;
 	this.i2 = 0;
@@ -152,8 +155,15 @@ Prizes.prototype.getRandomInt = function(min, max) {
 
 Prizes.prototype.removePrizeWithIndex = function(index) {
 
-	// TODO: Make something more interesting than this dissapearing
 	var prizeMesh = this.prizes[index];
+
+	prizeMesh.updateMatrixWorld();
+	var points = this.pointsPool.getPrizePointsInstance(prizeMesh.userData.points);
+	var pointsPosition = new THREE.Vector3();
+	pointsPosition.setFromMatrixPosition( prizeMesh.matrixWorld );
+	points.mesh.position.set( pointsPosition.x, pointsPosition.y, pointsPosition.z );
+	this.parent.scene.add( points.mesh );
+	points.animate();
 
 	prizeMesh.userData.active = false;
 
