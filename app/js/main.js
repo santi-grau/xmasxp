@@ -152,8 +152,7 @@ App.prototype.onClickStart = function() {
 		this.controls.connect();
 		this.controls.update();
 
-		this.setupCardboad();
-
+		this.setupDeviceOrientation();
 	}
 };
 
