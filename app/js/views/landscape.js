@@ -18,13 +18,13 @@ var Landscape = function( parent ){
 
 	this.group = new THREE.Object3D();
 
-	var geoWorker = WebWorker( require( './ww/treemesh' ) );
-	geoWorker.onmessage = this.treeGeometryReady.bind(this);
-	geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data } ) );
+	// var geoWorker = WebWorker( require( './ww/treemesh' ) );
+	// geoWorker.onmessage = this.treeGeometryReady.bind(this);
+	// geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data } ) );
 
-	var geoWorker = WebWorker( require( './ww/houseMesh' ) );
-	geoWorker.onmessage = this.houseGeometryReady.bind(this);
-	geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data } ) );
+	// var geoWorker = WebWorker( require( './ww/houseMesh' ) );
+	// geoWorker.onmessage = this.houseGeometryReady.bind(this);
+	// geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data } ) );
 
 }
 Landscape.prototype.houseGeometryReady = function( msg ){

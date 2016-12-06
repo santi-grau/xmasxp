@@ -10,7 +10,6 @@ var Lights = function( parent ){
 	this.sunGroup = this.makeSun();
 	this.moonGroup = this.makeMoon();
 
-	
 
 	this.ambientLight = new THREE.AmbientLight( 0xffffff , 0.6);
 	this.group.add( this.ambientLight );

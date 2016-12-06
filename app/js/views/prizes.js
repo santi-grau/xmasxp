@@ -116,7 +116,7 @@ Prizes.prototype.getRandomInt = function(min, max) {
 Prizes.prototype.removePrizeWithIndex = function(index) {
 
 	// TODO: Make something more interesting than this dissapearing
-	this.prizes[index].visible = false;
+	// this.prizes[index].visible = false;
 };
 
 Prizes.prototype.step = function( time ){

@@ -17,8 +17,6 @@ var Player = function( parent ) {
 	this.currentStatus = 'waiting';
 
 	this.noise = timbre("noise", { mul:0.15 } ).play();
-	// this.pan = T("pan", { pos : 0.5 }, this.noise ).play();
-
 
 	var src = "assets/wind.wav";
 	this.wind = timbre("audio", { mul: 0.0 }).loadthis(src, function () { });
@@ -36,6 +34,8 @@ var Player = function( parent ) {
 
 	this.descendingSpeed = 0.0;
 	this.maxDescendingSpeed = 1.0;
+	this.maxSpeed = 0;
+	this.maxAltitude = 0;
 	this.points = 0;
 
 	this.cameraContainer = new THREE.Object3D();
@@ -86,7 +86,7 @@ Player.prototype.onStart = function(){
 Player.prototype.updateSpeedDescend = function(speedDescend) {
 
 	this.descendingSpeed = speedDescend;
-	this.parent.stage.score.updateSpeed( this.descendingSpeed );
+	
 };
 
 Player.prototype.incrementPoints = function( points, prizeIndex ) {
@@ -97,9 +97,24 @@ Player.prototype.incrementPoints = function( points, prizeIndex ) {
     this.parent.prizes.removePrizeWithIndex( prizeIndex );
 };
 
+Player.prototype.updateScoreSpeed = function(){
+	this.maxSpeed = Math.max( this.maxSpeed, this.speed );
+	this.parent.stage.score.updateSpeed( this.maxSpeed  );
+}
+Player.prototype.updateScoreAltitude = function(){
+	this.maxAltitude = Math.max( this.maxAltitude, this.altitude );
+	this.parent.stage.score.updateAltitude( this.maxAltitude  );	
+}
+Player.prototype.bonusPoints = function( points, bonus ) {
+
+	this.points += points;
+	this.parent.stage.score.updatePoints( this.points );
+	this.parent.stage.score.showBonus( bonus );
+
+};
+
 Player.prototype.descending = function( time ){
 
-	// Modifiying the speed is actually changing the mass, more mass == more acceleration
 	var mass = 75;
 
 	this.pos = new THREE.Vector3(0,0,0);
@@ -115,7 +130,8 @@ Player.prototype.descending = function( time ){
 	this.speed += a / 60;
 	this.slopePosition += this.speed;
 
-	console.log((this.speed * 100).toFixed(2) + 'kmh');
+	this.incrementPoints( this.speed * 100 );
+	this.updateScoreSpeed();
 
 	var pp = this.parent.stage.slope.getPointAtLength( this.slopePosition );
 	this.position = new THREE.Vector3( 0 , this.parent.stage.slopeOrigin.y - pp.y, this.parent.stage.slopeOrigin.x - pp.x );
@@ -126,6 +142,13 @@ Player.prototype.descending = function( time ){
 }
 
 Player.prototype.onJump = function(){
+
+	if( this.speed * 100 > 130 ) {
+		this.bonusPoints( this.speed * 10000, 'jump' );
+	}
+
+	this.minFriction = 0.005;
+	this.maxFriction = 0.01;
 
 	this.jumpOrigin = this.group.position;
 	this.speedUp = Math.sin( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
@@ -172,12 +195,16 @@ Player.prototype.ascending = function( time ){
 	this.rotation += ( -this.rotation ) * 0.3;
 	this.altitude = this.getAltitude();
 	if( this.speedUp < 0 ) this.onPeak();
+	this.updateScoreAltitude();
+
+
+	console.log((this.speed * 100).toFixed(2) + 'kmh', this.points + 'points', this.altitude + 'meters');
 }
 
 Player.prototype.onPeak = function(){
 	// TweenMax.to( this, 2, { motionSpeed : 1, ease : Power2.easeOut });
 	this.peakAltitude = this.altitude;
-	this.currentStatus = 'hovering'
+	this.currentStatus = 'hovering';
 	console.log('Player reached max height ( ' + this.peakAltitude + ' )' );
 }
 
@@ -234,8 +261,6 @@ Player.prototype.ending = function( time ){
 }
 
 Player.prototype.step = function( time ){
-	// this.pan.pos = (Math.sin( time/1000 ) + 1) / 2
-
 	this.noise.mul = this.speed / 10;
 
 	this[this.currentStatus]( time );

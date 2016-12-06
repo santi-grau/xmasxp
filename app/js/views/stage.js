@@ -3,7 +3,7 @@ var mountain = require('../../assets/lamp.obj');
 var lamp = require('../../assets/lamp.obj');
 var pole = require('../../assets/pole.obj');
 
-var Skybox = require('./skybox'); // Scoreboard
+// var Skybox = require('./skybox'); // Scoreboard
 var Score = require('./score'); // Scoreboard
 var Intro = require('./intro'); // Introboard
 var Landscape = require('./landscape'); // Trees, village and decoration on stage
@@ -38,12 +38,6 @@ var Stage = function( parent ){
 		if( child.name == 'WATER_MOUNTAIN_Mesh.000' ) child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0x0000ff } );
 		if( child.name == 'STONE_MOUNTAIN_Mesh.001' ) child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xABABAB } );
 
-		// if( child.name == 'MOUNTAIN_Mesh.026' ) console.log(child);
-
-		// if( child.name == 'MOUNTAIN_Mesh.026' ) child.material.map = THREE.ImageUtils.loadTexture( 'data:image/svg+xml;base64,' + textureData );
-		// if( child.name == 'MOUNTAIN_Mesh.026' ) console.log(child.material);
-		// child.material.needsUpdate = true;
-
 		child.castShadow = true;
 		child.receiveShadow = (child.name == 'RAMP_Mesh.017')? false : true;
 		var wireframe = new THREE.LineSegments( new THREE.WireframeGeometry( child.geometry ), new THREE.LineBasicMaterial( { color: 0x444444, linewidth: .5, fog : true  } ) );
@@ -54,7 +48,7 @@ var Stage = function( parent ){
 	this.score = new Score( this );
 	this.intro = new Intro( this );
 	this.landscape = new Landscape( this );
-	this.skybox = new Skybox( this );
+	// this.skybox = new Skybox( this );
 
 	this.landingMesh = this.makeLandingMesh();
 	this.lamps = this.addLamps();
@@ -113,6 +107,7 @@ Stage.prototype.addLamps = function(){
 		lampGroup.rotation.z = angle;
 		group.add( lampGroup );
 	}
+	mesh.remove()
 	return group;
 }
 
@@ -139,6 +134,7 @@ Stage.prototype.makeLandingMesh = function(){
 }
 Stage.prototype.step = function( time ){
 	this.landscape.step( time );
+	this.score.step( time );
 }
 
 module.exports = Stage;

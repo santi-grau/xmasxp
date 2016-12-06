@@ -20,13 +20,18 @@ var App = function() {
 	this.isPlayer = true;
 
 	// props
-	this.containerEl = document.getElementById('main');0
+	this.containerEl = document.getElementById('main');
 
 	// three stuff
 	this.scene = new THREE.Scene();
 	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
-	this.camera.position.set( 0, 30, -200 );
-	this.camera.rotation.x = Math.PI / 2;
+
+    this.designCamera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    this.designCamera.position.set( 0, 37, -200 );
+    this.designCamera.rotation.y = 0
+
+	this.camera.position.set( 0, 100, -200 );
+    this.camera.lookAt( 0, 100, -400 )
 
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
 	this.renderer.shadowMap.enabled = true;
@@ -42,11 +47,13 @@ var App = function() {
 	this.lights = new Lights( this );
     this.scene.add( this.stage.group, this.player.group, this.prizes.group, this.lights.group );
 
+    
+
     var axisHelper = new THREE.AxisHelper( 5 );
     this.scene.add( axisHelper );
 
-    this.activeCamera = (this.isPlayer)? this.player.camera : this.camera;
-	this.controls = (this.isWebVR)? new THREE.VRControls(this.activeCamera) : new OrbitControls(this.activeCamera);
+    this.activeCamera = (this.isPlayer) ? this.player.camera : this.camera;
+	this.controls = (this.isWebVR) ? new THREE.VRControls(this.activeCamera) : new OrbitControls(this.activeCamera);
 	if (this.isPlayer && !this.isWebVR) {
 
 	    // put some limitations to the Orbit controls
@@ -64,7 +71,6 @@ var App = function() {
         this.controls.standing = false;
 
         // Vive controllers
-        console.log('here');
         this.viveController1 = new THREE.ViveController( 0 );
         this.viveController1.standingMatrix = this.controls.getStandingMatrix();
         this.scene.add( this.viveController1 );
@@ -90,7 +96,7 @@ var App = function() {
 
 	window.onresize = this.onResize.bind(this);
 
-    // setTimeout( this.player.onStart.bind(this.player), 2000 );
+    setTimeout( this.player.onStart.bind(this.player), 2000 );
 
 	// run
 	this.onResize();
@@ -125,6 +131,7 @@ App.prototype.step = function(time) {
     }
 
     this.effect.render( this.scene, this.activeCamera );
+    // this.effect.render( this.scene, this.designCamera ); // camera to debug score, delete when done
 };
 
 var app = new App();
