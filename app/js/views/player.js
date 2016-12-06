@@ -118,7 +118,7 @@ Player.prototype.descending = function( time ){
 	this.speed += a / 60;
 	this.slopePosition += this.speed;
 
-	console.log((this.speed * 100).toFixed(2) + 'kmh');
+	// console.log((this.speed * 100).toFixed(2) + 'kmh');
 
 	var pp = this.parent.stage.slope.getPointAtLength( this.slopePosition );
 	this.position = new THREE.Vector3( 0 , this.parent.stage.slopeOrigin.y - pp.y, this.parent.stage.slopeOrigin.x - pp.x );

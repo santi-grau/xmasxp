@@ -43,7 +43,7 @@ var TargetCamera = function( parent, prizes ){
         geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
         geometryLine.vertices.push(new THREE.Vector3(0.02, 0, 0));
         geometryLine.vertices.push(new THREE.Vector3(5, 0, 0));
-    this.line = new THREE.Line(geometryLine, materialLine, THREE.LinePieces);
+    this.line = new THREE.LineSegments(geometryLine, materialLine);
 
     this.mesh.add( this.line );
 
@@ -114,53 +114,68 @@ TargetCamera.prototype.step = function() {
         // Calc distance from this point to the target point
         var renderer = this.parent.parent.renderer;
         var maxDistance = renderer.domElement.offsetWidth * 0.25;
-        var positionRay = this.getCoordinates( this.mesh, this.parent.camera, renderer);
+        var positionRay = new THREE.Vector2( window.innerWidth * 0.5, window.innerHeight * 0.5);// this.getCoordinates( this.mesh, this.parent.camera, renderer);
         var positionTarget = this.getCoordinates( this.speedTarget.mesh, this.parent.camera, renderer);
         var distance = Math.min( maxDistance, positionRay.distanceTo( positionTarget ) );
         var distancePercentage = 1.0 - (distance / maxDistance);
 
         this.updateSpeedDescend( distancePercentage );
 
-    } else if ( this.parent.currentStatus !== 'waiting' && this.parent.currentStatus !== 'ascending' && this.parent.currentStatus !== 'hovering' ) return;
+    } else if ( this.parent.currentStatus == 'waiting' || this.parent.currentStatus == 'ascending' || this.parent.currentStatus == 'hovering' ) {
 
-    // Throw a ray to check if it intersects with the speed target
-    var cameraDirection = new THREE.Vector3();
-    this.parent.camera.getWorldDirection( cameraDirection );
+        // Throw a ray to check if it intersects with something
+        var cameraDirection = new THREE.Vector3();
+        this.parent.camera.getWorldDirection( cameraDirection );
 
-    this.raycaster.ray.origin.setFromMatrixPosition( this.parent.camera.matrixWorld );
-    this.raycaster.ray.direction = cameraDirection.normalize();
-
-    var intersects = ( this.parent.currentStatus == 'waiting' )? this.raycaster.intersectObject( this.speedTarget.mesh ) : this.raycaster.intersectObjects( this.prizes, true );
-    if (intersects.length > 0) {
-
-        if (intersects[0].object == this.speedTarget.mesh) {
-
-            this.onGazeOverIntro();
-
-        } else {
-
-            var intersectMesh = intersects[0].object;
-            if (!intersectMesh.userData.points) this.incrementPoints( intersectMesh.parent.userData.index, intersectMesh.parent.userData.points );
-            else this.incrementPoints( intersectMesh.userData.index, intersectMesh.userData.points );
-        }
-
-    } else {
+        this.raycaster.ray.origin.setFromMatrixPosition( this.parent.camera.matrixWorld );
+        this.raycaster.ray.direction = cameraDirection.normalize();
 
         if (this.parent.currentStatus == 'waiting') {
 
-            this.onGazeOutIntro();
-        }
-    }
+            var intersects = this.raycaster.intersectObject( this.speedTarget.mesh );
+            if (intersects.length > 0) {
 
-    if (this.parent.currentStatus == 'waiting' && this.isGazeIntro) {
+                if (intersects[0].object == this.speedTarget.mesh) {
 
-        this.gazeIntroTime = (new Date() - this.gazeIntroStartTime) / 1000;
-        this.timeGazeString = Math.floor(this.gazeIntroTime).toString();
-        this.drawTargetCamera();
+                    this.onGazeOverIntro();
+                }
+            } else {
 
-        if (this.gazeIntroTime > this.gazeIntroTotalTime) {
+                this.onGazeOutIntro();
+            }
 
-            this.onGazeEndIntro();
+            if (this.isGazeIntro) {
+
+                this.gazeIntroTime = (new Date() - this.gazeIntroStartTime) / 1000;
+                this.timeGazeString = Math.floor(this.gazeIntroTime).toString();
+                this.drawTargetCamera();
+
+                if (this.gazeIntroTime > this.gazeIntroTotalTime) {
+
+                    this.onGazeEndIntro();
+                }
+            }
+
+        } else {
+
+            var intersects = this.raycaster.intersectObjects( this.prizes, true );
+            if (intersects.length > 0) {
+
+                var intersectMesh = intersects[0].object;
+                if (!intersectMesh.userData.points) {
+
+                    if (intersectMesh.parent.userData.active === true) {
+
+                        this.incrementPoints( intersectMesh.parent.userData.index, intersectMesh.parent.userData.points );
+                    }
+                } else {
+
+                    if (intersectMesh.userData.active === true) {
+
+                        this.incrementPoints( intersectMesh.userData.index, intersectMesh.userData.points );
+                    }
+                }
+            }
         }
     }
 };
