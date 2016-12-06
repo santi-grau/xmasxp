@@ -8,6 +8,7 @@ var Lights = require('./views/lights');
 
 var OBJLoader = require('three-obj-loader')(THREE);
 var OrbitControls = require('three-orbit-controls')(THREE);
+var PointerLockControls = require('./scripts/vr/PointerLockControls');
 var VRControls = require('./scripts/vr/VRControls');
 var DeviceOrientationControls = require('./scripts/vr/DeviceOrientationControls');
 var VREffect = require('./scripts/vr/VREffect');
@@ -18,11 +19,16 @@ var WebVR = require('./scripts/vr/WebVR');
 
 var App = function() {
 
-	this.loading = new Loading(this);
-
     this.forceNonWebVR = false;
     this.isWebVR = (THREE.WebVR.isAvailable() === true && !this.forceNonWebVR);
     this.isCardboard = !this.isWebVR && this.isTouchDevice();
+    this.isDesktop = !this.isWebVR && !this.isCardboard;
+    this.isPointerLock = false;
+
+    this.hasPointerLock = 'pointerLockElement' in document || 'webkitPointerLockElement' in document;
+
+	this.loading = new Loading( this );
+
 	this.isPlayer = true;
     this.isIOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 
@@ -48,6 +54,7 @@ var App = function() {
 	this.stage = new Stage( this );
 	this.player = new Player( this );
 	this.lights = new Lights( this );
+
     this.scene.add( this.stage.group, this.player.group, this.prizes.group, this.lights.group );
 
     var axisHelper = new THREE.AxisHelper( 5 );
@@ -55,6 +62,7 @@ var App = function() {
 
     this.activeCamera = (this.isPlayer)? this.player.camera : this.camera;
 	this.controls = new OrbitControls(this.activeCamera);
+
 	if (this.isPlayer) {
 
 		if (this.isWebVR) {
@@ -74,13 +82,7 @@ var App = function() {
 		} else {
 
 		    // put some limitations to the Orbit controls
-	        this.controls.enableZoom = false;
-	        this.controls.minPolarAngle = Math.PI / 4;
-	        this.controls.maxPolarAngle = Math.PI / 1.25;
-	        this.controls.minAzimuthAngle = -Math.PI / 4;
-	        this.controls.maxAzimuthAngle = Math.PI / 4;
-	        this.controls.target.set( 0, 0, -0.1 );
-	        this.controls.update();
+		    this.setupOrbitControls();
 	    }
     }
 
@@ -89,7 +91,6 @@ var App = function() {
         this.controls.standing = false;
 
         // Vive controllers
-        console.log('here');
         this.viveController1 = new THREE.ViveController( 0 );
         this.viveController1.standingMatrix = this.controls.getStandingMatrix();
         this.scene.add( this.viveController1 );
@@ -115,8 +116,10 @@ var App = function() {
 
 	window.addEventListener('resize', this.onResize.bind(this), true);
 
-
-    // setTimeout( this.player.onStart.bind(this.player), 2000 );
+	document.addEventListener( 'pointerlockchange', this.onPointerLockChange.bind(this), false );
+	document.addEventListener( 'webkitpointerlockchange', this.onPointerLockChange.bind(this), false );
+	document.addEventListener( 'pointerlockerror', this.onPointerLockError.bind(this), false );
+	document.addEventListener( 'webkitpointerlockerror', this.onPointerLockError.bind(this), false );
 
 	// run
 	this.onResize();
@@ -128,7 +131,88 @@ var App = function() {
 
     	this.effect.requestAnimationFrame( this.step.bind(this) );
     }
-}
+};
+
+App.prototype.onClickStart = function() {
+
+	if (this.isDesktop) {
+
+		if (this.hasPointerLock) {
+
+			this.setupPointerLock();
+		}
+	}
+};
+
+App.prototype.toggleControls = function() {
+
+	if (this.isDesktop) {
+
+		if (this.isPointerLock) {
+
+			this.setupOrbitControls();
+
+		} else {
+
+			this.setupPointerLock();
+		}
+	}
+};
+
+App.prototype.setupPointerLock = function() {
+
+	// Fullscreen and pointerLock
+	this.controls = new THREE.PointerLockControls(this.activeCamera);
+	this.controls.enabled = false;
+	this.isPointerLock = true;
+
+	// Ask the browser to lock the pointer
+	document.body.requestPointerLock();
+};
+
+App.prototype.onPointerLockAccepted = function() {
+
+	this.controls.getObject().position.set( 0, 0, 0 );
+	this.player.cameraContainer.add( this.controls.getObject() );
+	this.controls.enabled = true;
+	this.activeCamera = this.player.camera;
+};
+
+App.prototype.setupOrbitControls = function() {
+
+	this.isPointerLock = false;
+
+	this.controls = new OrbitControls(this.activeCamera);
+
+	this.controls.enableZoom = false;
+	this.controls.minPolarAngle = Math.PI / 4;
+	this.controls.maxPolarAngle = Math.PI / 1.25;
+	this.controls.minAzimuthAngle = -Math.PI / 4;
+	this.controls.maxAzimuthAngle = Math.PI / 4;
+	this.controls.target.set( 0, 0, -0.1 );
+	this.controls.update();
+
+	this.player.cameraContainer.add( this.activeCamera );
+	this.activeCamera = this.player.camera;
+};
+
+App.prototype.onPointerLockChange = function() {
+
+	var element = document.body;
+	if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+
+		this.onPointerLockAccepted();
+
+	} else {
+
+		this.setupOrbitControls();
+	}
+};
+
+App.prototype.onPointerLockError = function() {
+
+	this.setupOrbitControls();
+};
 
 App.prototype.isTouchDevice = function () {
 
@@ -193,7 +277,10 @@ App.prototype.step = function(time) {
 	this.prizes.step( time );
 	this.lights.step( time );
 
-    this.controls.update();
+	if (!this.isPointerLock) {
+
+    	this.controls.update();
+    }
     if ( this.isPlayer && this.isWebVR ) {
 
 		this.viveController1.update();

@@ -159,7 +159,7 @@ Prizes.prototype.removePrizeWithIndex = function(index) {
 	/////////////////////////////////////////////////////////////////////////////
 	if( !prizeMesh ) return; // had to add this to solve conflct... no idea why tho
 	/////////////////////////////////////////////////////////////////////////////
-	
+
 	prizeMesh.updateMatrixWorld();
 	var points = this.pointsPool.getPrizePointsInstance(prizeMesh.userData.points);
 	var pointsPosition = new THREE.Vector3();

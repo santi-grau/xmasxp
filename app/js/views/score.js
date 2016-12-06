@@ -38,13 +38,13 @@ Score.prototype.drawTexture = function() {
 	var col2 = '#ffdaa0';
 	this.context.fillStyle = col1;
 	this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-	
-	
+
+
 	this.context.fillStyle = col2;
 	this.context.rect( 10, 10, this.canvas.width - 20, 40 );
 	this.context.fill();
     this.context.fillStyle = col1;
-    this.context.textAlign = 'center'; 
+    this.context.textAlign = 'center';
     this.context.font = "30px matrix";
     this.context.fillText('TOTAL SCORE', this.canvas.width / 2, 40);
     this.context.fillStyle = col2;

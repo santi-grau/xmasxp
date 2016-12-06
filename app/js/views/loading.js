@@ -1,18 +1,35 @@
 
+var LoadingCanvas = require('./loadingcanvas');
+
 var Loading = function( parent ){
 
 	this.parent = parent;
-	this.buttonEl = document.querySelector("#start-button");
-	this.loadingBgEl = document.querySelector("#intro");
+	this.buttonEl = document.querySelector('#start-button');
+	this.buttonModeEl = document.querySelector('#mode-button');
+	this.loadingBgEl = document.querySelector('#intro');
+
+	if (this.parent.isWebVR) {
+
+		this.buttonEl.innerText = "GO WEBVR";
+
+	} else if (this.parent.isCardboard) {
+
+		this.buttonEl.innerText = "GO CARDBOARD";
+
+	} else {
+
+		this.buttonEl.innerText = "GO DESKTOP";
+	}
+
+	// this.loadingCanvas = new LoadingCanvas( this );
 
 	this.addEventListeners();
-
-
 }
 
 Loading.prototype.addEventListeners = function(){
 
 	this.buttonEl.addEventListener( 'click', this.onClickButton.bind(this), false );
+	this.buttonModeEl.addEventListener( 'click', this.onClickButtonMode.bind(this), false );
 }
 
 Loading.prototype.onClickButton = function(e) {
@@ -22,7 +39,14 @@ Loading.prototype.onClickButton = function(e) {
 	this.loadingBgEl.style.display = 'none';
 	this.buttonEl.style.display = 'none';
 
-	// this.parent.fullscreen();
+	this.parent.onClickStart();
+}
+
+Loading.prototype.onClickButtonMode = function(e) {
+
+	e.preventDefault();
+
+	this.parent.toggleControls();
 }
 
 module.exports = Loading;
