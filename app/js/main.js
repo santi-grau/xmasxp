@@ -24,6 +24,7 @@ var App = function() {
     this.isCardboard = !this.isWebVR && this.isTouchDevice();
     this.isDesktop = !this.isWebVR && !this.isCardboard;
     this.isPointerLock = false;
+    this.isDeviceOrientation = false;
 
     this.hasPointerLock = 'pointerLockElement' in document || 'webkitPointerLockElement' in document;
 
@@ -31,6 +32,8 @@ var App = function() {
 
 	this.isPlayer = true;
     this.isIOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
+
+	this.stiSleep = 0;
 
 	// props
 	this.containerEl = document.getElementById('main');0
@@ -43,12 +46,12 @@ var App = function() {
 
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
-	this.renderer.shadowMap.enabled = true;
-	this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+	// this.renderer.shadowMap.enabled = true;
+	// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     this.containerEl.appendChild( this.renderer.domElement );
 
-    this.effect = (this.isCardboard)? new THREE.StereoEffect(this.renderer) : new THREE.VREffect(this.renderer);
+    this.effect = new THREE.VREffect(this.renderer);
 
 	this.prizes = new Prizes( this );
 	this.stage = new Stage( this );
@@ -63,28 +66,29 @@ var App = function() {
     this.activeCamera = (this.isPlayer)? this.player.camera : this.camera;
 	this.controls = new OrbitControls(this.activeCamera);
 
-	if (this.isPlayer) {
+	// if (this.isPlayer) {
 
-		if (this.isWebVR) {
+	// 	if (this.isWebVR) {
 
-			this.controls = new THREE.VRControls(this.activeCamera);
+	// 		this.controls = new THREE.VRControls(this.activeCamera);
 
-		} else if (this.isCardboard) {
+	// 	}
+		// else if (this.isCardboard) {
 
-	        if (this.isIOS) this.preventSleep();
+	 //        if (this.isIOS) this.preventSleep();
 
-	        this.controls = new THREE.DeviceOrientationControls(this.activeCamera);
-	        this.controls.connect();
-	        this.controls.update();
+	 //        this.controls = new THREE.DeviceOrientationControls(this.activeCamera);
+	 //        this.controls.connect();
+	 //        this.controls.update();
 
-    	    this.renderer.domElement.addEventListener('click', this.fullscreen.bind(this), false);
+  //   	    this.renderer.domElement.addEventListener('click', this.fullscreen.bind(this), false);
 
-		} else {
+		// } else {
 
-		    // put some limitations to the Orbit controls
-		    this.setupOrbitControls();
-	    }
-    }
+		//     // put some limitations to the Orbit controls
+		//     this.setupOrbitControls();
+	 //    }
+    // }
 
 	if (this.isPlayer && this.isWebVR ) {
 
@@ -123,24 +127,33 @@ var App = function() {
 
 	// run
 	this.onResize();
-	if (this.isCardboard) {
 
-		requestAnimationFrame( this.step.bind(this) );
+	if (this.isWebVR) {
+
+		this.effect.requestAnimationFrame( this.step.bind(this) );
 
 	} else {
 
-    	this.effect.requestAnimationFrame( this.step.bind(this) );
-    }
+		requestAnimationFrame( this.step.bind(this) );
+	}
 };
 
 App.prototype.onClickStart = function() {
 
 	if (this.isDesktop) {
 
-		if (this.hasPointerLock) {
+		if (this.hasPointerLock) this.setupPointerLock();
+		else this.setupOrbitControls();
 
-			this.setupPointerLock();
-		}
+	} else if (this.isCardboard) {
+
+		// Controls are always the same on cardboard devices
+		this.controls = new THREE.DeviceOrientationControls(this.activeCamera);
+		this.controls.connect();
+		this.controls.update();
+
+		this.setupCardboad();
+
 	}
 };
 
@@ -148,15 +161,36 @@ App.prototype.toggleControls = function() {
 
 	if (this.isDesktop) {
 
-		if (this.isPointerLock) {
+		if (this.isPointerLock) this.setupOrbitControls();
+		else this.setupPointerLock();
 
-			this.setupOrbitControls();
+	} else if (this.isCardboard) {
 
-		} else {
+		if (!this.isDeviceOrientation) this.setupDeviceOrientation();
+		else this.setupCardboad();
 
-			this.setupPointerLock();
-		}
 	}
+};
+
+App.prototype.setupDeviceOrientation = function() {
+
+	this.isDeviceOrientation = true;
+
+	this.effect = new THREE.VREffect(this.renderer);
+	this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
+
+	if (this.isIOS) this.cancelSleep();
+};
+
+App.prototype.setupCardboad = function() {
+
+	this.isDeviceOrientation = false;
+
+	this.effect = new THREE.StereoEffect(this.renderer);
+	this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
+
+	this.fullscreen();
+	if (this.isIOS) this.preventSleep();
 };
 
 App.prototype.setupPointerLock = function() {
@@ -226,7 +260,7 @@ App.prototype.isTouchDevice = function () {
 
 App.prototype.preventSleep = function () {
 
-    setInterval(function () {
+    this.stiSleep = setInterval(function () {
 
         window.location.href = '/new/page';
         window.setTimeout(function () {
@@ -234,6 +268,11 @@ App.prototype.preventSleep = function () {
         }, 0);
 
     }, 30000);
+};
+
+App.prototype.cancelSleep = function() {
+
+	clearInterval( this.stiSleep );
 };
 
 App.prototype.fullscreen = function () {
@@ -256,21 +295,20 @@ App.prototype.onResize = function(e) {
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 	this.camera.aspect = this.containerEl.offsetWidth / this.containerEl.offsetHeight;
     this.camera.updateProjectionMatrix();
-	// this.renderer.setSize( this.containerEl.offsetWidth * 2, this.containerEl.offsetHeight * 2 );
 	this.renderer.setSize( this.containerEl.offsetWidth, this.containerEl.offsetHeight );
 	this.renderer.domElement.setAttribute('style', 'width:' + this.containerEl.offsetWidth + 'px; height:' + this.containerEl.offsetHeight + 'px');
 }
 
 App.prototype.step = function(time) {
 
-	if (this.isCardboard) {
+	if (this.isWebVR) {
 
-		requestAnimationFrame( this.step.bind(this) );
+		this.effect.requestAnimationFrame( this.step.bind(this) );
 
 	} else {
 
-    	this.effect.requestAnimationFrame( this.step.bind(this) );
-    }
+		requestAnimationFrame( this.step.bind(this) );
+	}
 
 	this.stage.step( time );
 	this.player.step( time );
@@ -281,6 +319,7 @@ App.prototype.step = function(time) {
 
     	this.controls.update();
     }
+
     if ( this.isPlayer && this.isWebVR ) {
 
 		this.viveController1.update();

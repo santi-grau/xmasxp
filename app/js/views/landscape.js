@@ -18,13 +18,16 @@ var Landscape = function( parent ){
 
 	this.group = new THREE.Object3D();
 
-	var geoWorker = WebWorker( require( './ww/treemesh' ) );
-	geoWorker.onmessage = this.treeGeometryReady.bind(this);
-	geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data } ) );
 
-	var geoWorker = WebWorker( require( './ww/houseMesh' ) );
-	geoWorker.onmessage = this.houseGeometryReady.bind(this);
-	geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data } ) );
+	// esto va raruno
+
+	// var geoWorker = WebWorker( require( './ww/treemesh' ) );
+	// geoWorker.onmessage = this.treeGeometryReady.bind(this);
+	// geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data } ) );
+
+	// var geoWorker = WebWorker( require( './ww/houseMesh' ) );
+	// geoWorker.onmessage = this.houseGeometryReady.bind(this);
+	// geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data } ) );
 
 }
 Landscape.prototype.houseGeometryReady = function( msg ){
@@ -35,7 +38,7 @@ Landscape.prototype.houseGeometryReady = function( msg ){
 
 	var geometry = new THREE.BufferGeometry();
 	geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( data.vertices ), 3 ) );
-	
+
 	var material = new THREE.MeshPhongMaterial( { shading: THREE.FlatShading, vertexColors: THREE.VertexColors } );
 
 	this.housesMesh = new THREE.Mesh( geometry, material );
@@ -56,7 +59,7 @@ Landscape.prototype.treeGeometryReady = function( msg ){
 
 	var geometry = new THREE.BufferGeometry();
 	geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( data.vertices ), 3 ) );
-	
+
 	var material = new THREE.MeshPhongMaterial( { shading: THREE.FlatShading, vertexColors: THREE.VertexColors, side : THREE.DoubleSide } );
 
 	this.treeMesh = new THREE.Mesh( geometry, material );
