@@ -10,7 +10,7 @@ var OrbitControls = require('three-orbit-controls')(THREE);
 var VRControls = require('./scripts/vr/VRControls');
 var VREffect = require('./scripts/vr/VREffect');
 var ViveController = require('./scripts/vr/ViveController');
-var WEBVR = require('./scripts/vr/WebVR');
+var WebVR = require('./scripts/vr/WebVR');
 // var PolyfillWebVR = require('./scripts/vr/webvr-polyfill');
 
 var App = function() {
