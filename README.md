@@ -9,20 +9,21 @@ Should be ready on port 4000
 
 ### TODO
 
-1. VRify -> Desktop, WebVR vive, Mobile magic window and cardboard ✔
+1. Intro -> Initial DOM screen with explanation and start button.
 2. Lights -> make night lighting.
-3. Landscape ✔
-4. Audience -> Simple mesh with spheres (particle system with vertex shader animation?).
-5. Scoreboard -> Big screen, displays total points of user, speed and play again. ✔
-6. Intro -> Initial DOM screen with explanation and start button.
-7. Start Counter -> In-game small screen at the top with gaze for 3,2,1 counter.
-8. Game dynamics -> Gaze system : reduce / increase speed / pick prizes. ✔
-9. Build system -> Grunt, make.
-10. Sounds -> Added with tone.js, polish stereo, add sky sond and landing. music.
-11. Add prizes ✔
-12. Play again ✔
-13. Color scheme: make sure that the gazers are visible in every lighting situation.
-14. Mobile optimizations.
+3. Mobile optimizations.
+4. Color scheme: make sure that the gazers are visible in every lighting situation.
+5. Build system -> Grunt, make & do a test push to the xmas experiment git.
+6. Sounds -> Added with tone.js, polish stereo, add sky sound and landing. music.
+7. Audience -> Simple mesh with spheres (particle system with vertex shader animation?).
+
+8. VRify -> Desktop, WebVR vive, Mobile magic window and cardboard ✔
+9. Landscape ✔
+10. Scoreboard -> Big screen, displays total points of user, speed and play again. ✔
+11. Start Counter -> In-game small screen at the top with gaze for 3,2,1 counter. ✔
+12. Game dynamics -> Gaze system : reduce / increase speed / pick prizes. ✔
+13. Add prizes ✔
+14. Play again ✔
 
 ### WISHLIST
 
