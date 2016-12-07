@@ -56,7 +56,16 @@ var TargetCamera = function( parent, prizes ){
 
     this.raycaster = new THREE.Raycaster();
 };
+TargetCamera.prototype.updateColor = function( col1, col2 ) {
+    
+    this.col1 = col1;
+    this.col2 = col2;
+    
+    this.line.material.color.setRGB( col1[0], col1[1], col1[2] );
+    this.line.material.needsUpdate = true;
 
+    this.drawTargetCamera();
+}
 TargetCamera.prototype.reset = function() {
 
     this.speedLineMultiplier = 1.0;
@@ -77,10 +86,9 @@ TargetCamera.prototype.reset = function() {
 };
 
 TargetCamera.prototype.drawTargetCamera = function () {
-
     var halfSize = this.canvas.width * 0.5;
-
-    this.context.strokeStyle = '#000000';
+    if(this.col1) this.context.strokeStyle = 'rgb('+Math.floor(this.col1[0]*255)+','+Math.floor(this.col1[1]*255)+','+Math.floor(this.col1[2]*255)+')';
+    else this.context.strokeStyle = '#000000';
     this.context.lineWidth = 15;
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.beginPath();
@@ -118,7 +126,8 @@ TargetCamera.prototype.drawTargetCamera = function () {
 
     if (this.showTime && this.percentageTime > 0) {
 
-        this.context.strokeStyle = '#cc0000';
+        if(this.col2) this.context.strokeStyle = 'rgb('+Math.floor(this.col2[0]*255)+','+Math.floor(this.col2[1]*255)+','+Math.floor(this.col2[2]*255)+')';
+        else this.context.strokeStyle = '#000000';
         this.context.lineWidth = 20;
         this.context.lineCap = 'round';
 

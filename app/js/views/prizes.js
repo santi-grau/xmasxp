@@ -225,6 +225,10 @@ Prizes.prototype.removePrizeWithIndex = function(index) {
     });
 };
 
+Prizes.prototype.updateWireframeColor = function( color ){
+	for(var i = 0 ; i < this.group.children.length ; i++ ) for( var j = 0 ; j < this.group.children[i].children[0].children.length ; j++ ) if( this.group.children[i].children[0].children[j] instanceof THREE.LineSegments ) this.group.children[i].children[0].children[j].material.color.setHex( color );
+}
+
 Prizes.prototype.removeWireframe = function( wireframeGeometry, percentage, originalPositions, incPositions) {
 
 	for ( var j = 0; j < wireframeGeometry.attributes.position.array.length; j += 3 ) {

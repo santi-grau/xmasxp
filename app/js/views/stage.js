@@ -111,6 +111,11 @@ Stage.prototype.addLamps = function(){
 	return group;
 }
 
+Stage.prototype.updateWireframeColor = function(color){
+	for(var i = 0 ; i < this.wireframe.children.length ; i++ ){
+		this.wireframe.children[i].material.color.setHex( color );
+	}
+}
 Stage.prototype.makeLandingMesh = function(){
 	var path = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg"><path d="' + this.landingPath + '" /></svg>', "application/xml").querySelector('svg').querySelectorAll('path')[0];
 	var segments = 100;

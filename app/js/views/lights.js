@@ -92,7 +92,9 @@ Lights.prototype.update = function( ){
 				clear : [ 0, 0, 0, 0.002 ],
 				fog : [ 0, 0, 0, 0.002 ],
 				ambient : [ 0, 0, 0, 0 ],
-				directional : [ 0, 0, 0, 0 ]
+				directional : [ 0, 0, 0, 0 ],
+				gazeColor1 : [ .1, .1, .1 ],
+				gazeColor2 : [ 0.3, 0.4, 0.2 ]
 			}
 		},
 		{ 'stage' : 'sunrise',
@@ -100,7 +102,9 @@ Lights.prototype.update = function( ){
 				clear : [ 1, 0.3, 0.1, 0.002 ],
 				fog : [ 1, 0.3, 0.1, 0.002 ],
 				ambient : [ 1, 1, 1, 0.5 ],
-				directional : [ 1, 0, 0, 0.5 ]
+				directional : [ 1, 0, 0, 0.5 ],
+				gazeColor1 : [ .1, .1, .1 ],
+				gazeColor2 : [ 0.3, 0.4, 0.2 ]
 			}
 		},
 		{
@@ -109,7 +113,9 @@ Lights.prototype.update = function( ){
 				clear : [ 0.82, 0.93, 0.94, 0.002 ],
 				fog : [ 1, 1, 1, 0.002 ],
 				ambient : [ 1, 1, 1, 1 ],
-				directional : [ 1, 1, 1, 1 ]
+				directional : [ 1, 1, 1, 1 ],
+				gazeColor1 : [ .1, .1, .1 ],
+				gazeColor2 : [ 0.3, 0.4, 0.2 ]
 			}
 		},
 		{
@@ -118,7 +124,9 @@ Lights.prototype.update = function( ){
 				clear : [ 1, 0.2, 0.3, 0.002 ],
 				fog : [ 1, 0.2, 0.3, 0.002 ],
 				ambient : [ 1, 0.3, 0, 0.3 ],
-				directional : [ 1, 0.8, 0.5, 0.8 ]
+				directional : [ 1, 0.8, 0.5, 0.8 ],
+				gazeColor1 : [ .1, .1, .1 ],
+				gazeColor2 : [ 0.3, 0.4, 0.2 ]
 			}
 		},
 		{
@@ -127,7 +135,9 @@ Lights.prototype.update = function( ){
 				clear : [ 0, 0, 0, 0.002 ],
 				fog : [ 0, 0, 0, 0.002 ],
 				ambient : [ 0, 0, 0, 0 ],
-				directional : [ 0, 0, 0, 0 ]
+				directional : [ 0, 0, 0, 0 ],
+				gazeColor1 : [ .1, .1, .1 ],
+				gazeColor2 : [ 0.3, 0.4, 0.2 ]
 			}
 		}
 	]
@@ -169,12 +179,17 @@ Lights.prototype.update = function( ){
 	var ambientColor = [];
 	var fogColor = [];
 	var clearColor = [];
+	this.gazeColor1 = [];
+	this.gazeColor2 = [];
 	if( phase < 4 ){
 		frac = ( new Date().addHours(this.timeOffset).getTime() - new Date( getTimes[stages[phase].stage] ).getTime() ) / ( new Date( getTimes[stages[parseInt(phase)+1].stage] ).getTime() - new Date( getTimes[stages[phase].stage] ).getTime() );
 		for( var i = 0 ; i < stages[phase].data.directional.length ; i++ ) directionalColor[i] = stages[phase].data.directional[i] + ( stages[phase + 1].data.directional[i] - stages[phase].data.directional[i] ) * frac;
 		for( var i = 0 ; i < stages[phase].data.ambient.length ; i++ ) ambientColor[i] = stages[phase].data.ambient[i] + ( stages[phase + 1].data.ambient[i] - stages[phase].data.ambient[i] ) * frac;
 		for( var i = 0 ; i < stages[phase].data.fog.length ; i++ ) fogColor[i] = stages[phase].data.fog[i] + ( stages[phase + 1].data.fog[i] - stages[phase].data.fog[i] ) * frac;
 		for( var i = 0 ; i < stages[phase].data.clear.length ; i++ ) clearColor[i] = stages[phase].data.clear[i] + ( stages[phase + 1].data.clear[i] - stages[phase].data.clear[i] ) * frac;
+		for( var i = 0 ; i < stages[phase].data.gazeColor1.length ; i++ ) this.gazeColor1[i] = stages[phase].data.gazeColor1[i] + ( stages[phase + 1].data.gazeColor1[i] - stages[phase].data.gazeColor1[i] ) * frac;
+		for( var i = 0 ; i < stages[phase].data.gazeColor2.length ; i++ ) this.gazeColor2[i] = stages[phase].data.gazeColor2[i] + ( stages[phase + 1].data.gazeColor2[i] - stages[phase].data.gazeColor2[i] ) * frac;
+
 
 		this.fog.color = new THREE.Color( fogColor[0], fogColor[1], fogColor[2] );
 
@@ -187,6 +202,8 @@ Lights.prototype.update = function( ){
 		this.parent.renderer.setClearColor(new THREE.Color( clearColor[0], clearColor[1], clearColor[2] ), 1 );
 
 		this.sunSphere.material.color = this.directionalLight.color;
+
+		this.wireframeColor = 0x444444;
 	} else {
 		var t1 = new Date().addHours(this.timeOffset).getTime() - new Date( getTimes.night ).getTime();
 		if( t1 < 0 ) t1 = new Date().addHours(parseInt(this.timeOffset) + 24).getTime() - new Date( getTimes.night ).getTime();
@@ -197,13 +214,21 @@ Lights.prototype.update = function( ){
 		this.directionalLight.color = new THREE.Color( 0, 0, 0 );
 		this.directionalLight.intensity = 0;
 
-		this.ambientLight.color = new THREE.Color( 0, 0, 0 );
-		this.ambientLight.intensity = 0.1;
+		this.ambientLight.color = new THREE.Color( 1, 1, 1 );
+		this.ambientLight.intensity = 0.2;
+
+		this.gazeColor1 = [ 1, 0.85490196078431, 0.62745098039216 ];
+		this.gazeColor2 = [ 1, 0.62745098039216, 0.62745098039216 ];
+
+		this.wireframeColor = 0xcccccc;
 
 		this.parent.renderer.setClearColor( this.fog.color, 1 );
 	}
-
-	// console.log(phase, frac);
+	
+	this.parent.player.targetCamera.updateColor( this.gazeColor1, this.gazeColor2 );
+	this.parent.player.target.updateColor( this.gazeColor1, this.gazeColor2 );
+	this.parent.stage.updateWireframeColor( this.wireframeColor );
+	this.parent.prizes.updateWireframeColor( this.wireframeColor );
 
 }
 Lights.prototype.getDayNightData = function( position ){

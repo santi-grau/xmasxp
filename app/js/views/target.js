@@ -50,6 +50,16 @@ var Target = function( parent ){
     this.drawTarget();
 };
 
+Target.prototype.updateColor = function( col1, col2 ){
+    this.col1 = col1;
+    this.col2 = col2;
+    
+    this.line.material.color.setRGB( col2[0], col2[1], col2[2] );
+    this.line.material.needsUpdate = true;
+
+    this.mesh.material.color.setRGB( col2[0], col2[1], col2[2] );
+    this.mesh.material.needsUpdate = true;
+}
 Target.prototype.reset = function() {
 
     this.color = this.colorNoHit;

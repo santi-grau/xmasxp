@@ -28,41 +28,41 @@ var App = function() {
 
     this.hasPointerLock = 'pointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-	this.loading = new Loading( this );
+    this.loading = new Loading( this );
 
-	this.isPlayer = true;
+    this.isPlayer = true;
     this.isIOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 
-	this.stiSleep = 0;
-	this.isReseting = false;
+    this.stiSleep = 0;
+    this.isReseting = false;
 
-	// props
-	this.containerEl = document.getElementById('main');0
+    // props
+    this.containerEl = document.getElementById('main');0
 
-	// three stuff
-	this.scene = new THREE.Scene();
-	this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
-	this.camera.position.set( 0, 30, -200 );
-	this.camera.rotation.x = Math.PI / 2;
+    // three stuff
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    this.camera.position.set( 0, 30, -200 );
+    this.camera.rotation.x = Math.PI / 2;
 
     // delete this
     // this.designCamera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
     // this.designCamera.position.set( 0, 37, -200 );
     // this.designCamera.rotation.y = 0
 
-	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
+    this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
-	// this.renderer.shadowMap.enabled = true;
-	// this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // this.renderer.shadowMap.enabled = true;
+    // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     this.containerEl.appendChild( this.renderer.domElement );
 
     this.effect = new THREE.VREffect(this.renderer);
 
-	this.prizes = new Prizes( this );
-	this.stage = new Stage( this );
-	this.player = new Player( this );
-	this.lights = new Lights( this );
+    this.prizes = new Prizes( this );
+    this.stage = new Stage( this );
+    this.player = new Player( this );
+    this.lights = new Lights( this );
 
     this.scene.add( this.stage.group, this.player.group, this.prizes.group, this.lights.group );
 
@@ -70,9 +70,9 @@ var App = function() {
     this.scene.add( axisHelper );
 
     this.activeCamera = (this.isPlayer)? this.player.camera : this.camera;
-	this.controls = new OrbitControls(this.activeCamera);
+    this.controls = new OrbitControls(this.activeCamera);
 
-	if (this.isPlayer && this.isWebVR ) {
+    if (this.isPlayer && this.isWebVR ) {
 
         this.controls.standing = false;
 
@@ -100,164 +100,164 @@ var App = function() {
         document.body.appendChild( THREE.WebVR.getButton(this.effect) );
     }
 
-	window.addEventListener('resize', this.onResize.bind(this), true);
+    window.addEventListener('resize', this.onResize.bind(this), true);
 
-	document.addEventListener( 'pointerlockchange', this.onPointerLockChange.bind(this), false );
-	document.addEventListener( 'webkitpointerlockchange', this.onPointerLockChange.bind(this), false );
-	document.addEventListener( 'pointerlockerror', this.onPointerLockError.bind(this), false );
-	document.addEventListener( 'webkitpointerlockerror', this.onPointerLockError.bind(this), false );
+    document.addEventListener( 'pointerlockchange', this.onPointerLockChange.bind(this), false );
+    document.addEventListener( 'webkitpointerlockchange', this.onPointerLockChange.bind(this), false );
+    document.addEventListener( 'pointerlockerror', this.onPointerLockError.bind(this), false );
+    document.addEventListener( 'webkitpointerlockerror', this.onPointerLockError.bind(this), false );
 
-	document.addEventListener('keyup', function(e) { if (e.keyCode == 32) this.reset(); }.bind(this), false);
-	// run
-	this.onResize();
+    document.addEventListener('keyup', function(e) { if (e.keyCode == 32) this.reset(); }.bind(this), false);
+    // run
+    this.onResize();
 
-	if (this.isWebVR) {
+    if (this.isWebVR) {
 
-		this.effect.requestAnimationFrame( this.step.bind(this) );
+        this.effect.requestAnimationFrame( this.step.bind(this) );
 
-	} else {
+    } else {
 
-		requestAnimationFrame( this.step.bind(this) );
-	}
+        requestAnimationFrame( this.step.bind(this) );
+    }
 };
 
 App.prototype.reset = function() {
 
-	if (!this.isReseting) {
+    if (!this.isReseting) {
 
-		this.isReseting = true;
+        this.isReseting = true;
 
-		TweenMax.to( this.renderer.domElement, 1.0, {
+        TweenMax.to( this.renderer.domElement, 1.0, {
 
-			opacity: 0.001,
-			ease: Power2.easeInOut,
-			onComplete: function () {
+            opacity: 0.001,
+            ease: Power2.easeInOut,
+            onComplete: function () {
 
-				this.player.reset();
-				this.prizes.reset();
-				this.stage.score.reset();
+                this.player.reset();
+                this.prizes.reset();
+                this.stage.score.reset();
 
-				this.isReseting = false;
+                this.isReseting = false;
 
-				TweenMax.to( this.renderer.domElement, 1.0, {
+                TweenMax.to( this.renderer.domElement, 1.0, {
 
-					opacity: 0.999,
-					ease: Power2.easeInOut
-				} );
+                    opacity: 0.999,
+                    ease: Power2.easeInOut
+                } );
 
-			}.bind( this )
+            }.bind( this )
 
-		} );
-	}
+        } );
+    }
 };
 
 App.prototype.onClickStart = function() {
 
-	if (this.isDesktop) {
+    if (this.isDesktop) {
 
-		if (this.hasPointerLock) this.setupPointerLock();
-		else this.setupOrbitControls();
+        if (this.hasPointerLock) this.setupPointerLock();
+        else this.setupOrbitControls();
 
-	} else if (this.isCardboard) {
+    } else if (this.isCardboard) {
 
-		// Controls are always the same on cardboard devices
-		this.controls = new THREE.DeviceOrientationControls(this.activeCamera);
-		this.controls.connect();
-		this.controls.update();
+        // Controls are always the same on cardboard devices
+        this.controls = new THREE.DeviceOrientationControls(this.activeCamera);
+        this.controls.connect();
+        this.controls.update();
 
-		this.setupDeviceOrientation();
-	}
+        this.setupDeviceOrientation();
+    }
 };
 
 App.prototype.toggleControls = function() {
 
-	if (this.isDesktop) {
+    if (this.isDesktop) {
 
-		if (this.isPointerLock) this.setupOrbitControls();
-		else this.setupPointerLock();
+        if (this.isPointerLock) this.setupOrbitControls();
+        else this.setupPointerLock();
 
-	} else if (this.isCardboard) {
+    } else if (this.isCardboard) {
 
-		if (!this.isDeviceOrientation) this.setupDeviceOrientation();
-		else this.setupCardboad();
+        if (!this.isDeviceOrientation) this.setupDeviceOrientation();
+        else this.setupCardboad();
 
-	}
+    }
 };
 
 App.prototype.setupDeviceOrientation = function() {
 
-	this.isDeviceOrientation = true;
+    this.isDeviceOrientation = true;
 
-	this.effect = new THREE.VREffect(this.renderer);
-	this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
+    this.effect = new THREE.VREffect(this.renderer);
+    this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
-	if (this.isIOS) this.cancelSleep();
+    if (this.isIOS) this.cancelSleep();
 };
 
 App.prototype.setupCardboad = function() {
 
-	this.isDeviceOrientation = false;
+    this.isDeviceOrientation = false;
 
-	this.effect = new THREE.StereoEffect(this.renderer);
-	this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
+    this.effect = new THREE.StereoEffect(this.renderer);
+    this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
-	this.fullscreen();
-	if (this.isIOS) this.preventSleep();
+    this.fullscreen();
+    if (this.isIOS) this.preventSleep();
 };
 
 App.prototype.setupPointerLock = function() {
 
-	// Fullscreen and pointerLock
-	this.controls = new THREE.PointerLockControls(this.activeCamera);
-	this.controls.enabled = false;
-	this.isPointerLock = true;
+    // Fullscreen and pointerLock
+    this.controls = new THREE.PointerLockControls(this.activeCamera);
+    this.controls.enabled = false;
+    this.isPointerLock = true;
 
-	// Ask the browser to lock the pointer
-	document.body.requestPointerLock();
+    // Ask the browser to lock the pointer
+    document.body.requestPointerLock();
 };
 
 App.prototype.onPointerLockAccepted = function() {
 
-	this.controls.getObject().position.set( 0, 0, 0 );
-	this.player.cameraContainer.add( this.controls.getObject() );
-	this.controls.enabled = true;
-	this.activeCamera = this.player.camera;
+    this.controls.getObject().position.set( 0, 0, 0 );
+    this.player.cameraContainer.add( this.controls.getObject() );
+    this.controls.enabled = true;
+    this.activeCamera = this.player.camera;
 };
 
 App.prototype.setupOrbitControls = function() {
 
-	this.isPointerLock = false;
+    this.isPointerLock = false;
 
-	this.controls = new OrbitControls(this.activeCamera);
+    this.controls = new OrbitControls(this.activeCamera);
 
-	this.controls.enableZoom = false;
-	this.controls.minPolarAngle = Math.PI / 4;
-	this.controls.maxPolarAngle = Math.PI / 1.25;
-	this.controls.minAzimuthAngle = -Math.PI / 4;
-	this.controls.maxAzimuthAngle = Math.PI / 4;
-	this.controls.target.set( 0, 0, -0.1 );
-	this.controls.update();
+    this.controls.enableZoom = false;
+    this.controls.minPolarAngle = Math.PI / 4;
+    this.controls.maxPolarAngle = Math.PI / 1.25;
+    this.controls.minAzimuthAngle = -Math.PI / 4;
+    this.controls.maxAzimuthAngle = Math.PI / 4;
+    this.controls.target.set( 0, 0, -0.1 );
+    this.controls.update();
 
-	this.player.cameraContainer.add( this.activeCamera );
-	this.activeCamera = this.player.camera;
+    this.player.cameraContainer.add( this.activeCamera );
+    this.activeCamera = this.player.camera;
 };
 
 App.prototype.onPointerLockChange = function() {
 
-	var element = document.body;
-	if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+    var element = document.body;
+    if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
 
-		this.onPointerLockAccepted();
+        this.onPointerLockAccepted();
 
-	} else {
+    } else {
 
-		this.setupOrbitControls();
-	}
+        this.setupOrbitControls();
+    }
 };
 
 App.prototype.onPointerLockError = function() {
 
-	this.setupOrbitControls();
+    this.setupOrbitControls();
 };
 
 App.prototype.isTouchDevice = function () {
@@ -284,7 +284,7 @@ App.prototype.preventSleep = function () {
 
 App.prototype.cancelSleep = function() {
 
-	clearInterval( this.stiSleep );
+    clearInterval( this.stiSleep );
 };
 
 App.prototype.fullscreen = function () {
@@ -305,37 +305,37 @@ App.prototype.onResize = function(e) {
     this.player.onResize(e);
 
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
-	this.camera.aspect = this.containerEl.offsetWidth / this.containerEl.offsetHeight;
+    this.camera.aspect = this.containerEl.offsetWidth / this.containerEl.offsetHeight;
     this.camera.updateProjectionMatrix();
-	this.renderer.setSize( this.containerEl.offsetWidth, this.containerEl.offsetHeight );
-	this.renderer.domElement.setAttribute('style', 'width:' + this.containerEl.offsetWidth + 'px; height:' + this.containerEl.offsetHeight + 'px');
+    this.renderer.setSize( this.containerEl.offsetWidth, this.containerEl.offsetHeight );
+    this.renderer.domElement.setAttribute('style', 'width:' + this.containerEl.offsetWidth + 'px; height:' + this.containerEl.offsetHeight + 'px');
 }
 
 App.prototype.step = function(time) {
 
-	if (this.isWebVR) {
+    if (this.isWebVR) {
 
-		this.effect.requestAnimationFrame( this.step.bind(this) );
+        this.effect.requestAnimationFrame( this.step.bind(this) );
 
-	} else {
+    } else {
 
-		requestAnimationFrame( this.step.bind(this) );
-	}
+        requestAnimationFrame( this.step.bind(this) );
+    }
 
-	this.stage.step( time );
-	this.player.step( time );
-	this.prizes.step( time );
-	this.lights.step( time );
+    this.stage.step( time );
+    this.player.step( time );
+    this.prizes.step( time );
+    this.lights.step( time );
 
-	if (!this.isPointerLock) {
+    if (!this.isPointerLock) {
 
-    	this.controls.update();
+        this.controls.update();
     }
 
     if ( this.isPlayer && this.isWebVR ) {
 
-		this.viveController1.update();
-		this.viveController2.update();
+        this.viveController1.update();
+        this.viveController2.update();
     }
 
     this.effect.render( this.scene, this.activeCamera );
