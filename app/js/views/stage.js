@@ -1,5 +1,4 @@
 var model = require('../../assets/base9.obj');
-var mountain = require('../../assets/lamp.obj');
 var lamp = require('../../assets/lamp.obj');
 var pole = require('../../assets/pole.obj');
 
@@ -10,6 +9,7 @@ var Landscape = require('./landscape'); // Trees, village and decoration on stag
 
 var OBJLoader = require('three-obj-loader')(THREE);
 var Stage = function( parent ){
+
 	this.parent = parent;
 
 	this.slopeOrigin = new THREE.Vector2( 0,0 );

@@ -5,12 +5,20 @@ var TargetCamera = function( parent, prizes ){
     this.prizes = prizes.slice();
     this.speedTarget = this.parent.target;
     this.speedLineMultiplier = 1.0;
-    this.timeGazeString = '0';
 
     this.isGazeIntro = false;
     this.gazeIntroTime = 0;
     this.gazeIntroStartTime = 0;
-    this.gazeIntroTotalTime = 3.25;
+    this.gazeIntroTotalTime = 2;
+
+    this.isGazeReset = false;
+    this.gazeResetTime = 0;
+    this.gazeResetStartTime = 0;
+    this.gazeResetTotalTime = 2;
+
+    this.percentageTime = 0;
+    this.isOver = false;
+    this.stoOver = 0;
 
     this.showTime = true;
     this.showSpeed = false;
@@ -32,12 +40,9 @@ var TargetCamera = function( parent, prizes ){
     } );
 
     this.mesh = new THREE.Mesh( this.plane, material );
+    this.mesh.position.set( 0, 0, -5 );
 
-    this.mesh.position.y = 0;
-    this.mesh.position.x = 0;
-    this.mesh.position.z = -5;
-
-    var materialLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2.0, opacity: 0.0, transparent: true });
+    var materialLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2.0, opacity: 0.0, transparent: true, depthTest: false });
     var geometryLine = new THREE.Geometry();
         geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
         geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
@@ -52,30 +57,78 @@ var TargetCamera = function( parent, prizes ){
     this.raycaster = new THREE.Raycaster();
 };
 
+TargetCamera.prototype.reset = function() {
+
+    this.speedLineMultiplier = 1.0;
+
+    this.isGazeIntro = false;
+    this.gazeIntroTime = 0;
+    this.gazeIntroStartTime = 0;
+    this.gazeIntroTotalTime = 3.25;
+    this.percentageTime = 0;
+    this.isOver = false;
+
+    this.mesh.position.set( 0, 0, -5 );
+
+    this.showTime = true;
+    this.showSpeed = false;
+
+    this.drawTargetCamera();
+};
+
 TargetCamera.prototype.drawTargetCamera = function () {
 
     var halfSize = this.canvas.width * 0.5;
 
-    this.context.strokeStyle = "#000000";
+    this.context.strokeStyle = '#000000';
     this.context.lineWidth = 15;
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.beginPath();
-    this.context.arc(halfSize, halfSize, 50, 0, 2 * Math.PI);
+    this.context.arc(halfSize, halfSize, (this.isOver)? 60 : 50, 0, 2 * Math.PI);
     this.context.stroke();
 
     if (this.showSpeed) {
 
+        // 3 lines depending on the percentage
         var speedPercent = this.parent.descendingSpeed / this.parent.maxDescendingSpeed;
-        var speed = (100 * speedPercent * this.speedLineMultiplier);
-        this.context.fillStyle = "#cc0000";
-        this.context.fillRect(halfSize - speed, 220, speed, 15);
-        this.context.fillRect(halfSize, 220, speed, 15);
+
+
+        if (speedPercent > 0.4) {
+
+            this.context.beginPath();
+            this.context.arc(halfSize, halfSize, 90, Math.PI + 0.3, 2 * Math.PI - 0.3);
+            this.context.stroke();
+
+            this.context.beginPath();
+            this.context.arc(halfSize, halfSize, 90, 0.3, Math.PI - 0.3);
+            this.context.stroke();
+        }
+
+        if (speedPercent > 0.8) {
+
+            this.context.beginPath();
+            this.context.arc(halfSize, halfSize, 120, Math.PI + 0.3, 2 * Math.PI - 0.3);
+            this.context.stroke();
+
+            this.context.beginPath();
+            this.context.arc(halfSize, halfSize, 120, 0.3, Math.PI - 0.3);
+            this.context.stroke();
+        }
     }
 
-    if (this.showTime) {
+    if (this.showTime && this.percentageTime > 0) {
 
-        this.context.font = "Bold 60px Arial";
-        this.context.fillText(this.timeGazeString, 110, 150);
+        this.context.strokeStyle = '#cc0000';
+        this.context.lineWidth = 20;
+        this.context.lineCap = 'round';
+
+        this.context.beginPath();
+        this.context.arc(halfSize, halfSize, (this.isOver)? 95 : 85, Math.PI + 0.1, Math.PI + 0.1 + ((Math.PI - 0.2) * this.percentageTime));
+        this.context.stroke();
+
+        this.context.beginPath();
+        this.context.arc(halfSize, halfSize, (this.isOver)? 95 : 85, 0.1, 0.1 + ((Math.PI - 0.2) * this.percentageTime));
+        this.context.stroke();
     }
 
     this.texture.needsUpdate = true;
@@ -113,15 +166,16 @@ TargetCamera.prototype.step = function() {
 
         // Calc distance from this point to the target point
         var renderer = this.parent.parent.renderer;
-        var maxDistance = renderer.domElement.offsetWidth * 0.25;
+        var maxDistance = 60;
         var positionRay = new THREE.Vector2( window.innerWidth * 0.5, window.innerHeight * 0.5);// this.getCoordinates( this.mesh, this.parent.camera, renderer);
         var positionTarget = this.getCoordinates( this.speedTarget.mesh, this.parent.camera, renderer);
-        var distance = Math.min( maxDistance, positionRay.distanceTo( positionTarget ) );
+        var distance = Math.min( maxDistance, Math.max( 0, positionRay.distanceTo( positionTarget ) ) );
         var distancePercentage = 1.0 - (distance / maxDistance);
 
+        this.isOver = (distancePercentage > 0);
         this.updateSpeedDescend( distancePercentage );
 
-    } else if ( this.parent.currentStatus == 'waiting' || this.parent.currentStatus == 'ascending' || this.parent.currentStatus == 'hovering' ) {
+    } else if ( this.parent.currentStatus == 'waiting' || this.parent.currentStatus == 'ascending' || this.parent.currentStatus == 'hovering' || this.parent.currentStatus == 'breaking' || this.parent.currentStatus == 'ending' ) {
 
         // Throw a ray to check if it intersects with something
         var cameraDirection = new THREE.Vector3();
@@ -147,7 +201,7 @@ TargetCamera.prototype.step = function() {
             if (this.isGazeIntro) {
 
                 this.gazeIntroTime = (new Date() - this.gazeIntroStartTime) / 1000;
-                this.timeGazeString = Math.floor(this.gazeIntroTime).toString();
+                this.percentageTime = this.gazeIntroTime / this.gazeIntroTotalTime;
                 this.drawTargetCamera();
 
                 if (this.gazeIntroTime > this.gazeIntroTotalTime) {
@@ -156,7 +210,7 @@ TargetCamera.prototype.step = function() {
                 }
             }
 
-        } else {
+        } else if (this.parent.currentStatus == 'ascending' || this.parent.currentStatus == 'hovering') {
 
             var intersects = this.raycaster.intersectObjects( this.prizes, true );
             if (intersects.length > 0) {
@@ -176,6 +230,33 @@ TargetCamera.prototype.step = function() {
                     }
                 }
             }
+
+        } else if (this.parent.currentStatus == 'breaking' || this.parent.currentStatus == 'ending') {
+
+
+            var intersects = this.raycaster.intersectObject( this.parent.parent.stage.score.mesh );
+            if (intersects.length > 0) {
+
+                if (intersects[0].object == this.parent.parent.stage.score.mesh) {
+
+                    this.onGazeOverReset();
+                }
+            } else {
+
+                this.onGazeOutReset();
+            }
+
+            if (this.isGazeReset) {
+
+                this.gazeResetTime = (new Date() - this.gazeResetStartTime) / 1000;
+                this.percentageTime = this.gazeResetTime / this.gazeResetTotalTime;
+                this.drawTargetCamera();
+
+                if (this.gazeResetTime > this.gazeResetTotalTime) {
+
+                    this.onGazeEndReset();
+                }
+            }
         }
     }
 };
@@ -184,8 +265,10 @@ TargetCamera.prototype.onGazeOverIntro = function() {
 
     if (!this.isGazeIntro) {
 
+        this.isOver = true;
         this.isGazeIntro = true;
         this.gazeIntroStartTime = new Date();
+        if (this.tweenGaze) this.tweenGaze.kill();
     }
 };
 
@@ -193,15 +276,24 @@ TargetCamera.prototype.onGazeOutIntro = function() {
 
     if (this.isGazeIntro) {
 
+        this.isOver = false;
         this.isGazeIntro = false;
         this.gazeIntroTime = 0;
-        this.timeGazeString = '0';
+
+        if (this.tweenGaze) this.tweenGaze.kill();
+        this.tweenGaze = TweenMax.to( this, 0.5, {
+            percentageTime : 0,
+            ease : Power2.easeInOut,
+            onUpdate : this.drawTargetCamera.bind(this)
+        });
+
         this.drawTargetCamera();
     }
 };
 
 TargetCamera.prototype.onGazeEndIntro = function() {
 
+    this.isOver = false;
     this.showTime = false;
     this.showSpeed = true;
     this.parent.onGazeEndIntro();
@@ -213,9 +305,53 @@ TargetCamera.prototype.onGazeEndIntro = function() {
     });
 };
 
+TargetCamera.prototype.onGazeOverReset = function() {
+
+    this.showTime = true;
+    this.showSpeed = false;
+
+    if (!this.isGazeReset) {
+
+        this.isOver = true;
+        this.isGazeReset = true;
+        this.gazeResetStartTime = new Date();
+        if (this.tweenGaze) this.tweenGaze.kill();
+
+        this.parent.parent.stage.score.onOverReset();
+    }
+};
+
+TargetCamera.prototype.onGazeOutReset = function() {
+
+    if (this.isGazeReset) {
+
+        this.isOver = false;
+        this.isGazeReset = false;
+        this.gazeResetTime = 0;
+
+        if (this.tweenGaze) this.tweenGaze.kill();
+        this.tweenGaze = TweenMax.to( this, 0.5, {
+            percentageTime : 0,
+            ease : Power2.easeInOut,
+            onUpdate : this.drawTargetCamera.bind(this)
+        });
+
+        this.parent.parent.stage.score.onOutReset();
+    }
+};
+
+TargetCamera.prototype.onGazeEndReset = function() {
+
+    this.isOver = false;
+    this.parent.parent.reset();
+};
+
 TargetCamera.prototype.onJump = function() {
 
     this.hideSpeed();
+
+    this.showSpeed = false;
+    this.drawTargetCamera();
 
     TweenMax.to( this.line.material, 1.0, {
 
@@ -232,6 +368,15 @@ TargetCamera.prototype.updateSpeedDescend = function(speedDescend) {
 };
 
 TargetCamera.prototype.incrementPoints = function( index, points ) {
+
+    this.isOver = true;
+    this.drawTargetCamera();
+    clearTimeout( this.stoOver );
+    this.stoOver = setTimeout( function () {
+
+        this.isOver = false;
+        this.drawTargetCamera();
+    }.bind(this), 250 );
 
     this.parent.incrementPoints( points, index );
 };

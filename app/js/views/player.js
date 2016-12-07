@@ -63,7 +63,33 @@ var Player = function( parent ) {
 	this.position = new THREE.Vector3( 0 , this.parent.stage.slopeOrigin.y - pp.y, this.parent.stage.slopeOrigin.x - pp.x );
 
 	// console.log('Player waiting to start');
+
+
 }
+
+Player.prototype.reset = function() {
+
+	this.currentStatus = 'waiting';
+
+	this.descendingSpeed = 0.0;
+	this.maxDescendingSpeed = 1.0;
+	this.maxSpeed = 0;
+	this.maxAltitude = 0;
+	this.points = 0;
+
+	this.slopePosition = 0;
+	this.rotation = -1.6286101308328111 + Math.PI / 2; // trust me on this one...
+	this.speed = 0;
+	this.motionSpeed = 1;
+	var pp = this.parent.stage.slope.getPointAtLength( this.slopePosition );
+	this.position = new THREE.Vector3( 0 , this.parent.stage.slopeOrigin.y - pp.y, this.parent.stage.slopeOrigin.x - pp.x );
+
+	this.camera.fov = 24;
+	this.camera.updateProjectionMatrix();
+
+	this.target.reset();
+	this.targetCamera.reset();
+};
 
 Player.prototype.onGazeEndIntro = function() {
 
@@ -86,7 +112,7 @@ Player.prototype.onStart = function(){
 Player.prototype.updateSpeedDescend = function(speedDescend) {
 
 	this.descendingSpeed = speedDescend;
-	
+
 };
 
 Player.prototype.incrementPoints = function( points, prizeIndex ) {
@@ -103,7 +129,7 @@ Player.prototype.updateScoreSpeed = function(){
 }
 Player.prototype.updateScoreAltitude = function(){
 	this.maxAltitude = Math.max( this.maxAltitude, this.altitude );
-	this.parent.stage.score.updateAltitude( this.maxAltitude  );	
+	this.parent.stage.score.updateAltitude( this.maxAltitude  );
 }
 Player.prototype.bonusPoints = function( points, bonus ) {
 
@@ -156,7 +182,7 @@ Player.prototype.onJump = function(){
 
 	TweenMax.to( this, 0.2, { speed : 0, ease : Power2.easeOut });
 	TweenMax.to( this.wind, 0.2, { mul : 0.2, ease : Power2.easeOut });
-	
+
 
 	TweenMax.to( this, 2, { motionSpeed : 0.01, ease : Power2.easeOut });
 	TweenMax.to( this.camera, 2, { fov : 40, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
@@ -171,6 +197,7 @@ Player.prototype.onJump = function(){
 }
 
 Player.prototype.updateCamera = function(){
+
 	this.camera.updateProjectionMatrix();
 }
 
