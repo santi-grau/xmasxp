@@ -197,7 +197,7 @@ Prizes.prototype.removePrizeWithIndex = function(index) {
 
 	prizeMesh.userData.active = false;
 
-    TweenMax.to( prizeMesh.children[0].material, 0.5, {
+    TweenMax.to( prizeMesh.children[0].material, 0.7, {
 
         opacity : 0.0,
         ease : Power2.easeInOut

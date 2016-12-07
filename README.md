@@ -9,20 +9,20 @@ Should be ready on port 4000
 
 ### TODO
 
-1. VRify -> Desktop, WebVR vive, Mobile magic window and cardboard ✔
+1. Intro -> Initial DOM screen with explanation and start button.
 2. Lights ✔
-3. Landscape ✔
-4. Audience -> Simple mesh with spheres (particle system with vertex shader animation?).
-5. Scoreboard -> Big screen, displays total points of user, speed and play again. ✔
-6. Intro -> Initial DOM screen with explanation and start button.
-7. Start Counter -> In-game small screen at the top with gaze for 3,2,1 counter.
-8. Game dynamics ✔
-9. Build system -> Grunt, make.
-10. Sounds ✔
-11. Add prizes ✔
-12. Play again ✔
-13. Gaze color scheme ✔
-14. Mobile optimizations.
+3. Mobile optimizations.
+4. Gaze color scheme ✔
+5. Build system -> Grunt, make & do a test push to the xmas experiment git.
+6. Sounds ✔
+7. Audience -> Simple mesh with spheres (particle system with vertex shader animation?).
+8. VRify -> Desktop, WebVR vive, Mobile magic window and cardboard ✔
+9. Landscape ✔
+10. Scoreboard ✔
+11. Start Counter ✔
+12. Game dynamics ✔
+13. Add prizes ✔
+14. Play again ✔
 
 ### WISHLIST
 

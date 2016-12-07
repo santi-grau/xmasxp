@@ -2,6 +2,8 @@ var PrizePoints = function( points ){
 
 	this.points = points;
 	this.available = true;
+	this.audio = new Audio("assets/pickPrize.mp3");
+
 
 	this.createMesh();
 	this.drawTexture();
@@ -55,6 +57,8 @@ PrizePoints.prototype.animate = function() {
 	this.available = false;
 	this.mesh.visible = true;
 
+	this.audio.play();
+
 	TweenMax.to( this.mesh.position, 1.5, {
 
         y : this.mesh.position.y + 10.0,
@@ -78,6 +82,9 @@ PrizePoints.prototype.animate = function() {
 		        	this.mesh.material.opacity = 0.0;
 					this.mesh.position.set( 0, 0, 0 );
 					this.mesh.visible = false;
+
+					this.audio.pause();
+					this.audio.currentTime = 0;
 
 		        }.bind( this )
 		    } );

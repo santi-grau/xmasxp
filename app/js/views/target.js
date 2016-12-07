@@ -29,6 +29,7 @@ var Target = function( parent ){
         map: this.texture,
         side : THREE.DoubleSide,
         transparent : true,
+        opacity : 0,
         depthTest : false
     } );
 
@@ -44,6 +45,7 @@ var Target = function( parent ){
     this.line = new THREE.LineSegments(geometryLine, materialLine);
 
     this.mesh.add( this.line );
+    this.mesh.visible = false;
 
     this.tween;
     this.alpha = 1.0;
@@ -69,8 +71,8 @@ Target.prototype.reset = function() {
     this.line.visible = false;
     this.line.material.alpha = 0.0;
 
-    this.mesh.visible = true;
-    this.mesh.material.alpha = 1.0;
+    this.mesh.visible = false;
+    this.mesh.material.alpha = 0.0;
     this.mesh.position.set(0, 1.5, -5);
 
     this.position.set(0, 1.5, -5);
@@ -101,6 +103,12 @@ Target.prototype.show = function() {
     this.mesh.visible = true;
     this.line.visible = true;
     this.color = this.colorDescend;
+
+    TweenMax.to( this.mesh.material, 2.0, {
+
+        opacity : 1.0,
+        ease : Linear.none
+    });
 
     TweenMax.to( this.line.material, 2.0, {
 

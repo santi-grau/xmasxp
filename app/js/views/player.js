@@ -97,7 +97,7 @@ Player.prototype.onGazeEndIntro = function() {
 };
 
 Player.prototype.waiting = function(){
-	this.rotation = Math.PI / 24
+	this.rotation = 0;// Math.PI / 24
 }
 
 Player.prototype.onStart = function(){
