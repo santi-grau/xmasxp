@@ -36,8 +36,19 @@ Loading.prototype.onClickButton = function(e) {
 
 	e.preventDefault();
 
-	this.loadingBgEl.style.display = 'none';
-	this.buttonEl.style.display = 'none';
+	TweenMax.to( this.loadingBgEl, 1.5, {
+
+		opacity: 0.001,
+		ease: Power2.easeInOut,
+		onComplete: function () { this.loadingBgEl.style.display = 'none'; }.bind( this )
+	} );
+
+	TweenMax.to( this.buttonEl, 1.0, {
+
+		opacity: 0.001,
+		ease: Power2.easeInOut,
+		onComplete: function () { this.buttonEl.style.display = 'none'; }.bind( this )
+	} );
 
 	this.parent.onClickStart();
 }

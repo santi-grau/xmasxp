@@ -34,6 +34,7 @@ var App = function() {
     this.isIOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
 
 	this.stiSleep = 0;
+	this.isReseting = false;
 
 	// props
 	this.containerEl = document.getElementById('main');0
@@ -117,9 +118,32 @@ var App = function() {
 
 App.prototype.reset = function() {
 
-	this.player.reset();
-	this.prizes.reset();
-	this.stage.score.reset();
+	if (!this.isReseting) {
+
+		this.isReseting = true;
+
+		TweenMax.to( this.renderer.domElement, 1.0, {
+
+			opacity: 0.001,
+			ease: Power2.easeInOut,
+			onComplete: function () {
+
+				this.player.reset();
+				this.prizes.reset();
+				this.stage.score.reset();
+
+				this.isReseting = false;
+
+				TweenMax.to( this.renderer.domElement, 1.0, {
+
+					opacity: 0.999,
+					ease: Power2.easeInOut
+				} );
+
+			}.bind( this )
+
+		} );
+	}
 };
 
 App.prototype.onClickStart = function() {
