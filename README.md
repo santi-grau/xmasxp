@@ -16,7 +16,6 @@ Should be ready on port 4000
 5. Build system -> Grunt, make & do a test push to the xmas experiment git.
 6. Sounds -> Added with tone.js, polish stereo, add sky sound and landing. music.
 7. Audience -> Simple mesh with spheres (particle system with vertex shader animation?).
-
 8. VRify -> Desktop, WebVR vive, Mobile magic window and cardboard ✔
 9. Landscape ✔
 10. Scoreboard -> Big screen, displays total points of user, speed and play again. ✔
