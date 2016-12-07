@@ -8,6 +8,8 @@ var Score = function( parent ){
 	this.points = 0;
 	this.altitude = 0;
 
+	this.bonusAnimation = 0;
+
 	this.phaseinc = 0;
 	this.plane = new THREE.PlaneBufferGeometry( 30, 20 );
 
@@ -29,7 +31,13 @@ var Score = function( parent ){
 	this.speeedIcon = new Image();
 	this.speeedIcon.src = 'assets/speed.png';
 
+	this.updateFrameInterval = 20;
+	this.updateFrameCount = 0;
+
 	this.drawTexture();
+
+	// this.showBonus('speed')
+	// this.points = 1;
 }
 
 Score.prototype.drawTexture = function() {
@@ -63,7 +71,7 @@ Score.prototype.drawTexture = function() {
 
     this.context.rect( 10, 185, this.canvas.width - 20, 2 );
 
-    this.texture.needsUpdate = true;
+    // this.texture.needsUpdate = true;
 };
 
 Score.prototype.updateSpeed = function(speed) {
@@ -83,7 +91,7 @@ Score.prototype.updatePoints = function(points) {
 	this.drawTexture();
 };
 
-Score.prototype.showBonus = function(bonus) {
+Score.prototype.showBonus = function( bonus ) {
 	this.bonus = true;
 
 
@@ -92,19 +100,48 @@ Score.prototype.showBonus = function(bonus) {
 	// this.context.fillStyle = col1;
 	// this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	// this.context.fillStyle = col2;
- //    this.context.font = "20px matrix";
- //    this.context.fillText('BONUS!!! ', this.canvas.width / 2, 175);
+ //    this.context.font = "40px matrix";
+ //    this.context.fillText('SPEED BONUS!!! ', this.canvas.width / 2, 175);
+
+    TweenMax.to( this, 10, { bonusAnimation : 10, onUpdate : this.animateBonus.bind(this), onComplete: function(){ this.bonus = false; }.bind(this) });
 
 	// this.context.fillRect(0,0,this.canvas.width,this.canvas.height);
 	// this.context.globalCompositeOperation = "source-atop";
 	// this.context.drawImage(this.speeedIcon,0,0, 100, 100);
 
- //    this.texture.needsUpdate = true;
+    // this.texture.needsUpdate = true;
 
 	console.log('bonus : ' + bonus);
 };
+Score.prototype.animateBonus = function( step ) {
 
+	var col1 = '#000000';
+	var col2 = '#ffdaa0';
 
+	
+	var scale = Math.floor( this.bonusAnimation ) + 1;
+	console.log(scale);
+	
+	
+	this.context.fillStyle = col1;
+	this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+	this.context.save();
+	this.context.fillStyle = col2;
+
+	
+	// this.context.translate( -this.canvas.width / 2, -this.canvas.height / 2 );
+	// this.context.scale( scale, scale );
+
+    this.context.font = "20px matrix";
+    this.context.fillText('SPEED BONUS!!! ', this.canvas.width / 2, this.canvas.height / 2);
+    this.context.restore();
+	this.texture.needsUpdate = true;
+
+}
+
+Score.prototype.updateTexture = function( time ) {
+	
+}
 
 
 Score.prototype.drawIdleScreen = function( time ) {
@@ -128,8 +165,8 @@ Score.prototype.drawIdleScreen = function( time ) {
 	this.context.font = "80px blck";
 	this.context.fillText('SKI', 10, 140);
 	this.context.fillText('JUMP', 210, 196);
-
-	this.texture.needsUpdate = true;
+	this.updateTexture();
+	// this.texture.needsUpdate = true;
 };
 
 
@@ -137,6 +174,11 @@ Score.prototype.drawIdleScreen = function( time ) {
 Score.prototype.step = function( time ){
 	if( this.points == 0 ){
 		this.drawIdleScreen( time );
+	}
+	if( this.updateFrameCount < this.updateFrameInterval ) this.updateFrameCount++;
+	else{
+		this.texture.needsUpdate = true;
+		this.updateFrameCount = 0;
 	}
 }
 module.exports = Score;

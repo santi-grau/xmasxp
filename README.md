@@ -17,7 +17,7 @@ Should be ready on port 4000
 6. Intro -> 2 parts: Initial DOM screen with loading, explanation and start button, needed to enable WebVR. Then in-game small screen at the top with gaze for 3,2,1 counter.
 7. Game dynamics -> Gaze system : reduce / increase speed / pick prizes ✔
 8. Build system -> Grunt, make ?
-9. Sounds -> Added with tone.js, polish stereo, add sky sond and landing. music?
+9. Sounds ✔
 10. Add prizes ✔
 11. Replay
 

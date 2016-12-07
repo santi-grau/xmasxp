@@ -35,6 +35,11 @@ var App = function() {
 	this.camera.position.set( 0, 30, -200 );
 	this.camera.rotation.x = Math.PI / 2;
 
+    // delete this
+    // this.designCamera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    // this.designCamera.position.set( 0, 37, -200 );
+    // this.designCamera.rotation.y = 0
+
 	this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
 	this.renderer.shadowMap.enabled = true;
@@ -201,6 +206,7 @@ App.prototype.step = function(time) {
     }
 
     this.effect.render( this.scene, this.activeCamera );
+    // this.effect.render( this.scene, this.designCamera ); // camera to debug score, delete when done
 };
 
 var app = new App();
