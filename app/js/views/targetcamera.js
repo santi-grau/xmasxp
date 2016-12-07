@@ -18,6 +18,7 @@ var TargetCamera = function( parent, prizes ){
 
     this.percentageTime = 0;
     this.isOver = false;
+    this.stoOver = 0;
 
     this.showTime = true;
     this.showSpeed = false;
@@ -88,11 +89,31 @@ TargetCamera.prototype.drawTargetCamera = function () {
 
     if (this.showSpeed) {
 
+        // 3 lines depending on the percentage
         var speedPercent = this.parent.descendingSpeed / this.parent.maxDescendingSpeed;
-        var speed = (100 * speedPercent * this.speedLineMultiplier);
-        this.context.fillStyle = '#cc0000';
-        this.context.fillRect(halfSize - speed, 220, speed, 15);
-        this.context.fillRect(halfSize, 220, speed, 15);
+
+
+        if (speedPercent > 0.4) {
+
+            this.context.beginPath();
+            this.context.arc(halfSize, halfSize, 90, Math.PI + 0.3, 2 * Math.PI - 0.3);
+            this.context.stroke();
+
+            this.context.beginPath();
+            this.context.arc(halfSize, halfSize, 90, 0.3, Math.PI - 0.3);
+            this.context.stroke();
+        }
+
+        if (speedPercent > 0.8) {
+
+            this.context.beginPath();
+            this.context.arc(halfSize, halfSize, 120, Math.PI + 0.3, 2 * Math.PI - 0.3);
+            this.context.stroke();
+
+            this.context.beginPath();
+            this.context.arc(halfSize, halfSize, 120, 0.3, Math.PI - 0.3);
+            this.context.stroke();
+        }
     }
 
     if (this.showTime && this.percentageTime > 0) {
@@ -145,12 +166,13 @@ TargetCamera.prototype.step = function() {
 
         // Calc distance from this point to the target point
         var renderer = this.parent.parent.renderer;
-        var maxDistance = renderer.domElement.offsetWidth * 0.25;
+        var maxDistance = 60;
         var positionRay = new THREE.Vector2( window.innerWidth * 0.5, window.innerHeight * 0.5);// this.getCoordinates( this.mesh, this.parent.camera, renderer);
         var positionTarget = this.getCoordinates( this.speedTarget.mesh, this.parent.camera, renderer);
-        var distance = Math.min( maxDistance, positionRay.distanceTo( positionTarget ) );
+        var distance = Math.min( maxDistance, Math.max( 0, positionRay.distanceTo( positionTarget ) ) );
         var distancePercentage = 1.0 - (distance / maxDistance);
 
+        this.isOver = (distancePercentage > 0);
         this.updateSpeedDescend( distancePercentage );
 
     } else if ( this.parent.currentStatus == 'waiting' || this.parent.currentStatus == 'ascending' || this.parent.currentStatus == 'hovering' || this.parent.currentStatus == 'breaking' || this.parent.currentStatus == 'ending' ) {
@@ -328,6 +350,9 @@ TargetCamera.prototype.onJump = function() {
 
     this.hideSpeed();
 
+    this.showSpeed = false;
+    this.drawTargetCamera();
+
     TweenMax.to( this.line.material, 1.0, {
 
         opacity : 0.0,
@@ -343,6 +368,15 @@ TargetCamera.prototype.updateSpeedDescend = function(speedDescend) {
 };
 
 TargetCamera.prototype.incrementPoints = function( index, points ) {
+
+    this.isOver = true;
+    this.drawTargetCamera();
+    clearTimeout( this.stoOver );
+    this.stoOver = setTimeout( function () {
+
+        this.isOver = false;
+        this.drawTargetCamera();
+    }.bind(this), 250 );
 
     this.parent.incrementPoints( points, index );
 };
