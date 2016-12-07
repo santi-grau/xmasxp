@@ -224,7 +224,7 @@ Lights.prototype.update = function( ){
 
 		this.parent.renderer.setClearColor( this.fog.color, 1 );
 	}
-	
+
 	this.parent.player.targetCamera.updateColor( this.gazeColor1, this.gazeColor2 );
 	this.parent.player.target.updateColor( this.gazeColor1, this.gazeColor2 );
 	this.parent.stage.updateWireframeColor( this.wireframeColor );

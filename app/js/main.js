@@ -52,8 +52,8 @@ var App = function() {
 
     this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    // this.renderer.shadowMap.enabled = true;
-    // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     this.containerEl.appendChild( this.renderer.domElement );
 
@@ -192,6 +192,8 @@ App.prototype.setupDeviceOrientation = function() {
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
     if (this.isIOS) this.cancelSleep();
+
+    this.loading.changeButton('cardboard');
 };
 
 App.prototype.setupCardboad = function() {
@@ -203,6 +205,8 @@ App.prototype.setupCardboad = function() {
 
     this.fullscreen();
     if (this.isIOS) this.preventSleep();
+
+	this.loading.changeButton('phone');
 };
 
 App.prototype.setupPointerLock = function() {
@@ -214,6 +218,8 @@ App.prototype.setupPointerLock = function() {
 
     // Ask the browser to lock the pointer
     document.body.requestPointerLock();
+
+    this.loading.changeButton('drag');
 };
 
 App.prototype.onPointerLockAccepted = function() {
@@ -240,6 +246,8 @@ App.prototype.setupOrbitControls = function() {
 
     this.player.cameraContainer.add( this.activeCamera );
     this.activeCamera = this.player.camera;
+
+    this.loading.changeButton('pointerlock');
 };
 
 App.prototype.onPointerLockChange = function() {
