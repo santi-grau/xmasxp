@@ -9,7 +9,7 @@ var TargetCamera = function( parent, prizes ){
     this.isGazeIntro = false;
     this.gazeIntroTime = 0;
     this.gazeIntroStartTime = 0;
-    this.gazeIntroTotalTime = 2;
+    this.gazeIntroTotalTime = 3;
 
     this.isGazeReset = false;
     this.gazeResetTime = 0;
@@ -186,16 +186,17 @@ TargetCamera.prototype.step = function() {
 
         if (this.parent.currentStatus == 'waiting') {
 
-            var intersects = this.raycaster.intersectObject( this.speedTarget.mesh );
+            var intersects = this.raycaster.intersectObject( this.parent.parent.stage.intro.mesh );
             if (intersects.length > 0) {
 
-                if (intersects[0].object == this.speedTarget.mesh) {
+                if (intersects[0].object == this.parent.parent.stage.intro.mesh) {
 
                     this.onGazeOverIntro();
                 }
             } else {
 
                 this.onGazeOutIntro();
+                this.parent.parent.stage.intro.updateSeconds( 0 );
             }
 
             if (this.isGazeIntro) {
@@ -203,6 +204,8 @@ TargetCamera.prototype.step = function() {
                 this.gazeIntroTime = (new Date() - this.gazeIntroStartTime) / 1000;
                 this.percentageTime = this.gazeIntroTime / this.gazeIntroTotalTime;
                 this.drawTargetCamera();
+
+                this.parent.parent.stage.intro.updateSeconds( this.gazeIntroTime );
 
                 if (this.gazeIntroTime > this.gazeIntroTotalTime) {
 
@@ -362,7 +365,6 @@ TargetCamera.prototype.onJump = function() {
 
 TargetCamera.prototype.updateSpeedDescend = function(speedDescend) {
 
-    // this.speedTarget.drawHit();
     this.parent.updateSpeedDescend(speedDescend);
     this.drawTargetCamera();
 };
