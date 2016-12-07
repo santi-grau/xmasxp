@@ -29,6 +29,8 @@ var Score = function( parent ){
 	this.speeedIcon = new Image();
 	this.speeedIcon.src = 'assets/speed.png';
 
+	this.isOver = false;
+
 	this.drawTexture();
 };
 
@@ -43,7 +45,9 @@ Score.prototype.reset = function() {
 };
 
 Score.prototype.drawTexture = function() {
-	if( this.bonus ) return;
+
+	// if( this.bonus ) return;
+
 	var col1 = '#000000';
 	var col2 = '#ffdaa0';
 	this.context.fillStyle = col1;
@@ -51,7 +55,7 @@ Score.prototype.drawTexture = function() {
 
 
 	this.context.fillStyle = col2;
-	this.context.rect( 10, 10, this.canvas.width - 20, 40 );
+	this.context.fillRect( 10, 10, this.canvas.width - 20, 40 );
 	this.context.fill();
     this.context.fillStyle = col1;
     this.context.textAlign = 'center';
@@ -61,17 +65,34 @@ Score.prototype.drawTexture = function() {
     this.context.font = "50px matrix";
     this.context.fillText( Math.floor(this.points).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."),  this.canvas.width / 2, 100);
 
-    this.context.rect( 10, 115, this.canvas.width - 20, 2 );
+    this.context.fillRect( 10, 115, this.canvas.width - 20, 2 );
 
     this.context.font = "20px matrix";
     this.context.fillText('TOP SPEED: ' + this.speed.toFixed(2) + 'km/h', this.canvas.width / 2, 140);
 
-    this.context.rect( 10, 150, this.canvas.width - 20, 2 );
+    this.context.fillRect( 10, 150, this.canvas.width - 20, 2 );
 
-     this.context.font = "20px matrix";
+    this.context.font = "20px matrix";
     this.context.fillText('TOP ALTITUDE: ' + this.altitude.toFixed(2) + 'm', this.canvas.width / 2, 175);
 
-    this.context.rect( 10, 185, this.canvas.width - 20, 2 );
+    this.context.fillRect( 10, 185, this.canvas.width - 20, 2 );
+
+    // Play again button
+
+    if (this.isOver) {
+
+    	this.context.fillStyle = col2;
+    	this.context.fillRect( 10, 205, this.canvas.width - 20, 40 );
+
+    } else {
+
+    	this.context.strokeStyle = col2;
+    	this.context.lineWidth = 2;
+    	this.context.strokeRect( 10, 205, this.canvas.width - 20, 40 );
+    }
+    this.context.fillStyle = (this.isOver)? col1 : col2;
+    this.context.font = "30px matrix";
+    this.context.fillText('PLAY AGAIN', this.canvas.width / 2, 235);
 
     this.texture.needsUpdate = true;
 };
@@ -86,7 +107,6 @@ Score.prototype.updateAltitude = function(altitude) {
 	this.altitude = altitude;
 	this.drawTexture();
 };
-
 
 Score.prototype.updatePoints = function(points) {
 	this.points = points;
@@ -114,10 +134,20 @@ Score.prototype.showBonus = function(bonus) {
 	console.log('bonus : ' + bonus);
 };
 
+Score.prototype.onOverReset = function() {
 
+	this.isOver = true;
+	this.drawTexture();
+};
 
+Score.prototype.onOutReset = function() {
+
+	this.isOver = false;
+	this.drawTexture();
+};
 
 Score.prototype.drawIdleScreen = function( time ) {
+
 	var col1 = '#000000';
 	var col2 = '#ffdaa0';
 	this.phaseinc += 0.1;
@@ -145,6 +175,7 @@ Score.prototype.drawIdleScreen = function( time ) {
 
 
 Score.prototype.step = function( time ){
+
 	if( this.points == 0 ){
 		this.drawIdleScreen( time );
 	}

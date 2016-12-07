@@ -10,7 +10,12 @@ var TargetCamera = function( parent, prizes ){
     this.isGazeIntro = false;
     this.gazeIntroTime = 0;
     this.gazeIntroStartTime = 0;
-    this.gazeIntroTotalTime = 3.25;
+    this.gazeIntroTotalTime = 2;
+
+    this.isGazeReset = false;
+    this.gazeResetTime = 0;
+    this.gazeResetStartTime = 0;
+    this.gazeResetTotalTime = 2;
 
     this.showTime = true;
     this.showSpeed = false;
@@ -137,7 +142,7 @@ TargetCamera.prototype.step = function() {
 
         this.updateSpeedDescend( distancePercentage );
 
-    } else if ( this.parent.currentStatus == 'waiting' || this.parent.currentStatus == 'ascending' || this.parent.currentStatus == 'hovering' ) {
+    } else if ( this.parent.currentStatus == 'waiting' || this.parent.currentStatus == 'ascending' || this.parent.currentStatus == 'hovering' || this.parent.currentStatus == 'breaking' || this.parent.currentStatus == 'ending' ) {
 
         // Throw a ray to check if it intersects with something
         var cameraDirection = new THREE.Vector3();
@@ -172,7 +177,7 @@ TargetCamera.prototype.step = function() {
                 }
             }
 
-        } else {
+        } else if (this.parent.currentStatus == 'ascending' || this.parent.currentStatus == 'hovering') {
 
             var intersects = this.raycaster.intersectObjects( this.prizes, true );
             if (intersects.length > 0) {
@@ -190,6 +195,33 @@ TargetCamera.prototype.step = function() {
 
                         this.incrementPoints( intersectMesh.userData.index, intersectMesh.userData.points );
                     }
+                }
+            }
+
+        } else if (this.parent.currentStatus == 'breaking' || this.parent.currentStatus == 'ending') {
+
+
+            var intersects = this.raycaster.intersectObject( this.parent.parent.stage.score.mesh );
+            if (intersects.length > 0) {
+
+                if (intersects[0].object == this.parent.parent.stage.score.mesh) {
+
+                    this.onGazeOverReset();
+                }
+            } else {
+
+                this.onGazeOutReset();
+            }
+
+            if (this.isGazeReset) {
+
+                this.gazeResetTime = (new Date() - this.gazeResetStartTime) / 1000;
+
+                // ROLLOVER IN THE TARGET!
+
+                if (this.gazeResetTime > this.gazeResetTotalTime) {
+
+                    this.onGazeEndReset();
                 }
             }
         }
@@ -227,6 +259,33 @@ TargetCamera.prototype.onGazeEndIntro = function() {
         opacity : 1.0,
         ease : Linear.none
     });
+};
+
+TargetCamera.prototype.onGazeOverReset = function() {
+
+    if (!this.isGazeReset) {
+
+        this.isGazeReset = true;
+        this.gazeResetStartTime = new Date();
+
+        this.parent.parent.stage.score.onOverReset();
+    }
+};
+
+TargetCamera.prototype.onGazeOutReset = function() {
+
+    if (this.isGazeReset) {
+
+        this.isGazeReset = false;
+        this.gazeResetTime = 0;
+
+        this.parent.parent.stage.score.onOutReset();
+    }
+};
+
+TargetCamera.prototype.onGazeEndReset = function() {
+
+    this.parent.parent.reset();
 };
 
 TargetCamera.prototype.onJump = function() {
