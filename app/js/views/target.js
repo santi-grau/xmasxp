@@ -4,11 +4,11 @@ var Target = function( parent ){
 
     this.parent = parent;
     this.position = new THREE.Vector3(0, 1.5, -5);
-    this.colorNoHit = "#333333";
+    this.colorNoHit = "#666666";
     this.colorHit = "#00cc00";
     this.colorDescend = "#ffffff";
     this.color = this.colorNoHit;
-    this.scale = 4.0;
+    this.scale = 4.5;
     this.sto = 0;
     this.sti = 0;
 
@@ -53,7 +53,7 @@ var Target = function( parent ){
 Target.prototype.reset = function() {
 
     this.color = this.colorNoHit;
-    this.scale = 4.0;
+    this.scale = 4.5;
     this.alpha = 1.0;
 
     this.line.visible = false;

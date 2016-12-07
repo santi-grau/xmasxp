@@ -5,7 +5,6 @@ var TargetCamera = function( parent, prizes ){
     this.prizes = prizes.slice();
     this.speedTarget = this.parent.target;
     this.speedLineMultiplier = 1.0;
-    this.timeGazeString = '0';
 
     this.isGazeIntro = false;
     this.gazeIntroTime = 0;
@@ -16,6 +15,9 @@ var TargetCamera = function( parent, prizes ){
     this.gazeResetTime = 0;
     this.gazeResetStartTime = 0;
     this.gazeResetTotalTime = 2;
+
+    this.percentageTime = 0;
+    this.isOver = false;
 
     this.showTime = true;
     this.showSpeed = false;
@@ -57,12 +59,13 @@ var TargetCamera = function( parent, prizes ){
 TargetCamera.prototype.reset = function() {
 
     this.speedLineMultiplier = 1.0;
-    this.timeGazeString = '0';
 
     this.isGazeIntro = false;
     this.gazeIntroTime = 0;
     this.gazeIntroStartTime = 0;
     this.gazeIntroTotalTime = 3.25;
+    this.percentageTime = 0;
+    this.isOver = false;
 
     this.mesh.position.set( 0, 0, -5 );
 
@@ -76,27 +79,35 @@ TargetCamera.prototype.drawTargetCamera = function () {
 
     var halfSize = this.canvas.width * 0.5;
 
-    this.context.strokeStyle = "#000000";
+    this.context.strokeStyle = '#000000';
     this.context.lineWidth = 15;
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.context.beginPath();
-    this.context.arc(halfSize, halfSize, 50, 0, 2 * Math.PI);
+    this.context.arc(halfSize, halfSize, (this.isOver)? 60 : 50, 0, 2 * Math.PI);
     this.context.stroke();
 
     if (this.showSpeed) {
 
         var speedPercent = this.parent.descendingSpeed / this.parent.maxDescendingSpeed;
         var speed = (100 * speedPercent * this.speedLineMultiplier);
-        this.context.fillStyle = "#cc0000";
+        this.context.fillStyle = '#cc0000';
         this.context.fillRect(halfSize - speed, 220, speed, 15);
         this.context.fillRect(halfSize, 220, speed, 15);
     }
 
-    if (this.showTime) {
+    if (this.showTime && this.percentageTime > 0) {
 
-        this.context.fillStyle = "#000000";
-        this.context.font = "Bold 60px Arial";
-        this.context.fillText(this.timeGazeString, 110, 150);
+        this.context.strokeStyle = '#cc0000';
+        this.context.lineWidth = 20;
+        this.context.lineCap = 'round';
+
+        this.context.beginPath();
+        this.context.arc(halfSize, halfSize, (this.isOver)? 95 : 85, Math.PI + 0.1, Math.PI + 0.1 + ((Math.PI - 0.2) * this.percentageTime));
+        this.context.stroke();
+
+        this.context.beginPath();
+        this.context.arc(halfSize, halfSize, (this.isOver)? 95 : 85, 0.1, 0.1 + ((Math.PI - 0.2) * this.percentageTime));
+        this.context.stroke();
     }
 
     this.texture.needsUpdate = true;
@@ -168,7 +179,7 @@ TargetCamera.prototype.step = function() {
             if (this.isGazeIntro) {
 
                 this.gazeIntroTime = (new Date() - this.gazeIntroStartTime) / 1000;
-                this.timeGazeString = Math.floor(this.gazeIntroTime).toString();
+                this.percentageTime = this.gazeIntroTime / this.gazeIntroTotalTime;
                 this.drawTargetCamera();
 
                 if (this.gazeIntroTime > this.gazeIntroTotalTime) {
@@ -216,8 +227,8 @@ TargetCamera.prototype.step = function() {
             if (this.isGazeReset) {
 
                 this.gazeResetTime = (new Date() - this.gazeResetStartTime) / 1000;
-
-                // ROLLOVER IN THE TARGET!
+                this.percentageTime = this.gazeResetTime / this.gazeResetTotalTime;
+                this.drawTargetCamera();
 
                 if (this.gazeResetTime > this.gazeResetTotalTime) {
 
@@ -232,8 +243,10 @@ TargetCamera.prototype.onGazeOverIntro = function() {
 
     if (!this.isGazeIntro) {
 
+        this.isOver = true;
         this.isGazeIntro = true;
         this.gazeIntroStartTime = new Date();
+        if (this.tweenGaze) this.tweenGaze.kill();
     }
 };
 
@@ -241,15 +254,24 @@ TargetCamera.prototype.onGazeOutIntro = function() {
 
     if (this.isGazeIntro) {
 
+        this.isOver = false;
         this.isGazeIntro = false;
         this.gazeIntroTime = 0;
-        this.timeGazeString = '0';
+
+        if (this.tweenGaze) this.tweenGaze.kill();
+        this.tweenGaze = TweenMax.to( this, 0.5, {
+            percentageTime : 0,
+            ease : Power2.easeInOut,
+            onUpdate : this.drawTargetCamera.bind(this)
+        });
+
         this.drawTargetCamera();
     }
 };
 
 TargetCamera.prototype.onGazeEndIntro = function() {
 
+    this.isOver = false;
     this.showTime = false;
     this.showSpeed = true;
     this.parent.onGazeEndIntro();
@@ -263,10 +285,15 @@ TargetCamera.prototype.onGazeEndIntro = function() {
 
 TargetCamera.prototype.onGazeOverReset = function() {
 
+    this.showTime = true;
+    this.showSpeed = false;
+
     if (!this.isGazeReset) {
 
+        this.isOver = true;
         this.isGazeReset = true;
         this.gazeResetStartTime = new Date();
+        if (this.tweenGaze) this.tweenGaze.kill();
 
         this.parent.parent.stage.score.onOverReset();
     }
@@ -276,8 +303,16 @@ TargetCamera.prototype.onGazeOutReset = function() {
 
     if (this.isGazeReset) {
 
+        this.isOver = false;
         this.isGazeReset = false;
         this.gazeResetTime = 0;
+
+        if (this.tweenGaze) this.tweenGaze.kill();
+        this.tweenGaze = TweenMax.to( this, 0.5, {
+            percentageTime : 0,
+            ease : Power2.easeInOut,
+            onUpdate : this.drawTargetCamera.bind(this)
+        });
 
         this.parent.parent.stage.score.onOutReset();
     }
@@ -285,6 +320,7 @@ TargetCamera.prototype.onGazeOutReset = function() {
 
 TargetCamera.prototype.onGazeEndReset = function() {
 
+    this.isOver = false;
     this.parent.parent.reset();
 };
 

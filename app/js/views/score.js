@@ -40,6 +40,7 @@ Score.prototype.reset = function() {
 	this.points = 0;
 	this.altitude = 0;
 	this.bonus = false;
+	this.isOver = false;
 
 	this.drawTexture();
 };
