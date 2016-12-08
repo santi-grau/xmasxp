@@ -4,7 +4,9 @@ var PrizePoints = function( parent, points ){
 
 	this.points = points;
 	this.available = true;
-	this.audio = new Audio("assets/pickPrize.mp4");
+
+	var audioFile = (this.parent.parent.isCardboard)? "assets/pickPrize.mp4" : "assets/pickPrize.ogg";
+	this.audio = new Audio(audioFile);
 
 
 	this.createMesh();
