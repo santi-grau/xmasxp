@@ -5,12 +5,11 @@ html
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no')
     title #{title}
-    meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel='stylesheet', id='mainStylesheet' href='css/main.css')
   body
     #main
     #bg
-    #intro.screen1
+    #intro
         #screen1.screenHolder
             #title SKI JUMP
             .over VR
@@ -22,6 +21,8 @@ html
                 | 
                 .loading loading
         #screen2.screenHolder
+            #gaze
+            #target
             #title &nbsp
             .copy(style='white-space:pre;')
                 | --------------------------------------

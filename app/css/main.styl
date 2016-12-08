@@ -44,24 +44,12 @@ body
 		z-index 10
 		color #ffffff
 		font-family mono;
-		&.screen1
-			#screen1
-				display block
-		&.screen2
-			#screen2
-				display block
-		&.screen3
-			#screen3
-				display block
-		&.screen4
-			#screen4
-				display block
 		.screenHolder
-			display none
 			opacity 0
 			transform translate3d(0px,10px,0px)
 			transition opacity 2s, transform 1s;
 			top 50%
+			left 0
 			position absolute
 			width 100%
 			margin-top -120px
@@ -85,6 +73,23 @@ body
 					opacity 0
 					&.active
 						opacity 1
+			&#screen2
+				#gaze
+					position absolute
+					width 100%
+					top 0
+					left 0
+					height 34px
+					background url(../assets/gaze.png) center center no-repeat
+					background-size auto 34px
+				#target
+					position absolute
+					width 100%
+					top 0
+					left 0
+					height 15px
+					background url(../assets/target.png) center center no-repeat
+					background-size auto 15px
 			&#screen4
 				.copy
 					.option

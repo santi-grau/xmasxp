@@ -7,6 +7,7 @@ var Loading = function( parent ){
 	this.buttonModeEl = document.querySelector('#mode-button');
 	this.buttonAudioEl = document.querySelector('#audio-toggle');
 	this.loadingBgEl = document.querySelector('#intro');
+	this.introColorEl = document.querySelector('#bg');
 
 	this.isAudioPlaying = true;
 
@@ -47,7 +48,10 @@ Loading.prototype.onClickButton = function(e) {
 
 		opacity: 0.001,
 		ease: Power2.easeInOut,
-		onComplete: function () { this.loadingBgEl.style.display = 'none'; }.bind( this )
+		onComplete: function () {
+			this.loadingBgEl.style.display = 'none';
+			this.introColorEl.style.display = 'none';
+		}.bind( this )
 	} );
 
 	TweenMax.to( this.buttonEl, 1.0, {

@@ -329,6 +329,7 @@ App.prototype.onResize = function(e) {
 App.prototype.step = function(time) {
 
     if( this.onIntro ){
+        this.intro.step( time );
         this.introCamera.position.set( Math.sin( (time + 50000) / 50000 ) * 250, 300 + Math.cos( time / 50000 ) * 150, Math.cos( time / 50000 ) * 300 );
         this.introCamera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
