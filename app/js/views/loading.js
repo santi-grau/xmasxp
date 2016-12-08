@@ -3,25 +3,30 @@ var Loading = function( parent ){
 
 	this.parent = parent;
 	
-	this.buttonEl = document.querySelector('#start-button');
+	this.buttonEl1 = document.querySelector('#start-button1');
+	this.buttonEl2 = document.querySelector('#start-button2');
+	this.buttonEl3 = document.querySelector('#start-button3');
 	this.buttonModeEl = document.querySelector('#mode-button');
 	this.buttonAudioEl = document.querySelector('#audio-toggle');
 	this.loadingBgEl = document.querySelector('#intro');
 	this.introColorEl = document.querySelector('#bg');
+	this.introEl = document.getElementById('intro');
 
 	this.isAudioPlaying = true;
 
 	if (this.parent.isWebVR) {
-
-		this.buttonEl.innerText = "GO WEBVR";
+		// this.buttonEl.innerText = "GO WEBVR";
+		this.introEl.classList.add('webvr');
 
 	} else if (this.parent.isCardboard) {
 
-		this.buttonEl.innerText = "GO CARDBOARD";
+		// this.buttonEl.innerText = "GO CARDBOARD";
+		this.introEl.classList.add('cardboard');
 
 	} else {
 
-		this.buttonEl.innerText = "GO DESKTOP";
+		// this.buttonEl.innerText = "GO DESKTOP";
+		this.introEl.classList.add('desktop');
 	}
 
 	this.addEventListeners();
@@ -29,7 +34,9 @@ var Loading = function( parent ){
 
 Loading.prototype.addEventListeners = function(){
 
-	this.buttonEl.addEventListener( 'click', this.onClickButton.bind(this), false );
+	this.buttonEl1.addEventListener( 'click', this.onClickButton.bind(this), false );
+	this.buttonEl2.addEventListener( 'click', this.onClickButton.bind(this), false );
+	this.buttonEl3.addEventListener( 'click', this.onClickButton.bind(this), false );
 	this.buttonModeEl.addEventListener( 'click', this.onClickButtonMode.bind(this), false );
 	this.buttonAudioEl.addEventListener( 'click', this.onClickButtonAudio.bind(this), false );
 };
@@ -54,11 +61,15 @@ Loading.prototype.onClickButton = function(e) {
 		}.bind( this )
 	} );
 
-	TweenMax.to( this.buttonEl, 1.0, {
+	TweenMax.to( this.buttonEl1, 1.0, {
 
 		opacity: 0.001,
 		ease: Power2.easeInOut,
-		onComplete: function () { this.buttonEl.style.display = 'none'; }.bind( this )
+		onComplete: function () {
+			this.buttonEl1.style.display = 'none';
+			this.buttonEl2.style.display = 'none';
+			this.buttonEl3.style.display = 'none';
+		}.bind( this )
 	} );
 
 	this.buttonModeEl.style.display = 'block';

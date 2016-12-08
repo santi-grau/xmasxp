@@ -39,11 +39,37 @@ body
 	#intro
 		text-rendering geometricPrecision 
 		width 100%
+		left 0
+		// margin-left -300px
 		height 100%
 		position fixed
 		z-index 10
 		color #ffffff
 		font-family mono;
+		&.webvr
+			#screen4
+				.copy
+					.option
+						&.o2
+							display block
+							margin-left -40px
+		&.cardboard
+			#screen4
+				.copy
+					.option
+						&.o1
+							display block
+						&.o2
+							display block
+							margin-left 55px
+		&.desktop
+			#screen4
+				.copy
+					.option
+						&.o3
+							display block
+							margin-left -40px
+						
 		.screenHolder
 			opacity 0
 			transform translate3d(0px,10px,0px)
@@ -52,7 +78,7 @@ body
 			left 0
 			position absolute
 			width 100%
-			margin-top -120px
+			margin-top -80px
 			text-align center
 			font-size 12px
 			&.active
@@ -68,6 +94,7 @@ body
 				top -38px
 				left 150px
 			.copy
+				background #ff0000
 				line-height 14px
 				.loading
 					opacity 0
@@ -90,6 +117,16 @@ body
 					height 15px
 					background url(../assets/target.png) center center no-repeat
 					background-size auto 15px
+					opacity 1
+			&#screen3
+				#prizes
+					position absolute
+					width 100%
+					top -45px
+					left 0
+					height 106px
+					background url(../assets/prizes.png) center center no-repeat
+					background-size auto 106px
 			&#screen4
 				.copy
 					.option
@@ -97,6 +134,7 @@ body
 						left 50%
 						color white
 						text-decoration none
+						display none
 						img
 							position absolute
 							left 50%
@@ -107,6 +145,9 @@ body
 							margin-left -180px
 						&.o2
 							margin-left 55px
+						&.o3
+							img
+								top -30px
 		#loader
 			width 100px
 			height 100px
@@ -115,15 +156,6 @@ body
 			top 50%
 			margin-left -50px
 			margin-top -50px
-	#start-button
-		position fixed
-		z-index 20
-		bottom 40px
-		left 50%
-		margin-left -50px
-		width 100px
-		height 40px
-		background-color #ffffff
 	#mode-button
 		position absolute
 		z-index 20

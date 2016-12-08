@@ -25,7 +25,7 @@ var Intro = function( parent ) {
 Intro.prototype.swapScreen = function( ) {
 	for( var i = 0 ; i < this.screens.length ; i++ ) this.screens[ i ].classList.remove('active');
 	this.screens[ this.currentScreen ].classList.add('active');
-	// if( this.currentScreen < this.screens.length - 1 ) setTimeout( this.swapScreen.bind(this), 5000 );
+	if( this.currentScreen < this.screens.length - 1 ) setTimeout( this.swapScreen.bind(this), 5000 );
 	this.currentScreen++;
 }
 
