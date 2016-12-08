@@ -15,7 +15,7 @@ var PrizePoints = function( parent, points ){
 
 PrizePoints.prototype.createMesh = function() {
 
-    this.plane = new THREE.PlaneBufferGeometry( 8, 8 );
+    this.plane = new THREE.PlaneBufferGeometry( 12, 12 );
 
     this.canvas = document.createElement('canvas');
     this.canvas.width = 256;
@@ -39,7 +39,7 @@ PrizePoints.prototype.createMesh = function() {
 PrizePoints.prototype.drawTexture = function() {
 
 	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	this.context.font = "Bold 128px Arial";
+	this.context.font = "Bold 60px matrix";
 	this.context.textAlign = "center";
 	this.context.fillStyle = "#ffffff";
     this.context.fillText(this.points, 128, 128);
@@ -60,6 +60,8 @@ PrizePoints.prototype.animate = function() {
 
 	this.available = false;
 	this.mesh.visible = true;
+	// make the points look at the player
+	this.mesh.lookAt(this.parent.parent.player.group.position);
 
 	if (this.parent.parent.loading.isAudioPlaying) {
 
