@@ -55,8 +55,10 @@ var App = function() {
     this.introCamera.lookAt(new THREE.Vector3( 0,0,0 ) )
     // this.introCamera.rotation.y = 0
 
-    this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
-    this.renderer.setPixelRatio(Math.max( 1, window.devicePixelRatio * 0.75));
+    this.renderer = new THREE.WebGLRenderer({ alpha : false, antialias : true });
+    this.renderer.autoClear = false;
+    var maxDPR = (this.isCardboard)? window.devicePixelRatio * 1 : window.devicePixelRatio * 0.75;
+    this.renderer.setPixelRatio(Math.max( 1, maxDPR ));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -108,6 +110,7 @@ var App = function() {
     }
 
     window.addEventListener('resize', this.onResize.bind(this), true);
+    window.addEventListener('orientationchange', this.onResize.bind(this), true);
 
     document.addEventListener( 'pointerlockchange', this.onPointerLockChange.bind(this), false );
     document.addEventListener( 'webkitpointerlockchange', this.onPointerLockChange.bind(this), false );
@@ -207,7 +210,7 @@ App.prototype.setupDeviceOrientation = function() {
     this.effect = new THREE.VREffect(this.renderer);
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
-    if (this.isIOS) this.cancelSleep();
+    // if (this.isIOS) this.cancelSleep();
 
     this.loading.changeButton('cardboard');
 };
@@ -219,8 +222,8 @@ App.prototype.setupCardboad = function() {
     this.effect = new THREE.StereoEffect(this.renderer);
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
-    this.fullscreen();
-    if (this.isIOS) this.preventSleep();
+    // this.fullscreen();
+    // if (this.isIOS) this.preventSleep();
 
 	this.loading.changeButton('phone');
 };
@@ -349,6 +352,7 @@ App.prototype.step = function(time) {
         // this.introCamera.position.set( 0, 80, -220 );
         // this.introCamera.lookAt( new THREE.Vector3( 0, 20, -220 ) );
     }
+
     if (this.isWebVR) {
 
         this.effect.requestAnimationFrame( this.step.bind(this) );
@@ -374,6 +378,8 @@ App.prototype.step = function(time) {
     //     this.viveController1.update();
     //     this.viveController2.update();
     // }
+
+    this.renderer.clear();
 
      if( !this.onIntro ) this.effect.render( this.scene, this.activeCamera );
      if( this.onIntro ) this.effect.render( this.scene, this.introCamera ); // camera to debug score, delete when done

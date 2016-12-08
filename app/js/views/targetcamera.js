@@ -59,10 +59,10 @@ var TargetCamera = function( parent, prizes ){
     this.raycaster = new THREE.Raycaster();
 };
 TargetCamera.prototype.updateColor = function( col1, col2 ) {
-    
+
     this.col1 = col1;
     this.col2 = col2;
-    
+
     this.line.material.color.setRGB( col1[0], col1[1], col1[2] );
     this.line.material.needsUpdate = true;
 

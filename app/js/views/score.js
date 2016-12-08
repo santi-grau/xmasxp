@@ -48,6 +48,7 @@ Score.prototype.reset = function() {
 };
 
 Score.prototype.drawTexture = function() {
+
 	// if( this.bonus ) return;
 
 	var col1 = '#000000';

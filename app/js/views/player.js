@@ -109,7 +109,7 @@ Player.prototype.waiting = function(){
 
 Player.prototype.onStart = function(){
 
-	this.speed = 0.1
+	this.speed = (this.parent.isCardboard)? 0.3 : 0.1;
 	this.currentStatus = 'descending';
 	this.target.show();
 
@@ -183,6 +183,7 @@ Player.prototype.onJump = function(){
 	this.minFriction = 0.005;
 	this.maxFriction = 0.01;
 
+
 	this.jumpOrigin = this.group.position;
 	this.speedUp = Math.sin( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 	this.speedForward = Math.cos( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
@@ -191,7 +192,7 @@ Player.prototype.onJump = function(){
 	TweenMax.to( this.wind, 0.2, { mul : 0.2, ease : Power2.easeOut });
 
 
-	TweenMax.to( this, 2, { motionSpeed : 0.01, ease : Power2.easeOut });
+	TweenMax.to( this, (this.parent.isCardboard)? 4 : 2, { motionSpeed : 0.01, ease : Power2.easeOut });
 	TweenMax.to( this.camera, 2, { fov : 40, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
 	this.currentStatus = 'ascending'
@@ -231,6 +232,9 @@ Player.prototype.ascending = function( time ){
 	this.position = new THREE.Vector3( this.jumpOrigin.x, ( this.jumpOrigin.y + this.speedUp ), ( this.jumpOrigin.z - this.speedForward * this.motionSpeed ) );
 	this.rotation += ( -this.rotation ) * 0.3;
 	this.altitude = this.getAltitude();
+
+	// document.getElementById('debug').innerText = this.originalSpeedUp + ' --> ' + this.speedUp.toFixed(3) + ' --> ' + this.fps;
+
 	if( this.speedUp < 0 ) this.onPeak();
 	this.updateScoreAltitude();
 

@@ -16,10 +16,10 @@ var Prizes = function( parent ){
 
 	this.i1 = 0;
 	this.i2 = 0;
-	this.totalPrizes = 100;
+	this.totalPrizes = (this.parent.isCardboard)? 80 : 100;
 	this.prizes = [];
 	this.minDistance = 20;
-	this.maxDistance = 300;
+	this.maxDistance = (this.parent.isCardboard)? 250 : 300;
 	this.minHeight = 100;
 	this.maxHeight = 140;
 	this.group = new THREE.Object3D();
@@ -213,16 +213,19 @@ Prizes.prototype.removePrizeWithIndex = function(index) {
         }
     });
 
-    TweenMax.to( prizeMesh.userData, 1.0, {
+    if (!this.parent.isCardboard) {
 
-        explosion : 1.0,
-        ease : Power2.easeInOut,
-        onUpdate : function () {
+	    TweenMax.to( prizeMesh.userData, 1.0, {
 
-        	this.removeWireframe( prizeMesh.children[1].geometry, prizeMesh.userData.explosion, prizeMesh.userData.originalPositions, prizeMesh.userData.explodePositions );
+	        explosion : 1.0,
+	        ease : Power2.easeInOut,
+	        onUpdate : function () {
 
-        }.bind( this )
-    });
+	        	this.removeWireframe( prizeMesh.children[1].geometry, prizeMesh.userData.explosion, prizeMesh.userData.originalPositions, prizeMesh.userData.explodePositions );
+
+	        }.bind( this )
+	    });
+    }
 };
 
 Prizes.prototype.updateWireframeColor = function( color ){
