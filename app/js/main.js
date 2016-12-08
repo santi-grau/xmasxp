@@ -56,7 +56,7 @@ var App = function() {
     // this.introCamera.rotation.y = 0
 
     this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setPixelRatio(Math.max( 1, window.devicePixelRatio * 0.75));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 

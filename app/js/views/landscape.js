@@ -71,6 +71,7 @@ Landscape.prototype.treeGeometryReady = function( msg ){
 
 }
 Landscape.prototype.step = function( time ){
+
 	var raycastAmount = 100;
 	if( this.placedHouses !== null && this.houseCoords && this.placedHouses < this.houseCoords.length ){
 		for( var j = this.placedHouses ; j < this.placedHouses + raycastAmount ; j++ ){

@@ -26,7 +26,7 @@ body
 		top 0
 		left 0
 		z-index 1
-	
+
 	#bg
 		background -moz-linear-gradient(bottom,  #c6caff 0%, #ffeee9 100%)
 		background -webkit-linear-gradient(bottom,  #c6caff 0%,#ffeee9 100%)
@@ -37,7 +37,7 @@ body
 		height 100%
 		z-index 9
 	#intro
-		text-rendering geometricPrecision 
+		text-rendering geometricPrecision
 		width 100%
 		left 0
 		// margin-left -300px
@@ -45,7 +45,7 @@ body
 		position fixed
 		z-index 10
 		color #ffffff
-		font-family mono;
+		font-family mono
 		&.webvr
 			#screen4
 				.copy
@@ -69,7 +69,7 @@ body
 						&.o3
 							display block
 							margin-left -40px
-						
+
 		.screenHolder
 			opacity 0
 			transform translate3d(0px,10px,0px)
@@ -89,15 +89,19 @@ body
 				font-size 59px
 				position relative
 				top 20px
+				transform translate3d(0px,0px,0px)
 			.over
 				position relative
 				top -38px
 				left 150px
+				transform translate3d(0px,0px,0px)
 			.copy
 				background #ff0000
 				line-height 14px
+				transform translate3d(0px,0px,0px)
 				.loading
 					opacity 0
+					transform translate3d(0px,0px,0px)
 					&.active
 						opacity 1
 			&#screen2
