@@ -19,6 +19,8 @@ var WebVR = require('./scripts/vr/WebVR');
 
 var App = function() {
 
+    this.onIntro = true;
+
     this.forceNonWebVR = false;
     this.isWebVR = (THREE.WebVR.isAvailable() === true && !this.forceNonWebVR);
     this.isCardboard = !this.isWebVR && this.isTouchDevice();
@@ -42,13 +44,14 @@ var App = function() {
     // three stuff
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
-    this.camera.position.set( 0, 30, -200 );
-    this.camera.rotation.x = Math.PI / 2;
+    this.camera.position.set( 200, 500, 0 );
+    this.camera.lookAt(new THREE.Vector3( 0,0,0 ) )
 
-    // delete this
-    // this.designCamera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
-    // this.designCamera.position.set( 0, 37, -200 );
-    // this.designCamera.rotation.y = 0
+    // // delete this
+    this.introCamera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
+    this.introCamera.position.set( 300, 400, 0 );
+    this.introCamera.lookAt(new THREE.Vector3( 0,0,0 ) )
+    // this.introCamera.rotation.y = 0
 
     this.renderer = new THREE.WebGLRenderer({ alpha : true, antialias : true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -152,7 +155,7 @@ App.prototype.reset = function() {
 };
 
 App.prototype.onClickStart = function() {
-
+    this.onIntro = false;
     if (this.isDesktop) {
 
         if (this.hasPointerLock) this.setupPointerLock();
@@ -312,7 +315,10 @@ App.prototype.onResize = function(e) {
 }
 
 App.prototype.step = function(time) {
-
+    if( this.onIntro ){
+        this.introCamera.position.set( Math.sin( (time + 50000) / 50000 ) * 250, 300 + Math.cos( time / 50000 ) * 150, Math.cos( time / 50000 ) * 300 );
+        this.introCamera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+    }
     if (this.isWebVR) {
 
         this.effect.requestAnimationFrame( this.step.bind(this) );
@@ -338,8 +344,8 @@ App.prototype.step = function(time) {
         this.viveController2.update();
     }
 
-    this.effect.render( this.scene, this.activeCamera );
-    // this.effect.render( this.scene, this.designCamera ); // camera to debug score, delete when done
+     if( !this.onIntro ) this.effect.render( this.scene, this.activeCamera );
+     if( this.onIntro ) this.effect.render( this.scene, this.introCamera ); // camera to debug score, delete when done
 };
 
 var app = new App();

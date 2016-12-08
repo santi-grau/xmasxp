@@ -4,6 +4,7 @@ var LoadingCanvas = require('./loadingcanvas');
 var Loading = function( parent ){
 
 	this.parent = parent;
+	
 	this.buttonEl = document.querySelector('#start-button');
 	this.buttonModeEl = document.querySelector('#mode-button');
 	this.loadingBgEl = document.querySelector('#intro');

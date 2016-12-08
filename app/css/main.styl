@@ -3,6 +3,11 @@
 	src: url('../assets/ScreenMatrix.ttf');
 }
 
+@font-face {
+	font-family: 'mono';
+	src: url('../assets/Mono.ttf');
+}
+
 html
 	width 100%
 	height 100%
@@ -21,25 +26,51 @@ body
 		top 0
 		left 0
 		z-index 1
-	#speed
+	
+	#bg
+		background -moz-linear-gradient(bottom,  #c6caff 0%, #ffeee9 100%)
+		background -webkit-linear-gradient(bottom,  #c6caff 0%,#ffeee9 100%)
+		background linear-gradient(bottom top,  #c6caff 0%,#ffeee9 100%)
+		mix-blend-mode multiply
 		position fixed
-		z-index 2
-	#position
-		top 20px
-		position fixed
-		z-index 2
-	#altitude
-		top 40px
-		position fixed
-		z-index 2
+		width 100%
+		height 100%
+		z-index 9
 	#intro
 		width 100%
 		height 100%
 		position fixed
 		z-index 10
-		top 0
-		left 0
-		background-color #cc0000
+		color #ffffff
+		font-family mono;
+		&.screen1
+			#screen1
+				display block
+		#screen1
+			display none
+			opacity 0
+			transform translate3d(0px,10px,0px)
+			transition opacity 2s, transform 1s;
+			top 50%
+			position absolute
+			width 100%
+			margin-top -120px
+			text-align center
+			font-size 12px
+			&.active
+				transform translate3d(0px,0px,0px)
+				opacity 1
+			#title
+				color #ffffff
+				font-size 59px
+				position relative
+				top 20px
+			.over
+				position relative
+				top -38px
+				left 150px
+			.copy
+				line-height 14px
 		#loader
 			width 100px
 			height 100px

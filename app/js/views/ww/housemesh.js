@@ -1,6 +1,7 @@
 module.exports = function( self ){
 	self.addEventListener('message',function (msg){
 		var data = JSON.parse( msg.data );
+		data.imgData = data.imgData.split(',');
 		
 		var vertices = [];
 		var colors = [];

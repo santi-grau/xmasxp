@@ -2,32 +2,30 @@ var WebWorker = require('webworkify');
 
 var Landscape = function( parent ){
 	this.parent = parent;
-	this.treesCount  = 1000;
 
-	var landscapemap = require('./../../assets/landscapemap2.svg');
+	var landscapemap = require('./../../assets/landscapemap3.svg');
 	var encodedData = window.btoa(landscapemap);
 
-	var myImage = new Image(1000, 1000);
+	var textureSize = 1000;
+	var myImage = new Image(textureSize, textureSize);
 	myImage.src = 'data:image/svg+xml;base64,' + encodedData;
 	this.canvas = document.createElement('canvas');
-	this.canvas.width = 1000;
-	this.canvas.height = 1000;
+	this.canvas.width = textureSize;
+	this.canvas.height = textureSize;
 	this.context = this.canvas.getContext('2d');
-	this.context.drawImage(myImage, 0, 0);
-	var imgData = this.context.getImageData( 0, 0, 1000, 1000 );
+	this.context.drawImage(myImage, 0, 0, textureSize, textureSize);
+	var imgData = this.context.getImageData( 0, 0, textureSize, textureSize );
 
 	this.group = new THREE.Object3D();
 
-
-	// esto va raruno
-
 	var geoWorker = WebWorker( require( './ww/treemesh' ) );
 	geoWorker.onmessage = this.treeGeometryReady.bind(this);
-	geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data } ) );
+	geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data.toString() } ) );
+
 
 	var geoWorker = WebWorker( require( './ww/houseMesh' ) );
 	geoWorker.onmessage = this.houseGeometryReady.bind(this);
-	geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data } ) );
+	geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data.toString() } ) );
 
 }
 Landscape.prototype.houseGeometryReady = function( msg ){
@@ -73,8 +71,9 @@ Landscape.prototype.treeGeometryReady = function( msg ){
 
 }
 Landscape.prototype.step = function( time ){
+	var raycastAmount = 100;
 	if( this.placedHouses !== null && this.houseCoords && this.placedHouses < this.houseCoords.length ){
-		for( var j = this.placedHouses ; j < this.placedHouses + 10 ; j++ ){
+		for( var j = this.placedHouses ; j < this.placedHouses + raycastAmount ; j++ ){
 			var raycaster = new THREE.Raycaster( new THREE.Vector3( this.houseCoords[j][1], -200, -this.houseCoords[j][0] ), new THREE.Vector3( 0, 1, 0 ), 0.1, 1000 );
 			var intersects = raycaster.intersectObject( this.parent.mountainMesh );
 			if( intersects ) {
@@ -85,11 +84,11 @@ Landscape.prototype.step = function( time ){
 		}
 		this.housesMesh.geometry.attributes.position.needsUpdate = true;
 		this.housesMesh.geometry.attributes.color.needsUpdate = true;
-		this.placedHouses += 10;
+		this.placedHouses += raycastAmount;
 	}
 
 	if( this.placedTrees !== null && this.treeCoords && this.placedTrees < this.treeCoords.length ){
-		for( var j = this.placedTrees ; j < this.placedTrees + 10 ; j++ ){
+		for( var j = this.placedTrees ; j < this.placedTrees + raycastAmount ; j++ ){
 			var raycaster = new THREE.Raycaster( new THREE.Vector3( this.treeCoords[j][1], -200, -this.treeCoords[j][0] ), new THREE.Vector3( 0, 1, 0 ), 0.1, 1000 );
 			var intersects = raycaster.intersectObject( this.parent.mountainMesh );
 			if( intersects ) {
@@ -100,7 +99,7 @@ Landscape.prototype.step = function( time ){
 		}
 		this.treeMesh.geometry.attributes.position.needsUpdate = true;
 		this.treeMesh.geometry.attributes.color.needsUpdate = true;
-		this.placedTrees += 10;
+		this.placedTrees += raycastAmount;
 	}
 }
 

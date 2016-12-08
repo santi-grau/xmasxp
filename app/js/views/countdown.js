@@ -1,6 +1,6 @@
 var SimplexNoise = require('simplex-noise');
 
-var Intro = function( parent ) {
+var Countdown = function( parent ) {
 
 	this.parent = parent;
 	this.value = 0;
@@ -25,11 +25,11 @@ var Intro = function( parent ) {
 	this.drawTexture();
 };
 
-Intro.prototype.step = function( time ) {
+Countdown.prototype.step = function( time ) {
 
 };
 
-Intro.prototype.updateSeconds = function(numSeconds) {
+Countdown.prototype.updateSeconds = function(numSeconds) {
 
 	var secondsBefore = this.secondsLeft;
 	var secondsNow = Math.ceil(this.secondsTotal - numSeconds);
@@ -41,7 +41,7 @@ Intro.prototype.updateSeconds = function(numSeconds) {
 	}
 };
 
-Intro.prototype.drawTexture = function() {
+Countdown.prototype.drawTexture = function() {
 
 	var col1 = '#000000';
 	var col2 = '#ffdaa0';
@@ -78,4 +78,4 @@ Intro.prototype.drawTexture = function() {
     this.texture.needsUpdate = true;
 };
 
-module.exports = Intro;
+module.exports = Countdown;

@@ -16,7 +16,7 @@ Should be ready on port 4000
 5. Build system -> Grunt, make & do a test push to the xmas experiment git.
 6. Sounds ✔
 7. Audience -> Simple mesh with spheres (particle system with vertex shader animation?).
-8. VRify -> Desktop, WebVR vive, Mobile magic window and cardboard ✔
+8. VRify ✔
 9. Landscape ✔
 10. Scoreboard ✔
 11. Start Counter ✔
@@ -26,10 +26,12 @@ Should be ready on port 4000
 
 ### WISHLIST
 
-1. Make global scoreboard & share points / game -> We'd need to keep track on server
-2. Make character -> Could enable external view
-3. Stars
-4. Village lights
-5. Sun and moon shaders
-6. Replay race, external view
-7. Vive interaction with controllers
+1. Shadows stop working. FIX.
+2. Make global scoreboard & share points / game -> We'd need to keep track on server
+3. Make character -> Could enable external view
+4. Stars
+5. Village lights
+6. Sun and moon shaders
+7. Replay race, external view
+8. Vive interaction with controllers
+9. Skis

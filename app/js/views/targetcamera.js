@@ -195,17 +195,17 @@ TargetCamera.prototype.step = function() {
 
         if (this.parent.currentStatus == 'waiting') {
 
-            var intersects = this.raycaster.intersectObject( this.parent.parent.stage.intro.mesh );
+            var intersects = this.raycaster.intersectObject( this.parent.parent.stage.countdown.mesh );
             if (intersects.length > 0) {
 
-                if (intersects[0].object == this.parent.parent.stage.intro.mesh) {
+                if (intersects[0].object == this.parent.parent.stage.countdown.mesh) {
 
                     this.onGazeOverIntro();
                 }
             } else {
 
                 this.onGazeOutIntro();
-                this.parent.parent.stage.intro.updateSeconds( 0 );
+                this.parent.parent.stage.countdown.updateSeconds( 0 );
             }
 
             if (this.isGazeIntro) {
@@ -214,7 +214,7 @@ TargetCamera.prototype.step = function() {
                 this.percentageTime = this.gazeIntroTime / this.gazeIntroTotalTime;
                 this.drawTargetCamera();
 
-                this.parent.parent.stage.intro.updateSeconds( this.gazeIntroTime );
+                this.parent.parent.stage.countdown.updateSeconds( this.gazeIntroTime );
 
                 if (this.gazeIntroTime > this.gazeIntroTotalTime) {
 

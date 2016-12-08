@@ -4,7 +4,7 @@ var pole = require('../../assets/pole.obj');
 
 // var Skybox = require('./skybox'); // Scoreboard
 var Score = require('./score'); // Scoreboard
-var Intro = require('./intro'); // Introboard
+var Countdown = require('./countdown'); // Introboard
 var Landscape = require('./landscape'); // Trees, village and decoration on stage
 
 var OBJLoader = require('three-obj-loader')(THREE);
@@ -46,7 +46,7 @@ var Stage = function( parent ){
 	}.bind(this) );
 
 	this.score = new Score( this );
-	this.intro = new Intro( this );
+	this.countdown = new Countdown( this );
 	this.landscape = new Landscape( this );
 	// this.skybox = new Skybox( this );
 
@@ -64,7 +64,7 @@ var Stage = function( parent ){
 		this.lamps,
 		this.poles,
 		this.score.mesh,
-		this.intro.mesh,
+		this.countdown.mesh,
 		this.landscape.group
 		// this.skybox.mesh
 	);

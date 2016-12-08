@@ -1,10 +1,14 @@
 module.exports = function( self ){
 	self.addEventListener('message',function (msg){
+		// var data = {}
 		var data = JSON.parse( msg.data );
-		
+		data.imgData = data.imgData.split(',');
+
 		var vertices = [];
 		var colors = [];
 		var coords = [];
+
+	
 
 		var verts = [ -0.5, 0, -0.5, 0, 1, 0, 0.5, 0, -0.5, 0.5, 0, -0.5, 0, 1, 0, 0.5, 0, 0.5, 0.5, 0, 0.5,0, 1, 0, -0.5, 0, 0.5, -0.5, 0, 0.5, 0, 1, 0,-0.5, 0, -0.5 ];
 
