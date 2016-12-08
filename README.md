@@ -26,7 +26,7 @@ Should be ready on port 4000
 
 ### WISHLIST
 
-1. Shadows stop working. FIX.
+1. Shadows stop working. FIX. ✔
 2. Make global scoreboard & share points / game -> We'd need to keep track on server
 3. Make character -> Could enable external view
 4. Stars
