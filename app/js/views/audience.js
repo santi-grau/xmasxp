@@ -9,35 +9,38 @@ var Audience = function( parent ){
 
 
 	var vs = '' +
-		'	attribute float size;' +
-		'	attribute vec3 customColor;' +
-		'	varying vec3 vColor;' +
-		'	void main() {' +
-		'		vColor = customColor;' +
-		'		vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );' +
-		'		gl_PointSize = size * ( 300.0 / -mvPosition.z );' +
-		'		gl_Position = projectionMatrix * mvPosition;' +
-		'	}';
+		'	attribute float size;\n' +
+		'	attribute vec3 customColor;\n' +
+		'	varying vec3 vColor;\n' +
+		'	void main() {\n' +
+		'		vColor = customColor;\n' +
+		'		vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );\n' +
+		'		gl_PointSize = size * ( 300.0 / -mvPosition.z );\n' +
+		'		gl_Position = projectionMatrix * mvPosition;\n' +
+		'	}\n';
 
 	var fs = '' +
-		'	uniform vec3 color;' +
-		'	uniform sampler2D texture;' +
-		'	varying vec3 vColor;' +
+
+	// THREE.ShaderChunk[ "common" ] + '\n' +
+	// THREE.ShaderChunk[ "fog_pars_fragment" ] + '\n' +
+
+		'	uniform vec3 color;\n' +
+		'	uniform sampler2D texture;\n' +
+		'	varying vec3 vColor;\n' +
+
+
 		'	void main() {' +
-		'		gl_FragColor = vec4( color * vColor, 1.0 );' +
-		'		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );' +
-		'	}';
+		'		gl_FragColor = vec4( color * vColor, 1.0 );\n' +
+		'		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );\n' +
 
-	var uniforms =
+        		// THREE.ShaderChunk[ "fog_fragment" ] + '\n' +
+		'	}\n';
 
-	// THREE.UniformsUtils.merge( [
+	var uniforms = {
 
-	//     THREE.UniformsLib[ "fog" ],{
-
-{			color	: { value : new THREE.Color( 0xffffff ) },
-			texture	: { value : new THREE.TextureLoader().load( "assets/particle.png" ) }
-		}
-	// ] );
+		color	: { value : new THREE.Color( 0xffffff ) },
+		texture	: { value : new THREE.TextureLoader().load( "assets/particle.png" ) }
+	};
 
 	var shaderMaterial = new THREE.ShaderMaterial( {
 
@@ -47,8 +50,6 @@ var Audience = function( parent ){
 		// blending		: THREE.AdditiveBlending,
 		// depthTest		: true,
 		transparent		: true
-		// opacity         : 1.0,
-		// fog             :false
 	});
 
 	this.geometry = new THREE.BufferGeometry();
@@ -83,7 +84,7 @@ var Audience = function( parent ){
 
 			if (i < 7) {
 
-				positions[ i3 + 0 ] = 0 + radiusX * Math.cos(0);
+				positions[ i3 + 0 ] = 0 + radiusX;
 				positions[ i3 + 1 ] = posY;
 				positions[ i3 + 2 ] = posZ + (4 * i);
 
