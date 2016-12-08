@@ -77,34 +77,34 @@ var App = function() {
     this.scene.add( axisHelper );
 
     this.activeCamera = (this.isPlayer)? this.player.camera : this.camera;
-    this.controls = new OrbitControls(this.activeCamera);
+    this.controls = (this.isWebVR)? new THREE.VRControls(this.activeCamera) : new OrbitControls(this.activeCamera);
 
     if (this.isPlayer && this.isWebVR ) {
 
         this.controls.standing = false;
 
-        // Vive controllers
-        this.viveController1 = new THREE.ViveController( 0 );
-        this.viveController1.standingMatrix = this.controls.getStandingMatrix();
-        this.scene.add( this.viveController1 );
-        this.viveController2 = new THREE.ViveController( 1 );
-        this.viveController2.standingMatrix = this.controls.getStandingMatrix();
-        this.scene.add( this.viveController2 );
+        // Vive controllers :: TODO
+        // this.viveController1 = new THREE.ViveController( 0 );
+        // this.viveController1.standingMatrix = this.controls.getStandingMatrix();
+        // this.scene.add( this.viveController1 );
+        // this.viveController2 = new THREE.ViveController( 1 );
+        // this.viveController2.standingMatrix = this.controls.getStandingMatrix();
+        // this.scene.add( this.viveController2 );
+        //
+        // var loader = new THREE.OBJLoader();
+        // loader.load( 'assets/vive-controller/vr_controller_vive_1_5.obj', function ( object ) {
+        //
+        //     var loader = new THREE.TextureLoader();
+        //     loader.setPath( 'assets/vive-controller/' );
+        //     var controller = object.children[ 0 ];
+        //     controller.material.map = loader.load( 'onepointfive_texture.png' );
+        //     controller.material.specularMap = loader.load( 'onepointfive_spec.png' );
+        //     this.viveController1.add( object.clone() );
+        //     this.viveController2.add( object.clone() );
+        //
+        // }.bind(this) );
 
-        var loader = new THREE.OBJLoader();
-        loader.load( 'assets/vive-controller/vr_controller_vive_1_5.obj', function ( object ) {
-
-            var loader = new THREE.TextureLoader();
-            loader.setPath( 'assets/vive-controller/' );
-            var controller = object.children[ 0 ];
-            controller.material.map = loader.load( 'onepointfive_texture.png' );
-            controller.material.specularMap = loader.load( 'onepointfive_spec.png' );
-            this.viveController1.add( object.clone() );
-            this.viveController2.add( object.clone() );
-
-        }.bind(this) );
-
-        document.body.appendChild( THREE.WebVR.getButton(this.effect) );
+        // document.body.appendChild( THREE.WebVR.getButton(this.effect) );
     }
 
     window.addEventListener('resize', this.onResize.bind(this), true);
@@ -173,6 +173,10 @@ App.prototype.onClickStart = function() {
         this.controls.update();
 
         this.setupDeviceOrientation();
+
+    } else if (this.isWebVR) {
+
+        this.effect.requestPresent();
     }
 };
 
@@ -188,6 +192,9 @@ App.prototype.toggleControls = function() {
         if (!this.isDeviceOrientation) this.setupDeviceOrientation();
         else this.setupCardboad();
 
+    } else if (this.isWebVR) {
+
+        this.effect.isPresenting ? this.effect.exitPresent() : this.effect.requestPresent();
     }
 };
 
@@ -328,7 +335,10 @@ App.prototype.onResize = function(e) {
 
 App.prototype.step = function(time) {
 
-    if( this.onIntro ){
+    if (this.isWebVR) time = time / 1000;
+
+    if (this.onIntro){
+
         this.intro.step( time );
         this.introCamera.position.set( Math.sin( (time + 50000) / 50000 ) * 250, 300 + Math.cos( time / 50000 ) * 150, Math.cos( time / 50000 ) * 300 );
         this.introCamera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
@@ -357,11 +367,11 @@ App.prototype.step = function(time) {
         this.controls.update();
     }
 
-    if ( this.isPlayer && this.isWebVR ) {
-
-        this.viveController1.update();
-        this.viveController2.update();
-    }
+    // if ( this.isPlayer && this.isWebVR ) {
+    //
+    //     this.viveController1.update();
+    //     this.viveController2.update();
+    // }
 
      if( !this.onIntro ) this.effect.render( this.scene, this.activeCamera );
      if( this.onIntro ) this.effect.render( this.scene, this.introCamera ); // camera to debug score, delete when done

@@ -16,6 +16,8 @@ var Player = function( parent ) {
 	this.gravity = 0.98;
 	this.currentStatus = 'waiting';
 
+	this.fps = (this.parent.isWebVR)? 90 : 60;
+
 	this.noise = timbre("noise", { mul:0.15 } ).play();
 
 	var src = "assets/wind.wav";
@@ -155,7 +157,7 @@ Player.prototype.descending = function( time ){
 	var Ef = Px * Fr;
 	var a = Ef / mass;
 
-	this.speed += a / 60;
+	this.speed += a / this.fps;
 	this.slopePosition += this.speed;
 
 	this.incrementPoints( this.speed * 100 );
@@ -224,7 +226,7 @@ Player.prototype.getAltitude = function(){
 }
 
 Player.prototype.ascending = function( time ){
-	this.speedUp -= this.gravity / 60 * this.motionSpeed;
+	this.speedUp -= this.gravity / this.fps * this.motionSpeed;
 	this.position = new THREE.Vector3( this.jumpOrigin.x, ( this.jumpOrigin.y + this.speedUp ), ( this.jumpOrigin.z - this.speedForward * this.motionSpeed ) );
 	this.rotation += ( -this.rotation ) * 0.3;
 	this.altitude = this.getAltitude();
@@ -249,7 +251,7 @@ Player.prototype.onEndHover = function(){
 }
 
 Player.prototype.hovering = function( time ){
-	this.speedUp -= this.gravity / 60 * this.motionSpeed;
+	this.speedUp -= this.gravity / this.fps * this.motionSpeed;
 	this.position = new THREE.Vector3( this.jumpOrigin.x, ( this.jumpOrigin.y + this.speedUp ), ( this.jumpOrigin.z - this.speedForward * this.motionSpeed ) );
 
 	this.altitude = this.getAltitude();
@@ -257,7 +259,7 @@ Player.prototype.hovering = function( time ){
 }
 
 Player.prototype.landing = function( time ){
-	this.speedUp -= this.gravity / 60 * this.motionSpeed;
+	this.speedUp -= this.gravity / this.fps * this.motionSpeed;
 	this.position = new THREE.Vector3( this.jumpOrigin.x, ( this.jumpOrigin.y + this.speedUp ), ( this.jumpOrigin.z - this.speedForward * this.motionSpeed ) );
 	this.rotation += ( 0 - this.rotation ) * 0.1
 
