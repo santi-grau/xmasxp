@@ -15,7 +15,7 @@ Should be ready on port 4000
 4. Gaze color scheme ✔
 5. Build system -> Grunt, make & do a test push to the xmas experiment git.
 6. Sounds ✔
-7. Audience -> Simple mesh with spheres (particle system with vertex shader animation?).
+7. Audience ✔
 8. VRify ✔
 9. Landscape ✔
 10. Scoreboard ✔
