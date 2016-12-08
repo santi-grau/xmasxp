@@ -1,4 +1,5 @@
 var SunCalc = require('suncalc');
+var TweenMax = require('gsap');
 
 var Lights = function( parent ){
 	this.parent = parent;
@@ -22,18 +23,14 @@ var Lights = function( parent ){
 	// }.bind(this), 10 );
 	this.incDebug = 0.0;
 
-	// var spotLight = new THREE.SpotLight( 0xffffff, 10, 1550 );
-	// spotLight.position.set( 46, 37, -212 );
-	// this.group.add(spotLight);
-
-
-	// var helper = new THREE.SpotLightHelper( spotLight, 10 )
-	// this.group.add(helper);
-
-	this.latlon = [ 37.3909795, -122.0360722 ];
+	var vl =  Math.random() * 180 - 90;
+	var vl2 = Math.random() * 360 - 180;
+	console.log(vl,vl2);
+	this.latlon = [ vl, vl2 ];
+	this.intiLatlon = [ vl, vl2 ];
 	this.update();
 
-	// this.getLocation();
+	this.getLocation();
 }
 Lights.prototype.makeMoon = function(){
 	this.moonGroup = new THREE.Object3D();
@@ -233,7 +230,15 @@ Lights.prototype.update = function( ){
 };
 
 Lights.prototype.getDayNightData = function( position ){
-	console.log(position);
+	this.latlonDest = position;
+	this.latlonInc = 0;
+	TweenMax.to( this, 3, { latlonInc : 1000, ease : Power2.easeOut, onUpdate : function( val ){
+		
+		this.latlon[0] = this.intiLatlon[0] + ( this.latlonDest.coords.latitude - this.intiLatlon[0] ) * this.latlonInc / 1000;
+		this.latlon[1] = this.intiLatlon[1] + ( this.latlonDest.coords.longitude - this.intiLatlon[1] ) * this.latlonInc / 1000;
+		this.update();
+
+	}.bind(this), onUpdateParams : [ this.latlonInc ] });
 };
 
 Lights.prototype.getLocation = function(){
