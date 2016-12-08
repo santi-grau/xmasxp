@@ -5,7 +5,19 @@ var PrizesPointsPool = function( parent ){
 
 	this.parent = parent;
 	this.pool = [];
-}
+
+	this.initializePool();
+};
+
+PrizesPointsPool.prototype.initializePool = function() {
+
+	var initialNumOfPrizesInPool = 4;
+	for (var i = 0; i < initialNumOfPrizesInPool; i++) {
+
+		var prizePoints = this.createPrizePointsInstance( 10 );
+		this.pool.push( prizePoints );
+	}
+};
 
 PrizesPointsPool.prototype.getPrizePointsInstance = function(points) {
 

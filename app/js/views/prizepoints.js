@@ -60,6 +60,8 @@ PrizePoints.prototype.animate = function() {
 
 	this.available = false;
 	this.mesh.visible = true;
+	// make the points look at the player
+	this.mesh.lookAt(this.parent.parent.player.group.position);
 
 	if (this.parent.parent.loading.isAudioPlaying) {
 
