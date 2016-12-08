@@ -2275,6 +2275,15 @@ var Loading = function( parent ){
 		this.introEl.classList.add('desktop');
 	}
 
+	if (this.parent.isCardboard) {
+
+		this.audio = document.createElement('audio');
+		this.audio.src = 'assets/pickPrize.m4a';
+		this.audioWind = document.createElement('audio');
+		this.audioWind.src = 'assets/wind.m4a';
+	}
+
+
 	this.addEventListeners();
 };
 
@@ -2335,6 +2344,12 @@ Loading.prototype.onClickButton = function(e) {
 	} );
 
 	this.parent.onClickStart();
+
+	if (this.parent.isCardboard) {
+
+		this.audio.play();
+		this.audioWind.play();
+	}
 };
 
 Loading.prototype.onClickButtonMode = function(e) {
@@ -2351,13 +2366,10 @@ Loading.prototype.onClickButtonAudio = function(e) {
 	this.isAudioPlaying = !this.isAudioPlaying;
 	this.buttonAudioEl.classList.toggle('playing');
 
-	if (this.isAudioPlaying) {
+	if (!this.parent.isCardboard) {
 
-		this.parent.player.noise.play();
-
-	} else {
-
-		this.parent.player.noise.pause();
+		if (this.isAudioPlaying) this.parent.player.noise.play();
+		else this.parent.player.noise.pause();
 	}
 };
 
@@ -2383,10 +2395,13 @@ var Player = function( parent ) {
 
 	this.fps = (this.parent.isWebVR)? 90 : 60;
 
-	this.noise = timbre("noise", { mul:0.15 } ).play();
+	if (!this.parent.isCardboard) {
 
-	var src = "assets/wind.wav";
-	this.wind = timbre("audio", { mul: 0.0 }).loadthis(src, function () { });
+		this.noise = timbre("noise", { mul:0.15 } ).play();
+
+		var src = "assets/wind.wav";
+		this.wind = timbre("audio", { mul: 0.0 }).loadthis(src, function () { });
+	}
 
 
 	this.slopePosition = 0;
@@ -2554,10 +2569,10 @@ Player.prototype.onJump = function(){
 	this.speedForward = Math.cos( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 
 	TweenMax.to( this, 0.2, { speed : 0, ease : Power2.easeOut });
-	TweenMax.to( this.wind, 0.2, { mul : 0.2, ease : Power2.easeOut });
+	if (!this.parent.isCardboard) TweenMax.to( this.wind, 0.2, { mul : 0.2, ease : Power2.easeOut });
 
 
-	TweenMax.to( this, (this.parent.isCardboard)? 4 : 2, { motionSpeed : 0.01, ease : Power2.easeOut });
+	TweenMax.to( this, 2, { motionSpeed : (this.parent.isCardboard)? 0.1 : 0.01, ease : Power2.easeOut });
 	TweenMax.to( this.camera, 2, { fov : 40, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
 	this.currentStatus = 'ascending'
@@ -2566,7 +2581,8 @@ Player.prototype.onJump = function(){
 
 	if (this.parent.loading.isAudioPlaying) {
 
-		this.wind.play();
+		if (this.parent.isCardboard) this.parent.loading.audioWind.play();
+		else this.wind.play();
 	}
 
 	// console.log('Player jumps');
@@ -2668,7 +2684,8 @@ Player.prototype.ending = function( time ){
 }
 
 Player.prototype.step = function( time ){
-	this.noise.mul = this.speed / 10;
+
+	if (!this.parent.isCardboard) this.noise.mul = this.speed / 10;
 
 	this[this.currentStatus]( time );
 
@@ -2699,8 +2716,11 @@ var PrizePoints = function( parent, points ){
 	this.points = points;
 	this.available = true;
 
-	var audioFile = (this.parent.parent.isCardboard)? "assets/pickPrize.mp4" : "assets/pickPrize.ogg";
-	this.audio = new Audio(audioFile);
+	if (!this.parent.parent.isCardboard) {
+
+		var audioFile = 'assets/pickPrize.ogg';
+		this.audio = new Audio(audioFile);
+	}
 
 
 	this.createMesh();
@@ -2759,7 +2779,8 @@ PrizePoints.prototype.animate = function() {
 
 	if (this.parent.parent.loading.isAudioPlaying) {
 
-		this.audio.play();
+		if (this.parent.parent.isCardboard) this.parent.parent.loading.audio.play();
+		else this.audio.play();
 	}
 
 	TweenMax.to( this.mesh.position, 1.5, {
@@ -2786,8 +2807,11 @@ PrizePoints.prototype.animate = function() {
 					this.mesh.position.set( 0, 0, 0 );
 					this.mesh.visible = false;
 
-					this.audio.pause();
-					this.audio.currentTime = 0;
+					if (!this.parent.parent.isCardboard) {
+
+						this.audio.pause();
+						this.audio.currentTime = 0;
+					}
 
 		        }.bind( this )
 		    } );
