@@ -68,8 +68,8 @@ var App = function() {
     this.prizes = new Prizes( this );
     this.stage = new Stage( this );
     this.player = new Player( this );
-    this.lights = new Lights( this );
     this.audience = new Audience( this );
+    this.lights = new Lights( this );
 
     this.scene.add( this.stage.group, this.player.group, this.prizes.group, this.lights.group );
 
@@ -333,6 +333,7 @@ App.prototype.step = function(time) {
         this.introCamera.position.set( Math.sin( (time + 50000) / 50000 ) * 250, 300 + Math.cos( time / 50000 ) * 150, Math.cos( time / 50000 ) * 300 );
         this.introCamera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
+        // DEBUG for audience positioning
         // this.introCamera.position.set( 0, 80, -220 );
         // this.introCamera.lookAt( new THREE.Vector3( 0, 20, -220 ) );
     }

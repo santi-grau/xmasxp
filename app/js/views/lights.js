@@ -140,12 +140,12 @@ Lights.prototype.update = function( ){
 				gazeColor2 : [ 0.3, 0.4, 0.2 ]
 			}
 		}
-	]
+	];
 
 	Date.prototype.addHours = function(h) {
  		this.setTime( this.getTime() + ( h*60*60*1000 ) );
  		return this;
-	}
+	};
 
 
 	this.timeOffset+=this.incDebug;
@@ -227,13 +227,15 @@ Lights.prototype.update = function( ){
 
 	this.parent.player.targetCamera.updateColor( this.gazeColor1, this.gazeColor2 );
 	this.parent.player.target.updateColor( this.gazeColor1, this.gazeColor2 );
+	this.parent.audience.updateColor( this.gazeColor1, this.gazeColor2 );
 	this.parent.stage.updateWireframeColor( this.wireframeColor );
 	this.parent.prizes.updateWireframeColor( this.wireframeColor );
+};
 
-}
 Lights.prototype.getDayNightData = function( position ){
 	console.log(position);
-}
+};
+
 Lights.prototype.getLocation = function(){
 	if ( navigator.geolocation ){
 		navigator.geolocation.getCurrentPosition( this.getDayNightData.bind(this) );
@@ -241,12 +243,13 @@ Lights.prototype.getLocation = function(){
 	} else{
 		this.getDayNightData(null);
 	}
-}
+};
+
 Lights.prototype.step = function( time ){
 
 	var now = new Date().getSeconds();
 	if( ( now == 30 || now == 0 ) && now !== this.lastNow ) this.update();
 	this.lastNow = now;
-}
+};
 
 module.exports = Lights;

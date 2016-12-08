@@ -89,6 +89,8 @@ Player.prototype.reset = function() {
 
 	this.target.reset();
 	this.targetCamera.reset();
+
+	this.parent.audience.isAnimated = false;
 };
 
 Player.prototype.onGazeEndIntro = function() {
@@ -195,6 +197,8 @@ Player.prototype.onJump = function(){
 
 		this.wind.play();
 	}
+
+	this.parent.audience.isAnimated = true;
 
 	// console.log('Player jumps');
 }

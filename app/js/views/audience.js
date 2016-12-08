@@ -5,7 +5,7 @@ var Audience = function( parent ){
 	this.parent = parent;
 	this.simplex = new SimplexNoise( Math.random );
 	this.simplexInc = 0.0;
-	this.isAnimated = true;
+	this.isAnimated = false;
 
 
 	var vs = '' +
@@ -28,20 +28,27 @@ var Audience = function( parent ){
 		'		gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );' +
 		'	}';
 
-	var uniforms = {
+	var uniforms =
 
-		color	: { value : new THREE.Color( 0xffffff ) },
-		texture	: { value : new THREE.TextureLoader().load( "assets/particle.png" ) }
-	};
+	// THREE.UniformsUtils.merge( [
+
+	//     THREE.UniformsLib[ "fog" ],{
+
+{			color	: { value : new THREE.Color( 0xffffff ) },
+			texture	: { value : new THREE.TextureLoader().load( "assets/particle.png" ) }
+		}
+	// ] );
 
 	var shaderMaterial = new THREE.ShaderMaterial( {
 
 		uniforms		: uniforms,
 		vertexShader	: vs,
 		fragmentShader	: fs,
-		blending		: THREE.AdditiveBlending,
-		// depthTest		: false,
+		// blending		: THREE.AdditiveBlending,
+		// depthTest		: true,
 		transparent		: true
+		// opacity         : 1.0,
+		// fog             :false
 	});
 
 	this.geometry = new THREE.BufferGeometry();
@@ -50,6 +57,10 @@ var Audience = function( parent ){
 	this.numParticlesPerRow = 24;
 	this.numParticlesRows = 12;
 	this.numParticles = this.numParticlesRows * this.numParticlesPerRow;
+
+	for ( var j = 0; j < this.numParticlesRows; j++ ) {
+		this.numParticles += j;
+	}
 
 	var radiusX = 14.2;
 	var radiusZ = 11.6;
@@ -68,7 +79,7 @@ var Audience = function( parent ){
 	var posZ = -221;
 	for ( var j = 0; j < this.numParticlesRows; j++ ) {
 
-		for ( var i = 0, i3 = (index * 3); i < this.numParticlesPerRow; i ++, i3 += 3 ) {
+		for ( var i = 0, i3 = (index * 3); i < (this.numParticlesPerRow + j); i ++, i3 += 3 ) {
 
 			if (i < 7) {
 
@@ -76,17 +87,17 @@ var Audience = function( parent ){
 				positions[ i3 + 1 ] = posY;
 				positions[ i3 + 2 ] = posZ + (4 * i);
 
-			} else if (i >= 7 && i < 17) {
+			} else if (i >= 7 && i < (17 + j)) {
 
-				positions[ i3 + 0 ] = 0 + radiusX * Math.cos(Math.PI * (i - 7) / (10-1));
+				positions[ i3 + 0 ] = 0 + radiusX * Math.cos( Math.PI * (i - 7) / ((17 + j - 7) - 1) );
 				positions[ i3 + 1 ] = posY;
-				positions[ i3 + 2 ] = posZ - radiusZ * Math.sin(Math.PI * (i - 7) / (10-1));
+				positions[ i3 + 2 ] = posZ - radiusZ * Math.sin( Math.PI * (i - 7) / ((17 + j - 7) - 1) );
 
 			} else {
 
 				positions[ i3 + 0 ] = 0 - radiusX;
 				positions[ i3 + 1 ] = posY;
-				positions[ i3 + 2 ] = posZ + (4 * (i - 17));
+				positions[ i3 + 2 ] = posZ + (4 * (i - (17 + j)));
 			}
 
 			this.positionsY[ index ] = positions[ i3 + 1];
@@ -118,8 +129,6 @@ var Audience = function( parent ){
 			posZ += incZ * 2.5;
 
 		}
-
-
 	}
 
 	this.geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
@@ -128,6 +137,18 @@ var Audience = function( parent ){
 
 	this.particleSystem = new THREE.Points( this.geometry, shaderMaterial );
 	this.parent.scene.add( this.particleSystem );
+};
+
+Audience.prototype.updateColor = function(color1, color2) {
+
+	var colors = this.geometry.attributes.customColor.array;
+	for ( var i = 0, i3 = 0; i < this.numParticles; i ++, i3 += 3 ) {
+
+		colors[ i3 + 0 ] = color2[ 0 ];
+		colors[ i3 + 1 ] = color2[ 1 ];
+		colors[ i3 + 2 ] = color2[ 2 ];
+	}
+	this.geometry.attributes.customColor.needsUpdate = true;
 };
 
 Audience.prototype.step = function( time ) {
