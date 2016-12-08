@@ -132,7 +132,7 @@ Score.prototype.showBonus = function(bonus) {
 
  //    this.texture.needsUpdate = true;
 
-	// console.log('bonus : ' + bonus);
+	console.log('bonus : ' + bonus);
 };
 
 Score.prototype.onOverReset = function() {
