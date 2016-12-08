@@ -27,7 +27,7 @@ var Prizes = function( parent ){
 	this.meshes = [
 		{
 			id : 'box',
-			points : 10,
+			points : 10000,
 			scale : 10.0 + 10.0,
 			model : boxModel,
 			mesh : null,
@@ -35,7 +35,7 @@ var Prizes = function( parent ){
 		},
 		{
 			id : 'cane',
-			points : 2,
+			points : 2000,
 			scale : 10.0 + 10.0,
 			model : caneModel,
 			mesh : null,
@@ -43,7 +43,7 @@ var Prizes = function( parent ){
 		},
 		{
 			id : 'ball',
-			points : 5,
+			points : 5000,
 			scale : 15.0 + 10.0,
 			model : ballModel,
 			mesh : null,
@@ -51,7 +51,7 @@ var Prizes = function( parent ){
 		},
 		{
 			id : 'book',
-			points : 5,
+			points : 8000,
 			scale : 20.0 + 10.0,
 			model : bookModel,
 			mesh : null,
