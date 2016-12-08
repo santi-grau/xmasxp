@@ -11,9 +11,9 @@ Should be ready on port 4000
 
 1. Intro ✔
 2. Lights ✔
-3. Mobile optimizations.
+3. Mobile optimizations
 4. Gaze color scheme ✔
-5. Build system -> Grunt, make & do a test push to the xmas experiment git.
+5. Build system ✔
 6. Sounds ✔
 7. Audience ✔
 8. VRify ✔

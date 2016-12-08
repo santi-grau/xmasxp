@@ -109,8 +109,8 @@ Lights.prototype.update = function( ){
 			'data' : {
 				clear : [ 0.82, 0.93, 0.94, 0.002 ],
 				fog : [ 1, 1, 1, 0.002 ],
-				ambient : [ 1, 1, 1, 1 ],
-				directional : [ 1, 1, 1, 1 ],
+				ambient : [ 0.9, 0.9, 0.9, 1 ],
+				directional : [ 0.9, 0.9, 0.9, 1 ],
 				gazeColor1 : [ .1, .1, .1 ],
 				gazeColor2 : [ 0.3, 0.4, 0.2 ]
 			}
@@ -232,7 +232,7 @@ Lights.prototype.update = function( ){
 Lights.prototype.getDayNightData = function( position ){
 	this.latlonDest = position;
 	this.latlonInc = 0;
-	TweenMax.to( this, 3, { latlonInc : 1000, ease : Power2.easeOut, onUpdate : function( val ){
+	TweenMax.to( this, 6, { latlonInc : 1000, ease : Power2.easeOut, onUpdate : function( val ){
 		
 		this.latlon[0] = this.intiLatlon[0] + ( this.latlonDest.coords.latitude - this.intiLatlon[0] ) * this.latlonInc / 1000;
 		this.latlon[1] = this.intiLatlon[1] + ( this.latlonDest.coords.longitude - this.intiLatlon[1] ) * this.latlonInc / 1000;

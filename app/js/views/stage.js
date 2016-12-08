@@ -33,7 +33,7 @@ var Stage = function( parent ){
 		if( child.name == 'SNOW_MOUNTAIN_Mesh.026' ) this.mountainMesh = child;
 
 
-		child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+		child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xefefef } );
 
 		if( child.name == 'WATER_MOUNTAIN_Mesh.000' ) child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0x0000ff } );
 		if( child.name == 'STONE_MOUNTAIN_Mesh.001' ) child.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xABABAB } );
@@ -93,7 +93,7 @@ Stage.prototype.addLamps = function(){
 	var group = new THREE.Object3D();
 	var mesh = new THREE.OBJLoader().parse(lamp).children[0];
 
-	mesh.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } );
+	mesh.material = new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xefefef } );
 	mesh.castShadow = true;
 	for( var i = 7 ; i < lampCount - 3 ; i++ ){
 		var m = mesh.clone()
@@ -132,7 +132,7 @@ Stage.prototype.makeLandingMesh = function(){
 		var ovs = nvs;
 	}
 
-	var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xffffff } ) );
+	var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { side : THREE.DoubleSide, color : 0xefefef } ) );
 	// mesh.castShadow = true;
 	// mesh.receiveShadow = true;
 	return mesh;
