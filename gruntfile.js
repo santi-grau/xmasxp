@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         files: [{
           dot: true,
           src: [
-            "build/*"
+            "docs/*"
           ]
         }]
       }
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
             "assets/**/*",
             "js/scripts/**/*"
           ],
-          dest: "build"
+          dest: "docs"
         }]
       }
     },
@@ -56,7 +56,7 @@ module.exports = function(grunt) {
           }
         },
         files: {
-          "build/index.html": "app/views/main.jade"
+          "docs/index.html": "app/views/main.jade"
         }
       }
     },
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
           ]
         },
         files: {
-          'build/css/main.css': 'app/css/main.styl'
+          'docs/css/main.css': 'app/css/main.styl'
         }
       }
     }
