@@ -94,8 +94,9 @@ body
 				top -38px
 				left 150px
 			.copy
-				background #ff0000
 				line-height 14px
+				.altcopy
+					display none
 				.loading
 					opacity 0
 					&.active
@@ -196,3 +197,8 @@ body
 		opacity 0.001
 		&.playing
 			background-position 0 0
+
+
+@media screen and (max-device-width: 480px)
+	body
+		-webkit-text-size-adjust none

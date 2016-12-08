@@ -31,6 +31,8 @@ var Score = function( parent ){
 
 	this.isOver = false;
 
+	this.timeTicker = 0;
+
 	this.drawTexture();
 };
 
@@ -176,9 +178,10 @@ Score.prototype.drawIdleScreen = function( time ) {
 
 
 Score.prototype.step = function( time ){
+	this.timeTicker++;
 
 	if( this.points == 0 ){
-		this.drawIdleScreen( time );
+		if(this.timeTicker == 60 ) this.drawIdleScreen( time );
 	}
 }
 module.exports = Score;
