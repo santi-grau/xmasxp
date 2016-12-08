@@ -4,7 +4,7 @@ var PrizePoints = function( parent, points ){
 
 	this.points = points;
 	this.available = true;
-	this.audio = new Audio("assets/pickPrize.mp3");
+	this.audio = new Audio("assets/pickPrize.mp4");
 
 
 	this.createMesh();
