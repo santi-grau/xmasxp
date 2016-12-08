@@ -89,10 +89,42 @@ body
 		height 40px
 		background-color #ffffff
 	#mode-button
-		position fixed
+		position absolute
 		z-index 20
-		bottom 40px
+		bottom 30px
+		left 40px
+		float left
+		width 40px
+		height 25px
+		background url(../assets/mode-button.png) no-repeat 0 0
+		background-size 40px 100px
+		cursor pointer
+		display none
+		opacity 0.001
+		&.cardboard
+			background-position 0 0
+		&.phone
+			background-position 0 -25px
+		&.pointerlock
+			background-position 0 -50px
+		&.drag
+			background-position 0 -75px
+	#audio-toggle
+		position absolute
+		z-index 20
+		bottom 30px
 		right 40px
-		width 100px
-		height 40px
-		background-color #cccccc
+		float: left
+		width: 25px
+		height: 25px
+		text-indent -9999px
+		will-change opacity, transform
+		transform translate3d( 0, 0px, 0 )
+		background url(../assets/audio.png) no-repeat 0 0
+		background-size 25px 50px
+		background-position 0 -25px
+		cursor pointer
+		display none
+		opacity 0.001
+		&.playing
+			background-position 0 0

@@ -191,7 +191,10 @@ Player.prototype.onJump = function(){
 	this.target.hide();
 	this.targetCamera.onJump();
 
-	this.wind.play();
+	if (this.parent.loading.isAudioPlaying) {
+
+		this.wind.play();
+	}
 
 	// console.log('Player jumps');
 }

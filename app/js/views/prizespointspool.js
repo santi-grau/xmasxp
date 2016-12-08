@@ -29,7 +29,7 @@ PrizesPointsPool.prototype.getPrizePointsInstance = function(points) {
 
 PrizesPointsPool.prototype.createPrizePointsInstance = function(points) {
 
-	var prizePoints = new PrizePoints(points);
+	var prizePoints = new PrizePoints(this, points);
 	return prizePoints;
 };
 
