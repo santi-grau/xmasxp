@@ -2,14 +2,14 @@
 var Loading = function( parent ){
 
 	this.parent = parent;
-	
+
 	this.buttonEl1 = document.querySelector('#start-button1');
 	this.buttonEl2 = document.querySelector('#start-button2');
 	this.buttonEl3 = document.querySelector('#start-button3');
 	this.buttonModeEl = document.querySelector('#mode-button');
 	this.buttonAudioEl = document.querySelector('#audio-toggle');
 	this.loadingBgEl = document.querySelector('#intro');
-	this.introColorEl = document.querySelector('#bg');
+	// this.introColorEl = document.querySelector('#bg');
 	this.introEl = document.getElementById('intro');
 
 	this.isAudioPlaying = true;
@@ -57,7 +57,7 @@ Loading.prototype.onClickButton = function(e) {
 		ease: Power2.easeInOut,
 		onComplete: function () {
 			this.loadingBgEl.style.display = 'none';
-			this.introColorEl.style.display = 'none';
+			// this.introColorEl.style.display = 'none';
 		}.bind( this )
 	} );
 

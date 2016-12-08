@@ -39,4 +39,8 @@ Intro.prototype.step = function( time ) {
 	}
 };
 
+Intro.prototype.onEnd = function() {
+	this.introEl.style.display = 'none';
+}
+
 module.exports = Intro;

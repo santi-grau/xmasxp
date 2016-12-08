@@ -160,6 +160,8 @@ App.prototype.reset = function() {
 
 App.prototype.onClickStart = function() {
     this.onIntro = false;
+    this.intro.onEnd();
+    this.stage.countdown.drawTexture();
     if (this.isDesktop) {
 
         if (this.hasPointerLock) this.setupPointerLock();

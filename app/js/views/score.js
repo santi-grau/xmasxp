@@ -48,7 +48,6 @@ Score.prototype.reset = function() {
 };
 
 Score.prototype.drawTexture = function() {
-
 	// if( this.bonus ) return;
 
 	var col1 = '#000000';
@@ -153,9 +152,7 @@ Score.prototype.drawIdleScreen = function( time ) {
 
 	var col1 = '#000000';
 	var col2 = '#ffdaa0';
-	this.phaseinc += 0.1;
-	var phase = Math.sin( this.phaseinc ) + 1;
-	if( Math.floor(phase) ){
+	if( this.phaseinc ){
 		this.context.fillStyle = col1;
 		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		this.context.fillStyle = col2;
@@ -181,7 +178,10 @@ Score.prototype.step = function( time ){
 	this.timeTicker++;
 
 	if( this.points == 0 ){
-		if(this.timeTicker == 60 ) this.drawIdleScreen( time );
+		if(this.timeTicker % 60 == 0 ) {
+			this.phaseinc = !this.phaseinc;
+			this.drawIdleScreen( time );
+		}
 	}
 }
 module.exports = Score;

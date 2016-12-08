@@ -200,8 +200,6 @@ Player.prototype.onJump = function(){
 		this.wind.play();
 	}
 
-	this.parent.audience.isAnimated = true;
-
 	// console.log('Player jumps');
 }
 
@@ -273,10 +271,11 @@ Player.prototype.onLand = function(){
 
 	// console.log( 'Player touched the ground' );
 	this.currentStatus = 'breaking'
+	this.parent.audience.isAnimated = true;
 }
 
 Player.prototype.onEnd = function(){
-	this.currentStatus = 'ending'
+	this.currentStatus = 'ending';
 	// console.log( 'Player has stopped completely' );
 }
 
