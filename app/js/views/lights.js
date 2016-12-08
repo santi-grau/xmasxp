@@ -18,14 +18,14 @@ var Lights = function( parent ){
 	// }, 2000 );
 
 	this.timeOffset = 0;
-	// setInterval( function(){
+	// setInterval( fun.ction(){
 	// 	this.update();
 	// }.bind(this), 10 );
 	this.incDebug = 0.0;
 
 	var vl =  Math.random() * 180 - 90;
 	var vl2 = Math.random() * 360 - 180;
-	console.log(vl,vl2);
+
 	this.latlon = [ vl, vl2 ];
 	this.intiLatlon = [ vl, vl2 ];
 	this.update();
@@ -229,25 +229,29 @@ Lights.prototype.update = function( ){
 	this.parent.prizes.updateWireframeColor( this.wireframeColor );
 };
 
-Lights.prototype.getDayNightData = function( position ){
-	this.latlonDest = position;
+Lights.prototype.getDayNightData = function( lat, lon ){
+	this.latlonDest = [lat,lon];
 	this.latlonInc = 0;
 	TweenMax.to( this, 6, { latlonInc : 1000, ease : Power2.easeOut, onUpdate : function( val ){
 		
-		this.latlon[0] = this.intiLatlon[0] + ( this.latlonDest.coords.latitude - this.intiLatlon[0] ) * this.latlonInc / 1000;
-		this.latlon[1] = this.intiLatlon[1] + ( this.latlonDest.coords.longitude - this.intiLatlon[1] ) * this.latlonInc / 1000;
+		this.latlon[0] = this.intiLatlon[0] + ( this.latlonDest[0] - this.intiLatlon[0] ) * this.latlonInc / 1000;
+		this.latlon[1] = this.intiLatlon[1] + ( this.latlonDest[1] - this.intiLatlon[1] ) * this.latlonInc / 1000;
 		this.update();
 
 	}.bind(this), onUpdateParams : [ this.latlonInc ] });
 };
 
 Lights.prototype.getLocation = function(){
-	if ( navigator.geolocation ){
-		navigator.geolocation.getCurrentPosition( this.getDayNightData.bind(this) );
-
-	} else{
-		this.getDayNightData(null);
-	}
+	var _this = this;
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200){
+			var data = JSON.parse(this.responseText)
+			_this.getDayNightData( data.latitude, data.longitude );
+		}
+	};
+	xhttp.open("GET", "//freegeoip.net/json/", true);
+	xhttp.send();
 };
 
 Lights.prototype.step = function( time ){
