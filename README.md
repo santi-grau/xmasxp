@@ -9,7 +9,7 @@ Should be ready on port 4000
 
 ### TODO
 
-1. Intro -> Initial DOM screen with explanation and start button.
+1. Intro ✔
 2. Lights ✔
 3. Mobile optimizations.
 4. Gaze color scheme ✔
@@ -34,5 +34,5 @@ Should be ready on port 4000
 6. Sun and moon shaders
 7. Replay race, external view
 8. Vive interaction with controllers
-9. Skis ✔
+9. Skis
 10. Geolocation
