@@ -53,6 +53,9 @@ var Player = function( parent ) {
 	this.camera.add( this.targetCamera.mesh );
 
 	this.skiMesh = new THREE.OBJLoader().parse(skiModel);
+	this.skiMesh.traverse( function ( child ) {
+		if( child instanceof THREE.Mesh ) child.material.color.setRGB(0.6,0.3,0.3)
+	})
 	this.skiMesh.rotation.y = Math.PI / 2;
 	this.skiMesh.position.y = 0.05;
 	this.skiMesh.position.x = 0.1;
