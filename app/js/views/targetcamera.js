@@ -23,7 +23,8 @@ var TargetCamera = function( parent, prizes ){
     this.showTime = true;
     this.showSpeed = false;
 
-    this.plane = new THREE.PlaneBufferGeometry( 0.1, 0.1 );
+    var sizePlane = (this.parent.parent.isWebVR)? 0.3 : 0.1;
+    this.plane = new THREE.PlaneBufferGeometry( sizePlane, sizePlane );
 
     this.canvas = document.createElement('canvas');
     this.canvas.width = 256;
@@ -42,11 +43,12 @@ var TargetCamera = function( parent, prizes ){
     this.mesh = new THREE.Mesh( this.plane, material );
     this.mesh.position.set( 0, 0, -5 );
 
+    var lineDistance = (this.parent.parent.isWebVR)? 0.06 : 0.02;
     var materialLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2.0, opacity: 0.0, transparent: true, depthTest: false });
     var geometryLine = new THREE.Geometry();
         geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
-        geometryLine.vertices.push(new THREE.Vector3(-0.02, 0, 0));
-        geometryLine.vertices.push(new THREE.Vector3(0.02, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(-1 * lineDistance, 0, 0));
+        geometryLine.vertices.push(new THREE.Vector3(lineDistance, 0, 0));
         geometryLine.vertices.push(new THREE.Vector3(5, 0, 0));
     this.line = new THREE.LineSegments(geometryLine, materialLine);
 

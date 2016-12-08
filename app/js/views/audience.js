@@ -109,7 +109,7 @@ var Audience = function( parent ){
 			colors[ i3 + 1 ] = color.g;
 			colors[ i3 + 2 ] = color.b;
 
-			sizes[ index ] = 5;
+			sizes[ index ] = (this.parent.isWebVR)? 1 : 5;
 
 			index++;
 		}

@@ -16,7 +16,8 @@ var Target = function( parent ){
     this.simplexInc = 0.0;
     this.useNoise = false;
 
-    this.plane = new THREE.PlaneBufferGeometry( 0.1, 0.1 );
+    var sizePlane = (this.parent.parent.isWebVR)? 0.3 : 0.1;
+    this.plane = new THREE.PlaneBufferGeometry( sizePlane, sizePlane );
 
     this.canvas = document.createElement('canvas');
     this.canvas.width = 256;
