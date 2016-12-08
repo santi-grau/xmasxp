@@ -6,6 +6,7 @@ var Player = require('./views/player');
 var Prizes = require('./views/prizes');
 var Lights = require('./views/lights');
 var Intro = require('./views/intro');
+var Audience = require('./views/audience');
 
 var OBJLoader = require('three-obj-loader')(THREE);
 var OrbitControls = require('three-orbit-controls')(THREE);
@@ -68,6 +69,7 @@ var App = function() {
     this.stage = new Stage( this );
     this.player = new Player( this );
     this.lights = new Lights( this );
+    this.audience = new Audience( this );
 
     this.scene.add( this.stage.group, this.player.group, this.prizes.group, this.lights.group );
 
@@ -325,9 +327,13 @@ App.prototype.onResize = function(e) {
 }
 
 App.prototype.step = function(time) {
+
     if( this.onIntro ){
         this.introCamera.position.set( Math.sin( (time + 50000) / 50000 ) * 250, 300 + Math.cos( time / 50000 ) * 150, Math.cos( time / 50000 ) * 300 );
         this.introCamera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+
+        // this.introCamera.position.set( 0, 80, -220 );
+        // this.introCamera.lookAt( new THREE.Vector3( 0, 20, -220 ) );
     }
     if (this.isWebVR) {
 
@@ -342,6 +348,7 @@ App.prototype.step = function(time) {
     this.player.step( time );
     this.prizes.step( time );
     this.lights.step( time );
+    this.audience.step( time );
 
     if (!this.isPointerLock) {
 

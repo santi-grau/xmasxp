@@ -17,7 +17,7 @@ var Intro = function( parent ) {
 
 	setTimeout( this.onLoad.bind(this), 3000 );
 
-	
+
 };
 
 Intro.prototype.onLoad = function( time ) {
@@ -25,15 +25,15 @@ Intro.prototype.onLoad = function( time ) {
 	setTimeout( function(){
 		this.introEl.classList.remove('screen1');
 	}.bind(this),1000)
-	
+
 	this.introEl.classList.add('screen2');
-	
+
 	setTimeout( function(){
 		this.screen2.classList.add('active');
 	}.bind(this),1)
 
 	setTimeout( this.onScreen3.bind(this), 5000 );
-	
+
 };
 
 Intro.prototype.onScreen3 = function( time ) {
@@ -41,13 +41,13 @@ Intro.prototype.onScreen3 = function( time ) {
 	setTimeout( function(){
 		this.introEl.classList.remove('screen2');
 	}.bind(this),1000)
-	
+
 	this.introEl.classList.add('screen3');
-	
+
 	setTimeout( function(){
 		this.screen3.classList.add('active');
 	}.bind(this),1)
-	
+
 	setTimeout( this.onScreen4.bind(this), 5000 );
 };
 
@@ -56,13 +56,13 @@ Intro.prototype.onScreen4 = function( time ) {
 	setTimeout( function(){
 		this.introEl.classList.remove('screen3');
 	}.bind(this),1000)
-	
+
 	this.introEl.classList.add('screen4');
-	
+
 	setTimeout( function(){
 		this.screen4.classList.add('active');
 	}.bind(this),1)
-	
+
 	// setTimeout( this.onScreen4.bind(this), 5000 );
 };
 
