@@ -22,11 +22,12 @@ var Landscape = function( parent ){
 	geoWorker.onmessage = this.treeGeometryReady.bind(this);
 	geoWorker.postMessage( JSON.stringify( { treeCount : 3000, imgData : imgData.data.toString() } ) );
 
+	if (!this.parent.parent.isCardboard) {
 
-	var geoWorker = WebWorker( require( './ww/houseMesh' ) );
-	geoWorker.onmessage = this.houseGeometryReady.bind(this);
-	geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data.toString() } ) );
-
+		var geoWorker = WebWorker( require( './ww/houseMesh' ) );
+		geoWorker.onmessage = this.houseGeometryReady.bind(this);
+		geoWorker.postMessage( JSON.stringify( { treeCount : 1200, imgData : imgData.data.toString() } ) );
+	}
 }
 Landscape.prototype.houseGeometryReady = function( msg ){
 	var data = JSON.parse( msg.data );
