@@ -5,6 +5,7 @@ var Stage = require('./views/stage');
 var Player = require('./views/player');
 var Prizes = require('./views/prizes');
 var Lights = require('./views/lights');
+var Intro = require('./views/intro');
 
 var OBJLoader = require('three-obj-loader')(THREE);
 var OrbitControls = require('three-orbit-controls')(THREE);
@@ -62,6 +63,7 @@ var App = function() {
 
     this.effect = new THREE.VREffect(this.renderer);
 
+    this.intro = new Intro( this );
     this.prizes = new Prizes( this );
     this.stage = new Stage( this );
     this.player = new Player( this );

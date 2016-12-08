@@ -35,3 +35,4 @@ Should be ready on port 4000
 7. Replay race, external view
 8. Vive interaction with controllers
 9. Skis
+10. Geolocation
