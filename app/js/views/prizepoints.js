@@ -1,4 +1,6 @@
-var PrizePoints = function( points ){
+var PrizePoints = function( parent, points ){
+
+	this.parent = parent;
 
 	this.points = points;
 	this.available = true;
@@ -57,7 +59,10 @@ PrizePoints.prototype.animate = function() {
 	this.available = false;
 	this.mesh.visible = true;
 
-	this.audio.play();
+	if (this.parent.parent.loading.isAudioPlaying) {
+
+		this.audio.play();
+	}
 
 	TweenMax.to( this.mesh.position, 1.5, {
 

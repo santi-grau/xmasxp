@@ -89,7 +89,14 @@ Loading.prototype.onClickButtonAudio = function(e) {
 	this.isAudioPlaying = !this.isAudioPlaying;
 	this.buttonAudioEl.classList.toggle('playing');
 
-	// TODO: Also stop the sound
+	if (this.isAudioPlaying) {
+
+		this.parent.player.noise.play();
+
+	} else {
+
+		this.parent.player.noise.pause();
+	}
 };
 
 module.exports = Loading;
