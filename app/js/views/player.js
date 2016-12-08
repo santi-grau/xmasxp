@@ -18,10 +18,13 @@ var Player = function( parent ) {
 
 	this.fps = (this.parent.isWebVR)? 90 : 60;
 
-	this.noise = timbre("noise", { mul:0.15 } ).play();
+	if (!this.parent.isCardboard) {
 
-	var src = "assets/wind.wav";
-	this.wind = timbre("audio", { mul: 0.0 }).loadthis(src, function () { });
+		this.noise = timbre("noise", { mul:0.15 } ).play();
+
+		var src = "assets/wind.wav";
+		this.wind = timbre("audio", { mul: 0.0 }).loadthis(src, function () { });
+	}
 
 
 	this.slopePosition = 0;
@@ -189,10 +192,10 @@ Player.prototype.onJump = function(){
 	this.speedForward = Math.cos( this.parent.stage.slopeAngle * Math.PI / 180 ) * this.speed;
 
 	TweenMax.to( this, 0.2, { speed : 0, ease : Power2.easeOut });
-	TweenMax.to( this.wind, 0.2, { mul : 0.2, ease : Power2.easeOut });
+	if (!this.parent.isCardboard) TweenMax.to( this.wind, 0.2, { mul : 0.2, ease : Power2.easeOut });
 
 
-	TweenMax.to( this, (this.parent.isCardboard)? 4 : 2, { motionSpeed : 0.01, ease : Power2.easeOut });
+	TweenMax.to( this, 2, { motionSpeed : (this.parent.isCardboard)? 0.1 : 0.01, ease : Power2.easeOut });
 	TweenMax.to( this.camera, 2, { fov : 40, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
 	this.currentStatus = 'ascending'
@@ -201,7 +204,8 @@ Player.prototype.onJump = function(){
 
 	if (this.parent.loading.isAudioPlaying) {
 
-		this.wind.play();
+		if (this.parent.isCardboard) this.parent.loading.audioWind.play();
+		else this.wind.play();
 	}
 
 	// console.log('Player jumps');
@@ -303,7 +307,8 @@ Player.prototype.ending = function( time ){
 }
 
 Player.prototype.step = function( time ){
-	this.noise.mul = this.speed / 10;
+
+	if (!this.parent.isCardboard) this.noise.mul = this.speed / 10;
 
 	this[this.currentStatus]( time );
 

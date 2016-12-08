@@ -29,6 +29,15 @@ var Loading = function( parent ){
 		this.introEl.classList.add('desktop');
 	}
 
+	if (this.parent.isCardboard) {
+
+		this.audio = document.createElement('audio');
+		this.audio.src = 'assets/pickPrize.m4a';
+		this.audioWind = document.createElement('audio');
+		this.audioWind.src = 'assets/wind.m4a';
+	}
+
+
 	this.addEventListeners();
 };
 
@@ -89,6 +98,12 @@ Loading.prototype.onClickButton = function(e) {
 	} );
 
 	this.parent.onClickStart();
+
+	if (this.parent.isCardboard) {
+
+		this.audio.play();
+		this.audioWind.play();
+	}
 };
 
 Loading.prototype.onClickButtonMode = function(e) {
@@ -105,13 +120,10 @@ Loading.prototype.onClickButtonAudio = function(e) {
 	this.isAudioPlaying = !this.isAudioPlaying;
 	this.buttonAudioEl.classList.toggle('playing');
 
-	if (this.isAudioPlaying) {
+	if (!this.parent.isCardboard) {
 
-		this.parent.player.noise.play();
-
-	} else {
-
-		this.parent.player.noise.pause();
+		if (this.isAudioPlaying) this.parent.player.noise.play();
+		else this.parent.player.noise.pause();
 	}
 };
 

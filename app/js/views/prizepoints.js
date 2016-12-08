@@ -5,8 +5,11 @@ var PrizePoints = function( parent, points ){
 	this.points = points;
 	this.available = true;
 
-	var audioFile = (this.parent.parent.isCardboard)? "assets/pickPrize.mp4" : "assets/pickPrize.ogg";
-	this.audio = new Audio(audioFile);
+	if (!this.parent.parent.isCardboard) {
+
+		var audioFile = 'assets/pickPrize.ogg';
+		this.audio = new Audio(audioFile);
+	}
 
 
 	this.createMesh();
@@ -65,7 +68,8 @@ PrizePoints.prototype.animate = function() {
 
 	if (this.parent.parent.loading.isAudioPlaying) {
 
-		this.audio.play();
+		if (this.parent.parent.isCardboard) this.parent.parent.loading.audio.play();
+		else this.audio.play();
 	}
 
 	TweenMax.to( this.mesh.position, 1.5, {
@@ -92,8 +96,11 @@ PrizePoints.prototype.animate = function() {
 					this.mesh.position.set( 0, 0, 0 );
 					this.mesh.visible = false;
 
-					this.audio.pause();
-					this.audio.currentTime = 0;
+					if (!this.parent.parent.isCardboard) {
+
+						this.audio.pause();
+						this.audio.currentTime = 0;
+					}
 
 		        }.bind( this )
 		    } );
