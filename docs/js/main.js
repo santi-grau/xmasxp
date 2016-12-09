@@ -259,7 +259,7 @@ App.prototype.setupCardboad = function() {
     this.effect = new THREE.StereoEffect(this.renderer);
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
-    // this.fullscreen();
+    this.fullscreen();
     // if (this.isIOS) this.preventSleep();
 
 	this.loading.changeButton('phone');
