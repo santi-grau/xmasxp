@@ -1852,11 +1852,11 @@ var Intro = function( parent ) {
 
 	this.swapScreen();
 
-	this.loading = document.querySelector('.loading');
-	this.swapInterval = setInterval( function(){
-		if( this.loading.classList.length == 1 ) this.loading.classList.add('active');
-		else this.loading.classList.remove('active');
-	}.bind(this), 1000 );
+	// this.loading = document.querySelector('.loading');
+	// this.swapInterval = setInterval( function(){
+	// 	if( this.loading.classList.length == 1 ) this.loading.classList.add('active');
+	// 	else this.loading.classList.remove('active');
+	// }.bind(this), 1000 );
 };
 
 Intro.prototype.swapScreen = function( ) {
