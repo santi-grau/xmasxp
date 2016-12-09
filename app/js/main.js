@@ -404,15 +404,10 @@ App.prototype.step = function(time) {
     //     this.viveController2.update();
     // }
 
-    if (this.isCardboard && !this.isDeviceOrientation && !this.onIntro) {
+    this.renderer.clear();
 
-    } else {
-
-        this.renderer.clear();
-    }
-
-     if( !this.onIntro ) this.effect.render( this.scene, this.activeCamera );
-     if( this.onIntro ) this.effect.render( this.scene, this.introCamera ); // camera to debug score, delete when done
+    if( !this.onIntro ) this.effect.render( this.scene, this.activeCamera );
+    if( this.onIntro ) this.effect.render( this.scene, this.introCamera );
 };
 
 var app = new App();
