@@ -11,7 +11,7 @@ Should be ready on port 4000
 
 1. Intro ✔
 2. Lights ✔
-3. Mobile optimizations
+3. Mobile optimizations (some, at least) ✔
 4. Gaze color scheme ✔
 5. Build system ✔
 6. Sounds ✔
