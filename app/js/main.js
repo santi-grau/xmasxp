@@ -17,7 +17,6 @@ var VREffect = require('./scripts/vr/VREffect');
 var StereoEffect = require('./scripts/vr/StereoEffect');
 var ViveController = require('./scripts/vr/ViveController');
 var WebVR = require('./scripts/vr/WebVR');
-// var PolyfillWebVR = require('./scripts/vr/webvr-polyfill');
 
 var App = function() {
 
