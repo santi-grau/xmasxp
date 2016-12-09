@@ -97,7 +97,7 @@ Loading.prototype.onClickButton = function(e) {
 		delay: 1.0
 	} );
 
-	this.parent.onClickStart();
+	this.parent.onClickStart((e.currentTarget.id == "start-button2"));
 
 	if (this.parent.isCardboard) {
 

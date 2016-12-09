@@ -160,7 +160,7 @@ App.prototype.reset = function() {
     }
 };
 
-App.prototype.onClickStart = function() {
+App.prototype.onClickStart = function(startInCardboard) {
     this.onIntro = false;
     this.intro.onEnd();
     this.stage.countdown.drawTexture();
@@ -176,7 +176,14 @@ App.prototype.onClickStart = function() {
         this.controls.connect();
         this.controls.update();
 
-        this.setupDeviceOrientation();
+        if (startInCardboard) {
+
+            this.setupCardboad();
+
+        } else {
+
+            this.setupDeviceOrientation();
+        }
 
     } else if (this.isWebVR) {
 
