@@ -1,6 +1,7 @@
 var model = require('../../assets/base9.obj');
 var lamp = require('../../assets/lamp.obj');
 var pole = require('../../assets/pole.obj');
+var arrow = require('../../assets/arrow.obj');
 
 // var Skybox = require('./skybox'); // Scoreboard
 var Score = require('./score'); // Scoreboard
@@ -70,7 +71,53 @@ var Stage = function( parent ){
 	);
 	this.group.rotation.y = Math.PI / 2;
 
-}
+	this.arrowGroup = new THREE.Object3D();
+	this.arrowMesh = new THREE.Object3D();
+
+	var arrowObj = new THREE.OBJLoader().parse(arrow);
+		arrowObj.children[0].material = new THREE.MeshBasicMaterial( { side : THREE.DoubleSide, color : 0xffdaa0 } );
+	var arrowWireframe = new THREE.LineSegments( new THREE.WireframeGeometry( arrowObj.children[0].geometry ), new THREE.LineBasicMaterial( { color: 0x00000, linewidth: .5, fog: true, transparent: true, opacity: 1.0  } ) );
+
+	this.arrowMesh.add(arrowObj);
+	this.arrowMesh.add(arrowWireframe);
+	this.arrowMesh.scale.set( 0.005, 0.005, 0.005 );
+	// this.arrowMesh.castShadow = true;
+	this.parent.scene.add( this.arrowGroup );
+
+	setTimeout(function () {
+
+		var pos = this.parent.player.group.position.clone();
+		this.arrowGroup.position.set(pos.x, pos.y + 2, pos.z);
+
+		// Around player
+		var radiusX = 2;
+		var radiusZ = 3;
+		var rots = [ 0, -30, -60, 60, 30, 0 ];
+		for (var i = 0; i <= 5; i++) {
+
+			var arrow = this.arrowMesh.clone();
+			arrow.position.set(radiusX * Math.cos( Math.PI * i / 5 ), 0, radiusZ * Math.sin( Math.PI * i / 5 ));
+			arrow.rotation.z = THREE.Math.degToRad( 90 );
+			arrow.rotation.y = THREE.Math.degToRad( rots[i] );
+			this.arrowGroup.add( arrow );
+		}
+
+		var arrowTop = this.arrowMesh.clone();
+		arrowTop.position.set(0, 1, -2);
+		arrowTop.rotation.x = THREE.Math.degToRad( -30 );
+		this.arrowGroup.add( arrowTop );
+
+		var arrowBottom = this.arrowMesh.clone();
+		arrowBottom.position.set(0, -1, -2);
+		arrowBottom.rotation.x = THREE.Math.degToRad( 30 );
+		this.arrowGroup.add( arrowBottom );
+
+
+	}.bind( this ), 1000);
+
+
+
+};
 
 
 Stage.prototype.addPoles = function(){
