@@ -26,9 +26,6 @@ var Score = function( parent ){
 	this.mesh.position.x = 262.5;
 	this.mesh.position.z = 0;
 
-	this.speeedIcon = new Image();
-	this.speeedIcon.src = 'assets/speed.png';
-
 	this.isOver = false;
 
 	this.timeTicker = 0;
