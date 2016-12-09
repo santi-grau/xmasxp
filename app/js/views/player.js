@@ -45,7 +45,7 @@ var Player = function( parent ) {
 
 	this.cameraContainer = new THREE.Object3D();
 	this.cameraContainer.position.y = (this.parent.isWebVR)? 1 : 1.75;
-	this.camera = new THREE.PerspectiveCamera( 24, this.parent.containerEl.offsetWidth / this.parent.containerEl.offsetHeight, 0.1, 10000 );
+	this.camera = new THREE.PerspectiveCamera( (this.parent.isCardboard)? 40 : 24, this.parent.containerEl.offsetWidth / this.parent.containerEl.offsetHeight, 0.1, 10000 );
 	this.camera.position.y = 0.01;
 	this.cameraContainer.add( this.camera );
 	this.group.add( this.cameraContainer );
@@ -92,7 +92,7 @@ Player.prototype.reset = function() {
 	var pp = this.parent.stage.slope.getPointAtLength( this.slopePosition );
 	this.position = new THREE.Vector3( 0 , this.parent.stage.slopeOrigin.y - pp.y, this.parent.stage.slopeOrigin.x - pp.x );
 
-	this.camera.fov = 24;
+	this.camera.fov = (this.parent.isCardboard)? 40 : 24;
 	this.camera.updateProjectionMatrix();
 
 	this.target.reset();
@@ -196,7 +196,7 @@ Player.prototype.onJump = function(){
 
 
 	TweenMax.to( this, 2, { motionSpeed : (this.parent.isCardboard)? 0.1 : 0.01, ease : Power2.easeOut });
-	TweenMax.to( this.camera, 2, { fov : 40, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
+	TweenMax.to( this.camera, 2, { fov : (this.parent.isCardboard)? 60 : 40, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
 	this.currentStatus = 'ascending'
 	this.target.hide();
@@ -278,7 +278,7 @@ Player.prototype.landing = function( time ){
 
 Player.prototype.onLand = function(){
 	this.position.y = this.getGroundIntersection( { x1: -this.position.z, y1: -this.position.y, x2: -this.position.z, y2: -100 } );
-	TweenMax.to( this.camera, 3, { fov : 32, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
+	TweenMax.to( this.camera, 3, { fov : (this.parent.isCardboard)? 40 : 32, ease : Power2.easeOut, onUpdate : this.updateCamera.bind(this) });
 
 	// console.log( 'Player touched the ground' );
 	this.currentStatus = 'breaking'

@@ -17,7 +17,6 @@ var VREffect = require('./scripts/vr/VREffect');
 var StereoEffect = require('./scripts/vr/StereoEffect');
 var ViveController = require('./scripts/vr/ViveController');
 var WebVR = require('./scripts/vr/WebVR');
-// var PolyfillWebVR = require('./scripts/vr/webvr-polyfill');
 
 var App = function() {
 
@@ -57,7 +56,7 @@ var App = function() {
 
     this.renderer = new THREE.WebGLRenderer({ alpha : false, antialias : true });
     this.renderer.autoClear = false;
-    var maxDPR = (this.isCardboard)? window.devicePixelRatio * 1 : window.devicePixelRatio * 0.75;
+    var maxDPR = (this.isCardboard)? window.devicePixelRatio * 0.75 : window.devicePixelRatio * 0.75;
     this.renderer.setPixelRatio(Math.max( 1, maxDPR ));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -161,7 +160,7 @@ App.prototype.reset = function() {
     }
 };
 
-App.prototype.onClickStart = function() {
+App.prototype.onClickStart = function(startInCardboard) {
     this.onIntro = false;
     this.intro.onEnd();
     this.stage.countdown.drawTexture();
@@ -177,7 +176,14 @@ App.prototype.onClickStart = function() {
         this.controls.connect();
         this.controls.update();
 
-        this.setupDeviceOrientation();
+        if (startInCardboard) {
+
+            this.setupCardboad();
+
+        } else {
+
+            this.setupDeviceOrientation();
+        }
 
     } else if (this.isWebVR) {
 
@@ -222,7 +228,7 @@ App.prototype.setupCardboad = function() {
     this.effect = new THREE.StereoEffect(this.renderer);
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
-    // this.fullscreen();
+    this.fullscreen();
     // if (this.isIOS) this.preventSleep();
 
 	this.loading.changeButton('phone');
