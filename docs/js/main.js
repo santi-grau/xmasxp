@@ -87,7 +87,7 @@ var App = function() {
 
     this.renderer = new THREE.WebGLRenderer({ alpha : false, antialias : true });
     this.renderer.autoClear = false;
-    var maxDPR = (this.isCardboard)? window.devicePixelRatio * 1 : window.devicePixelRatio * 0.75;
+    var maxDPR = (this.isCardboard)? window.devicePixelRatio * 0.75 : window.devicePixelRatio * 0.75;
     this.renderer.setPixelRatio(Math.max( 1, maxDPR ));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -3431,7 +3431,7 @@ var Stage = function( parent ){
 	setTimeout(function () {
 
 		var pos = this.parent.player.group.position.clone();
-		this.arrowGroup.position.set(pos.x, pos.y + 2, pos.z);
+		this.arrowGroup.position.set(pos.x, pos.y + 2, pos.z + 1);
 
 		// Around player
 		var radiusX = 2;
@@ -3447,12 +3447,12 @@ var Stage = function( parent ){
 		}
 
 		var arrowTop = this.arrowMesh.clone();
-		arrowTop.position.set(0, 1, -2);
+		arrowTop.position.set(0, 1.2, -3);
 		arrowTop.rotation.x = THREE.Math.degToRad( -30 );
 		this.arrowGroup.add( arrowTop );
 
 		var arrowBottom = this.arrowMesh.clone();
-		arrowBottom.position.set(0, -1, -2);
+		arrowBottom.position.set(0, -1.5, -3);
 		arrowBottom.rotation.x = THREE.Math.degToRad( 30 );
 		this.arrowGroup.add( arrowBottom );
 
