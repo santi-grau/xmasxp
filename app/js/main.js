@@ -108,6 +108,8 @@ var App = function() {
         // document.body.appendChild( THREE.WebVR.getButton(this.effect) );
     }
 
+    this.cancelClick = this.onCancelClick.bind(this);
+
     window.addEventListener('resize', this.onResize.bind(this), true);
     window.addEventListener('orientationchange', this.onResize.bind(this), true);
 
@@ -161,6 +163,7 @@ App.prototype.reset = function() {
 };
 
 App.prototype.onClickStart = function(startInCardboard) {
+
     this.onIntro = false;
     this.intro.onEnd();
     this.stage.countdown.drawTexture();
@@ -216,9 +219,9 @@ App.prototype.setupDeviceOrientation = function() {
     this.effect = new THREE.VREffect(this.renderer);
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
-    // if (this.isIOS) this.cancelSleep();
-
     this.loading.changeButton('cardboard');
+
+    if (window.parent) window.parent.postMessage( 'showLogo', '*' );
 };
 
 App.prototype.setupCardboad = function() {
@@ -229,22 +232,35 @@ App.prototype.setupCardboad = function() {
     this.effect.setSize(this.containerEl.offsetWidth, this.containerEl.offsetHeight);
 
     this.fullscreen();
-    // if (this.isIOS) this.preventSleep();
+    this.loading.changeButton('phone');
 
-	this.loading.changeButton('phone');
+    if (window.parent) window.parent.postMessage( 'hideLogo', '*' );
 };
 
 App.prototype.setupPointerLock = function() {
 
-    // Fullscreen and pointerLock
-    this.controls = new THREE.PointerLockControls(this.activeCamera);
-    this.controls.enabled = false;
-    this.isPointerLock = true;
+    if (!this.isPointerLock) {
 
-    // Ask the browser to lock the pointer
-    document.body.requestPointerLock();
+        // Fullscreen and pointerLock
+        this.controls = new THREE.PointerLockControls(this.activeCamera);
+        this.controls.enabled = false;
+        this.isPointerLock = true;
+
+        // Ask the browser to lock the pointer
+        document.body.requestPointerLock();
+
+        document.body.addEventListener('mousedown', this.cancelClick, true);
+        document.documentElement.addEventListener('mousedown', this.cancelClick, true);
+    }
 
     this.loading.changeButton('drag');
+};
+
+App.prototype.onCancelClick = function(e) {
+
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
 };
 
 App.prototype.onPointerLockAccepted = function() {
@@ -273,6 +289,9 @@ App.prototype.setupOrbitControls = function() {
     this.activeCamera = this.player.camera;
 
     this.loading.changeButton('pointerlock');
+
+    document.body.removeEventListener('mousedown', this.cancelClick, true);
+    document.documentElement.removeEventListener('mousedown', this.cancelClick, true);
 };
 
 App.prototype.onPointerLockChange = function() {
@@ -385,7 +404,12 @@ App.prototype.step = function(time) {
     //     this.viveController2.update();
     // }
 
-    this.renderer.clear();
+    if (this.isCardboard && !this.isDeviceOrientation && !this.onIntro) {
+
+    } else {
+
+        this.renderer.clear();
+    }
 
      if( !this.onIntro ) this.effect.render( this.scene, this.activeCamera );
      if( this.onIntro ) this.effect.render( this.scene, this.introCamera ); // camera to debug score, delete when done
