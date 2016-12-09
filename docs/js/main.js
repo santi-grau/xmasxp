@@ -191,7 +191,7 @@ App.prototype.reset = function() {
     }
 };
 
-App.prototype.onClickStart = function() {
+App.prototype.onClickStart = function(startInCardboard) {
     this.onIntro = false;
     this.intro.onEnd();
     this.stage.countdown.drawTexture();
@@ -207,7 +207,14 @@ App.prototype.onClickStart = function() {
         this.controls.connect();
         this.controls.update();
 
-        this.setupDeviceOrientation();
+        if (startInCardboard) {
+
+            this.setupCardboad();
+
+        } else {
+
+            this.setupDeviceOrientation();
+        }
 
     } else if (this.isWebVR) {
 
@@ -2109,8 +2116,8 @@ Lights.prototype.update = function( ){
 				fog : [ 1, 0.2, 0.3, 0.002 ],
 				ambient : [ 1, 0.3, 0, 0.3 ],
 				directional : [ 1, 0.8, 0.5, 0.8 ],
-				gazeColor1 : [ .1, .1, .1 ],
-				gazeColor2 : [ 0.3, 0.4, 0.2 ]
+				gazeColor1 : [ .8, .8, .8 ],
+				gazeColor2 : [ .9, .9, .9 ]
 			}
 		},
 		{
@@ -2220,7 +2227,7 @@ Lights.prototype.getDayNightData = function( lat, lon ){
 	this.latlonDest = [lat,lon];
 	this.latlonInc = 0;
 	TweenMax.to( this, 6, { latlonInc : 1000, ease : Power2.easeOut, onUpdate : function( val ){
-		
+
 		this.latlon[0] = this.intiLatlon[0] + ( this.latlonDest[0] - this.intiLatlon[0] ) * this.latlonInc / 1000;
 		this.latlon[1] = this.intiLatlon[1] + ( this.latlonDest[1] - this.intiLatlon[1] ) * this.latlonInc / 1000;
 		this.update();
@@ -2349,7 +2356,7 @@ Loading.prototype.onClickButton = function(e) {
 		delay: 1.0
 	} );
 
-	this.parent.onClickStart();
+	this.parent.onClickStart((e.currentTarget.id == "start-button2"));
 
 	if (this.parent.isCardboard) {
 
