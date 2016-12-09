@@ -56,7 +56,7 @@ var App = function() {
 
     this.renderer = new THREE.WebGLRenderer({ alpha : false, antialias : true });
     this.renderer.autoClear = false;
-    var maxDPR = (this.isCardboard)? window.devicePixelRatio * 1 : window.devicePixelRatio * 0.75;
+    var maxDPR = (this.isCardboard)? window.devicePixelRatio * 0.75 : window.devicePixelRatio * 0.75;
     this.renderer.setPixelRatio(Math.max( 1, maxDPR ));
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
