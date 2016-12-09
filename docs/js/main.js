@@ -2035,7 +2035,7 @@ var Lights = function( parent ){
 	// 	if( !this.dateRanges ) console.log( 'too late for geo ');
 	// }, 2000 );
 
-	this.timeOffset = -6;
+	this.timeOffset = 0;
 	// setInterval( fun.ction(){
 	// 	this.update();
 	// }.bind(this), 10 );
