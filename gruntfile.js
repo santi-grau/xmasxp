@@ -19,7 +19,7 @@ module.exports = function(grunt) {
           cwd: "app",
           src: [
             "assets/**/*",
-            "js/scripts/**/*"
+            "js/scripts/timbre.js"
           ],
           dest: "docs"
         }]
@@ -81,7 +81,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-stylus');
   grunt.loadNpmTasks('grunt-contrib-copy');
   // grunt.loadNpmTasks('grunt-browserify');
-  
+
   // Build Tasks
   grunt.registerTask('build', [
     'clean',
