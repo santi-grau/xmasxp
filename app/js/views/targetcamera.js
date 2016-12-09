@@ -23,7 +23,7 @@ var TargetCamera = function( parent, prizes ){
     this.showTime = true;
     this.showSpeed = false;
 
-    var sizePlane = (this.parent.parent.isWebVR)? 0.3 : 0.1;
+    var sizePlane = (this.parent.parent.isWebVR || this.parent.parent.isCardboard)? 0.3 : 0.1;
     this.plane = new THREE.PlaneBufferGeometry( sizePlane, sizePlane );
 
     this.canvas = document.createElement('canvas');
@@ -43,7 +43,7 @@ var TargetCamera = function( parent, prizes ){
     this.mesh = new THREE.Mesh( this.plane, material );
     this.mesh.position.set( 0, 0, -5 );
 
-    var lineDistance = (this.parent.parent.isWebVR)? 0.06 : 0.02;
+    var lineDistance = (this.parent.parent.isWebVR || this.parent.parent.isCardboard)? 0.06 : 0.02;
     var materialLine = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2.0, opacity: 0.0, transparent: true, depthTest: false });
     var geometryLine = new THREE.Geometry();
         geometryLine.vertices.push(new THREE.Vector3(-5, 0, 0));
